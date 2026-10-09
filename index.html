@@ -84,6 +84,12 @@ h2{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--mute
 .btnlike{display:inline-block;font-size:12px;padding:4px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);cursor:pointer}
 .btnlike:hover{border-color:var(--muted)}
 .fu-h{color:var(--fu)}
+.book{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:8px}
+.book input{width:auto;padding:5px 8px;font-size:13px;color-scheme:dark}
+.call{display:flex;gap:10px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line)}
+.call:last-child{border-bottom:0}
+.call .when{font-variant-numeric:tabular-nums;font-weight:600;min-width:0}
+.next-call{font-size:13px;padding:10px 14px;border:1px solid var(--line);border-radius:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .drop img,.dm img{max-width:100%;max-height:320px;border-radius:8px;display:block}
 .er{font-size:13px;padding:8px 10px;background:var(--soft);border-radius:8px}
 /* scores & metrics */
@@ -140,7 +146,7 @@ tr:last-child td{border-bottom:0}
 <script>
 /* Each DM is one document in "dms", keyed by IG handle:
    { handle, url, followers, avgLikes, avgComments, er, channel, shotId, opener (read from the screenshot), loom,
-     sentAt, day, status: sent|replied|booked, repliedAt, followedUpAt, reply:{text, sentiment},
+     sentAt, day, status: sent|replied|booked, repliedAt, bookedFor, seen, followedUpAt, reply:{text, sentiment},
      score:{overall, criteria:{human, personal, value, lowNo, status, clarity, loom}, style, feedback} } */
 const GOAL = 5, FOLLOW_UP_AFTER = 3, TOO_LATE = 7, DAY = 864e5;
 
@@ -200,6 +206,10 @@ function tier(er){
   if(er == null) return null;
   return er >= .03 ? 'High' : er >= .01 ? 'Medium' : 'Low';
 }
+const fmtCall = iso => new Date(iso).toLocaleString(undefined, { weekday:'short', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+const upcomingCalls = () => dms.filter(d => d.status === 'booked' && d.bookedFor && new Date(d.bookedFor) > Date.now() - 2*3600e3)
+  .sort((a,b) => a.bookedFor.localeCompare(b.bookedFor));
+let booking = null; // handle whose booking form is open
 // Where a DM stands on follow-up: none needed, waiting, due, too late.
 function followState(d){
   if(d.status !== 'sent') return null;
@@ -268,7 +278,8 @@ function renderGoal(){
       <div class="small ${n>=GOAL?'':'muted'}" style="${n>=GOAL?'color:var(--good);font-weight:600':''}">${n>=GOAL ? 'Goal hit' : `${GOAL-n} to go`}</div>
     </div>
     <div class="slots ${n>=GOAL?'done':''}">${Array.from({length:GOAL},(_,i)=>`<i class="${i<n?'on':''}"></i>`).join('')}</div>
-    <div class="small muted">Resets to 0 at midnight.</div>`;
+    <div class="small muted">Resets to 0 at midnight.</div>
+    ${upcomingCalls()[0] ? `<div class="next-call"><span class="pill solid">Next call</span><b>@${esc(upcomingCalls()[0].handle)}</b><span class="muted">${esc(fmtCall(upcomingCalls()[0].bookedFor))}</span></div>` : ''}`;
   $('#cons').innerHTML = `
       <h2 style="margin:0">Consistency</h2>
       <div class="nums">
@@ -482,20 +493,24 @@ function renderTrack(){
 
   const row = d => {
     const f = followState(d), sc = d.score?.overall;
-    const status = d.status === 'booked' ? '<span class="pill solid">Booked</span>' : d.status === 'replied' ? '<span class="pill good">Replied</span>' : '';
+    const status = d.status === 'booked' ? `<span class="pill solid">Booked${d.bookedFor ? ' · ' + esc(fmtCall(d.bookedFor)) : ''}</span>` : d.status === 'replied' ? '<span class="pill good">Replied</span>' : (d.seen ? '<span class="pill">Seen</span>' : '');
     const fu = f ? `<span class="pill ${f.k==='due'?'fu':f.k==='late'?'bad':f.k==='wait'?'fu-soft':''}">${f.label}</span>` : '';
     const h = esc(d.handle);
     const btns = d.status === 'sent'
       ? `${f && (f.k==='due' || f.k==='wait') ? `<button class="sm" data-act="followed" data-h="${h}">Followed up</button>` : ''}`
         + (canImages ? `<label class="btnlike">Check for reply<input type="file" accept="image/*" data-reply="${h}" hidden></label>` : `<button class="sm" data-act="replied" data-h="${h}">Replied</button>`)
-      : d.status === 'replied' ? `<button class="sm" data-act="booked" data-h="${h}">Booked call</button>` : '';
+      : '';
+    const bookBtn = `<button class="sm${d.status === 'replied' ? ' primary' : ''}" data-act="bookopen" data-h="${h}">${d.status === 'booked' ? 'Change call time' : 'Book call'}</button>`;
+    const pad = n => String(n).padStart(2,'0');
+    const local = iso => { const x = new Date(iso); return `${x.getFullYear()}-${pad(x.getMonth()+1)}-${pad(x.getDate())}T${pad(x.getHours())}:${pad(x.getMinutes())}`; };
+    const form = booking === d.handle ? `<div class="book"><input type="datetime-local" value="${d.bookedFor ? local(d.bookedFor) : ''}"><button class="sm primary" data-act="booksave" data-h="${h}">Save</button><button class="sm" data-act="bookcancel">Cancel</button></div>` : '';
     return `<div class="dm"${d.status === 'sent' && canImages ? ` data-drop="${h}"` : ''}>
       <div class="top">
         <a href="${esc(d.url)}" target="_blank" rel="noopener">@${esc(d.handle)}</a>
         <span class="small muted">${new Date(d.sentAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})}${d.channel ? ' · '+esc(d.channel) : ''}${tier(d.er) ? ' · '+tier(d.er)+' eng.' : ''}${sc ? ` · score ${sc}/10` : ''}</span>
         <span style="flex:1"></span>${status}${fu}
       </div>
-      <div class="row" style="margin-top:8px">${btns}</div>
+      <div class="row" style="margin-top:8px">${btns}${bookBtn}</div>${form}
       <details><summary>Message, Loom & feedback</summary>
         ${d.shotId ? `<img src="${esc(d.shotUrl || '/_blob/'+d.shotId)}" alt="Message screenshot" style="margin-top:6px" loading="lazy">` : ''}
         ${d.opener ? `<pre>${esc(d.opener)}</pre>` : ''}
@@ -515,6 +530,9 @@ function renderTrack(){
     <div class="stat"><span>Avg score</span><b>${avg}</b></div>
     <div class="stat"><span>Missed follow-ups</span><b style="${late?'color:var(--bad)':''}">${late}</b></div>
   </div>
+
+  ${upcomingCalls().length ? `<h2>Upcoming calls</h2>
+  <div class="card list">${upcomingCalls().map(d => `<div class="call"><span class="pill solid">Call</span><span class="when">${esc(fmtCall(d.bookedFor))}</span><a href="${esc(d.url)}" target="_blank" rel="noopener" style="color:var(--ink);font-weight:600;text-decoration:none">@${esc(d.handle)}</a></div>`).join('')}</div>` : ''}
 
   <h2 class="fu-h">Follow up now</h2>
   ${due.length ? `<div class="card list">${due.map(row).join('')}</div>`
@@ -557,6 +575,18 @@ document.addEventListener('click', async e => {
     case 'save': save(); break;
     case 'channel': readStep(); flow.d.channel = b.dataset.c; renderFlow(); break;
     case 'noshot': readStep(); URL.revokeObjectURL(flow.d.shotUrl); flow.d.shot = null; flow.d.shotUrl = ''; renderFlow(); break;
+    case 'bookopen': booking = b.dataset.h; renderTrack(); b.closest('.dm')?.querySelector('.book input')?.focus(); break;
+    case 'bookcancel': booking = null; renderTrack(); break;
+    case 'booksave': {
+      const v = b.closest('.book')?.querySelector('input')?.value, h = b.dataset.h, d = dms.find(x => x.handle === h);
+      if(!v){ toast('Pick a date and time for the call'); return; }
+      b.disabled = true;
+      try{
+        await store.collection('dms').doc(h).update({ status:'booked', bookedFor:new Date(v).toISOString(), repliedAt:d?.repliedAt || new Date().toISOString() });
+        booking = null; toast(`Call booked with @${h}`);
+      }catch(err){ b.disabled = false; toast("Couldn't save. Try again."); }
+      break;
+    }
     case 'followed': case 'replied': case 'booked': {
       const h = b.dataset.h, now = new Date().toISOString();
       const patch = b.dataset.act === 'followed' ? { followedUpAt:now }
