@@ -51,10 +51,19 @@ h2{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--mute
 .slots i.on{background:var(--accent)}
 .slots.done i.on{background:var(--good)}
 .slots i{height:6px}
-.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center;font-size:11px;color:var(--muted)}
-.week b{display:block;margin:0 auto 2px;width:26px;height:26px;line-height:26px;border-radius:50%;background:var(--soft);color:var(--muted);font-size:12px}
-.week b.hit{background:var(--ink);color:var(--bg)}
-.week b.part{background:#333;color:var(--ink)}
+.cons{display:grid;gap:12px}
+.cons .nums{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.cons .nums div{background:var(--soft);border-radius:10px;padding:10px 12px}
+.cons .nums b{display:block;font-size:22px;font-variant-numeric:tabular-nums;line-height:1.2}
+.cons .nums span{font-size:11px;color:var(--muted)}
+.heat{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;max-width:300px}
+.heat i{aspect-ratio:1;max-width:100%;border-radius:4px;background:var(--soft);display:grid;place-items:center;font-style:normal;font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums}
+.heat i.l1{background:#262626;color:var(--ink)} .heat i.l2{background:#4a4a4a;color:var(--ink)} .heat i.hit{background:var(--ink);color:var(--bg);font-weight:700}
+.heat i.today{outline:1px solid var(--ink);outline-offset:1px}
+.heat i.future{background:none}
+.heat .dow{background:none;aspect-ratio:auto;font-size:10px}
+.legend{display:flex;gap:10px;align-items:center;font-size:11px;color:var(--muted);flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:-1px;margin-right:4px}
 /* stepper */
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;font-size:12px;color:var(--muted)}
 .steps div{border-top:3px solid var(--soft);padding-top:6px}
@@ -122,6 +131,7 @@ tr:last-child td{border-bottom:0}
   <section id="start">
     <div class="card goal" id="goal"></div>
     <div id="flow"></div>
+    <div class="card cons" id="cons"></div>
   </section>
   <section id="track" hidden></section>
 </main>
@@ -201,22 +211,74 @@ function followState(d){
 }
 
 /* ---------- Start screen ---------- */
-function renderGoal(){
-  const today = localDay();
-  const n = dms.filter(d => d.day === today).length;
-  const week = [];
-  for(let i=6;i>=0;i--){
-    const dt = new Date(Date.now() - i*DAY), k = localDay(dt);
-    const c = dms.filter(d => d.day === k).length;
-    week.push(`<div><b class="${c>=GOAL?'hit':c?'part':''}">${c}</b>${dt.toLocaleDateString(undefined,{weekday:'narrow'})}</div>`);
+// Count of DMs per local day, e.g. { "2026-10-09": 5 }.
+function dayCounts(){
+  const c = {};
+  for(const d of dms) if(d.day) c[d.day] = (c[d.day] || 0) + 1;
+  return c;
+}
+const addDays = (dt, n) => { const x = new Date(dt); x.setDate(x.getDate() + n); return x; };
+
+// Streaks count days where the goal was hit. Today only breaks the streak once it's over.
+function consistency(counts){
+  const today = new Date();
+  let streak = 0;
+  for(let i = (counts[localDay(today)] || 0) >= GOAL ? 0 : 1; ; i++){
+    if((counts[localDay(addDays(today, -i))] || 0) >= GOAL) streak++; else break;
   }
+  const days = Object.keys(counts).sort();
+  let best = 0, run = 0, prev = null;
+  for(const k of days){
+    if(counts[k] < GOAL){ run = 0; prev = k; continue; }
+    run = prev && localDay(addDays(new Date(prev + 'T12:00'), 1)) === k && counts[prev] >= GOAL ? run + 1 : 1;
+    best = Math.max(best, run); prev = k;
+  }
+  // Hit rate over the last 30 days, counted from the first day you logged a DM.
+  const first = days[0];
+  let span = 0, hits = 0;
+  for(let i = 0; i < 30; i++){
+    const k = localDay(addDays(today, -i));
+    if(!first || k < first) break;
+    if(i === 0 && (counts[k] || 0) < GOAL) continue; // today isn't over yet
+    span++; if((counts[k] || 0) >= GOAL) hits++;
+  }
+  return { streak, best: Math.max(best, streak), hits, span };
+}
+
+function renderGoal(){
+  const counts = dayCounts();
+  const today = new Date(), todayKey = localDay(today);
+  const n = counts[todayKey] || 0;
+  const c = consistency(counts);
+
+  // Last 5 weeks, Monday-first, so each column is a weekday.
+  const start = addDays(today, -((today.getDay() + 6) % 7) - 28);
+  const cells = [];
+  for(let i = 0; i < 35; i++){
+    const dt = addDays(start, i), k = localDay(dt), v = counts[k] || 0;
+    const future = k > todayKey;
+    const cls = future ? 'future' : v >= GOAL ? 'hit' : v >= 3 ? 'l2' : v ? 'l1' : '';
+    cells.push(`<i class="${cls} ${k === todayKey ? 'today' : ''}" title="${dt.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'})}: ${v} DM${v===1?'':'s'}">${future ? '' : v || ''}</i>`);
+  }
+  const dows = ['M','T','W','T','F','S','S'].map(d => `<i class="dow">${d}</i>`).join('');
+
   $('#goal').innerHTML = `
     <div class="row" style="justify-content:space-between;align-items:flex-end">
-      <div><div class="small muted">Today's DMs</div><div class="n">${n}<small> / ${GOAL}</small></div></div>
+      <div><div class="small muted">Today · ${today.toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'})}</div><div class="n">${n}<small> / ${GOAL}</small></div></div>
       <div class="small ${n>=GOAL?'':'muted'}" style="${n>=GOAL?'color:var(--good);font-weight:600':''}">${n>=GOAL ? 'Goal hit' : `${GOAL-n} to go`}</div>
     </div>
     <div class="slots ${n>=GOAL?'done':''}">${Array.from({length:GOAL},(_,i)=>`<i class="${i<n?'on':''}"></i>`).join('')}</div>
-    <div class="week">${week.join('')}</div>`;
+    <div class="small muted">Resets to 0 at midnight.</div>`;
+  $('#cons').innerHTML = `
+      <h2 style="margin:0">Consistency</h2>
+      <div class="nums">
+        <div><b>${c.streak}<span style="font-size:13px"> day${c.streak===1?'':'s'}</span></b><span>Current streak</span></div>
+        <div><b>${c.best}</b><span>Best streak</span></div>
+        <div><b>${c.span ? Math.round(100*c.hits/c.span)+'%' : '—'}</b><span>Goal hit, last 30 days</span></div>
+      </div>
+      ${n < GOAL && c.streak ? `<div class="small muted">Send ${GOAL-n} more today to keep your ${c.streak}-day streak.</div>` : ''}
+      <div class="heat">${dows}${cells.join('')}</div>
+      <div class="legend"><span><i style="background:var(--soft)"></i>0</span><span><i style="background:#262626"></i>1–2</span><span><i style="background:#4a4a4a"></i>3–4</span><span><i style="background:var(--ink)"></i>${GOAL}+ goal hit</span></div>`;
 }
 
 function renderFlow(){
