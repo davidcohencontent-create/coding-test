@@ -84,6 +84,11 @@ h2{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--mute
 .btnlike{display:inline-block;font-size:12px;padding:4px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);cursor:pointer}
 .btnlike:hover{border-color:var(--muted)}
 .fu-h{color:var(--fu)}
+.rank{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-bottom:1px solid var(--line)}
+.rank:last-child{border-bottom:0}
+.rank .pos{font-size:20px;font-weight:700;width:1.5em;line-height:1.2;font-variant-numeric:tabular-nums;color:var(--muted)}
+.rank:first-child .pos{color:var(--ink)}
+.rank .txt{font-size:14px;white-space:pre-line;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
 .book{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:8px}
 .book input{width:auto;padding:5px 8px;font-size:13px;color-scheme:dark}
 .call{display:flex;gap:10px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line)}
@@ -477,6 +482,30 @@ function group(keyFn, order){
   return order ? order.map(k => g[k]).filter(Boolean) : rows.sort((a,b) => b.sent - a.sent);
 }
 
+// Rank every opener by what it got: booked, then a warm reply, then any reply, then seen, then nothing.
+function outcome(d){
+  if(d.status === 'booked') return { pts:4, label:'Booked', cls:'solid' };
+  if(d.status === 'replied'){
+    const s = d.reply?.sentiment;
+    return s === 'positive' ? { pts:3, label:'Warm reply', cls:'good' } : s === 'negative' ? { pts:1, label:'Cold reply', cls:'bad' } : { pts:2, label:'Replied', cls:'good' };
+  }
+  if(d.seen) return { pts:0.5, label:'Seen', cls:'' };
+  return { pts:0, label:'No reply', cls:'' };
+}
+function openerRanking(){
+  const rows = dms.filter(d => d.opener).map(d => ({ d, o:outcome(d) }))
+    .sort((a,b) => b.o.pts - a.o.pts || (b.d.score?.overall || 0) - (a.d.score?.overall || 0) || a.d.sentAt.localeCompare(b.d.sentAt));
+  if(!rows.length) return `<div class="card empty small">Openers show up here once Claude has read your screenshots.</div>`;
+  return `<div class="card list">${rows.map(({d,o},i) => `<div class="rank">
+      <span class="pos">${i+1}</span>
+      <div style="min-width:0;flex:1">
+        <div class="txt">${esc(d.opener.replace(/https?:\/\/\S+/g,'[Loom]'))}</div>
+        <div class="small muted">@${esc(d.handle)} · ${esc(d.channel || 'Instagram')}</div>
+      </div>
+      <span class="pill ${o.cls}">${o.label}</span>
+    </div>`).join('')}</div>`;
+}
+
 function renderTrack(){
   const el = $('#track');
   const due = dms.filter(d => followState(d)?.k === 'due').sort((a,b) => a.sentAt.localeCompare(b.sentAt));
@@ -486,13 +515,11 @@ function renderTrack(){
   if(!dms.length){ el.innerHTML = `<div class="card empty">No DMs yet. Go to Start and log your first one.</div>`; return; }
 
   const sent = dms.length, replies = dms.filter(d => d.status !== 'sent').length, booked = dms.filter(d => d.status === 'booked').length;
-  const scored = dms.filter(d => d.score?.overall);
-  const avg = scored.length ? (scored.reduce((s,d) => s + d.score.overall, 0) / scored.length).toFixed(1) : '—';
   const late = dms.filter(d => followState(d)?.k === 'late').length;
   const all = dms.slice().sort((a,b) => b.sentAt.localeCompare(a.sentAt));
 
   const row = d => {
-    const f = followState(d), sc = d.score?.overall;
+    const f = followState(d);
     const status = d.status === 'booked' ? `<span class="pill solid">Booked${d.bookedFor ? ' · ' + esc(fmtCall(d.bookedFor)) : ''}</span>` : d.status === 'replied' ? '<span class="pill good">Replied</span>' : (d.seen ? '<span class="pill">Seen</span>' : '');
     const fu = f ? `<span class="pill ${f.k==='due'?'fu':f.k==='late'?'bad':f.k==='wait'?'fu-soft':''}">${f.label}</span>` : '';
     const h = esc(d.handle);
@@ -507,15 +534,15 @@ function renderTrack(){
     return `<div class="dm"${d.status === 'sent' && canImages ? ` data-drop="${h}"` : ''}>
       <div class="top">
         <a href="${esc(d.url)}" target="_blank" rel="noopener">@${esc(d.handle)}</a>
-        <span class="small muted">${new Date(d.sentAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})}${d.channel ? ' · '+esc(d.channel) : ''}${tier(d.er) ? ' · '+tier(d.er)+' eng.' : ''}${sc ? ` · score ${sc}/10` : ''}</span>
+        <span class="small muted">${new Date(d.sentAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})}${d.channel ? ' · '+esc(d.channel) : ''}${tier(d.er) ? ' · '+tier(d.er)+' eng.' : ''}</span>
         <span style="flex:1"></span>${status}${fu}
       </div>
       <div class="row" style="margin-top:8px">${btns}${bookBtn}</div>${form}
-      <details><summary>Message, Loom & feedback</summary>
+      <details><summary>Message, Loom & notes</summary>
         ${d.shotId ? `<img src="${esc(d.shotUrl || '/_blob/'+d.shotId)}" alt="Message screenshot" style="margin-top:6px" loading="lazy">` : ''}
         ${d.opener ? `<pre>${esc(d.opener)}</pre>` : ''}
         ${d.reply ? `<div class="small" style="margin-top:6px"><span class="pill ${d.reply.sentiment==='positive'?'good':d.reply.sentiment==='negative'?'bad':''}">Reply · ${esc(d.reply.sentiment)}</span> ${esc(d.reply.text)}</div>` : ''}
-        ${d.score?.feedback ? `<div class="small" style="margin:8px 0"><b>${esc(d.score.style)}</b> · ${esc(d.score.feedback)}</div>${critHTML(d.score)}` : ''}
+        ${d.score?.feedback ? `<div class="small" style="margin:8px 0"><b>Next time:</b> ${esc(d.score.feedback)}</div>` : ''}
         ${d.loom ? `<pre>${esc(d.loom)}</pre>` : ''}
       </details>
     </div>`;
@@ -527,7 +554,7 @@ function renderTrack(){
     <div class="stat"><span>Replies</span><b>${replies}</b></div>
     <div class="stat hero"><span>Response rate</span><b>${pct(replies,sent)}</b></div>
     <div class="stat"><span>Calls booked</span><b>${booked}</b></div>
-    <div class="stat"><span>Avg score</span><b>${avg}</b></div>
+    <div class="stat"><span>Booking rate</span><b>${pct(booked,sent)}</b></div>
     <div class="stat"><span>Missed follow-ups</span><b style="${late?'color:var(--bad)':''}">${late}</b></div>
   </div>
 
@@ -538,9 +565,10 @@ function renderTrack(){
   ${due.length ? `<div class="card list">${due.map(row).join('')}</div>`
     : `<div class="card empty small">Nothing due. DMs show up here ${FOLLOW_UP_AFTER} days after sending without a reply. After ${TOO_LATE} days it's too late. To check for a reply, drop a fresh screenshot on any DM below.</div>`}
 
+  <h2>Opener ranking</h2>
+  ${openerRanking()}
+
   <h2>What gets replies</h2>
-  ${bucketTable('Opener style', group(d => d.score?.style))}
-  ${bucketTable('Score', group(d => { const s = d.score?.overall; return s == null ? null : s >= 8 ? '8–10' : s >= 5 ? '5–7' : '1–4'; }, ['8–10','5–7','1–4']))}
   ${bucketTable('Channel', group(d => d.channel || 'Instagram', CHANNELS))}
   ${bucketTable('Profile engagement', group(d => tier(d.er), ['High','Medium','Low']))}
 
