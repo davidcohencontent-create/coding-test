@@ -7,10 +7,10 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: two screens in one narrow column. Start = daily goal + 3-step DM log. Tracking = metrics + follow-ups.
-   Look: black, monochrome, white as the only accent; colour only for follow-up urgency and wins. */
+   Look: black, monochrome, white as the main accent; blue marks follow-ups, green wins, red missed. */
 :root{
   --bg:#000; --panel:#0a0a0a; --ink:#f5f5f5; --muted:#7a7a7a; --line:#1f1f1f; --soft:#161616;
-  --accent:#fff; --accent-ink:#000; --good:#4ade80; --warn:#f5b546; --bad:#f26d6d;
+  --accent:#fff; --accent-ink:#000; --good:#4ade80; --fu:#5b9dff; --bad:#f26d6d;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -22,7 +22,7 @@ header h1{font-size:15px;margin:0;font-weight:650;flex:1}
 nav{display:flex;gap:2px}
 nav button{background:none;border:0;padding:6px 14px;border-radius:999px;color:var(--muted);font:inherit;cursor:pointer}
 nav button.on{background:var(--ink);color:var(--bg);font-weight:600}
-nav .count{display:inline-block;min-width:18px;padding:0 5px;margin-left:4px;border-radius:999px;background:var(--warn);color:#000;font-size:11px;font-weight:700;line-height:18px;text-align:center}
+nav .count{display:inline-block;min-width:18px;padding:0 5px;margin-left:4px;border-radius:999px;background:var(--fu);color:#000;font-size:11px;font-weight:700;line-height:18px;text-align:center}
 main{max-width:720px;margin:0 auto;padding:20px 16px 60px;display:grid;gap:16px}
 main>*,section>*{min-width:0}
 section{display:grid;gap:16px}
@@ -66,6 +66,15 @@ h2{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--mute
 .seg button.on{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:600}
 .drop{display:grid;place-items:center;min-height:120px;border:1px dashed #3a3a3a;border-radius:10px;color:var(--muted);font-size:13px;cursor:pointer;padding:10px;text-align:center}
 .drop:hover{border-color:var(--muted)}
+.drop.over,.dm.over{border-color:var(--ink);background:var(--soft)}
+.crit{display:grid;gap:6px}
+.crit div{display:grid;grid-template-columns:minmax(0,9rem) 1fr 2.2rem;gap:8px;align-items:center;font-size:12px;color:var(--muted)}
+.crit i{height:4px;background:var(--soft);border-radius:2px;overflow:hidden}
+.crit i b{display:block;height:100%;background:var(--ink)}
+.crit span{text-align:right;color:var(--ink);font-variant-numeric:tabular-nums}
+.btnlike{display:inline-block;font-size:12px;padding:4px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);cursor:pointer}
+.btnlike:hover{border-color:var(--muted)}
+.fu-h{color:var(--fu)}
 .drop img,.dm img{max-width:100%;max-height:320px;border-radius:8px;display:block}
 .er{font-size:13px;padding:8px 10px;background:var(--soft);border-radius:8px}
 /* scores & metrics */
@@ -77,7 +86,7 @@ h2{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--mute
 .score{display:flex;gap:16px;align-items:center}
 .score .big-n{font-size:44px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
 .pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--soft);color:var(--muted);white-space:nowrap}
-.pill.good{color:var(--good)} .pill.warn{background:var(--warn);color:#000} .pill.bad{color:var(--bad)} .pill.solid{background:var(--good);color:#000}
+.pill.good{color:var(--good)} .pill.fu{background:var(--fu);color:#000} .pill.fu-soft{color:var(--fu)} .pill.bad{color:var(--bad)} .pill.solid{background:var(--good);color:#000}
 table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
 td,th{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left}
 th{font-size:12px;color:var(--muted);font-weight:500}
@@ -120,12 +129,41 @@ tr:last-child td{border-bottom:0}
 
 <script>
 /* Each DM is one document in "dms", keyed by IG handle:
-   { handle, url, followers, avgLikes, avgComments, er, opener, loom, sentAt, day,
-     status: sent|replied|booked, repliedAt, followedUpAt, score:{overall, opener, loom, style, feedback} } */
+   { handle, url, followers, avgLikes, avgComments, er, channel, shotId, opener (read from the screenshot), loom,
+     sentAt, day, status: sent|replied|booked, repliedAt, followedUpAt, reply:{text, sentiment},
+     score:{overall, criteria:{human, personal, value, lowNo, status, clarity, loom}, style, feedback} } */
 const GOAL = 5, FOLLOW_UP_AFTER = 3, TOO_LATE = 7, DAY = 864e5;
 
 let store = null, sample = null, assets = null, canImages = false, dms = [], loaded = false;
 const CHANNELS = ['Instagram','WhatsApp','Email'];
+// Distilled from David's sales-training notes. Every DM is scored against these.
+const CRITERIA = [
+  ['human',    'Human, not automated'],
+  ['personal', 'Personal & specific'],
+  ['value',    'Value first'],
+  ['lowNo',    'Easy to say yes'],
+  ['status',   'Status & conviction'],
+  ['clarity',  'Short & clear'],
+  ['loom',     'Loom quality'],
+];
+const RUBRIC = `Score against these outreach principles, 1-10 each:
+- human: reads like a real person wrote it for this one prospect, not a template or automation. A personal video (the Loom) puts a face to the name; people don't like letting a real person down.
+- personal: references something real and specific about the prospect (their content, offer, numbers, situation). Nobody cares how much you know until they know how much you care.
+- value: gives something useful up front (an observation, idea, quick win, relevant asset). Never selfish asks like "got a minute?" or "just checking in".
+- lowNo: reduces the odds of a no. Ends with an open-ended question or 2-3 easy options (reply here, quick call now or later, watch the video) instead of a single yes/no ask.
+- status: talks peer to peer with calm certainty and authority. No begging, over-thanking, desperation or over-availability: wants the deal, doesn't need it. Uses the vocabulary of the prospect's world; nothing that reads as cheap, hypey or salesy. No income claims.
+- clarity: short, readable in about 10 seconds, one clear point, clear next step.
+- loom: strong open (who, why them, what they'll get in the first seconds); diagnoses current state vs desired state and the pain, problem and pressure; explains features as advantage -> benefit tied to an emotion (confidence, relief, competence, savvy, acceptance, creativity); concise, no fluff; ends with one easy next step. Score 1 if there is no transcript.`;
+const clamp10 = v => Math.max(1, Math.min(10, Math.round(+v || 0))) || null;
+function critHTML(sc){
+  if(!sc?.criteria) return '';
+  return `<div class="crit">${CRITERIA.map(([k,l]) => sc.criteria[k] ? `<div>${l}<i><b style="width:${sc.criteria[k]*10}%"></b></i><span>${sc.criteria[k]}</span></div>` : '').join('')}</div>`;
+}
+function readReply(r){
+  const rp = r && r.reply;
+  if(!rp || !rp.replied) return null;
+  return { text:String(rp.text || '').slice(0,1000), sentiment:['positive','neutral','negative'].includes(rp.sentiment) ? rp.sentiment : 'neutral', booked:!!rp.booked };
+}
 let tab = 'start';
 let flow = null;          // null = not started; else { step, d:{...}, result }
 
@@ -208,9 +246,8 @@ function renderFlow(){
       <div class="small muted">Sent via</div>
       <div class="seg">${CHANNELS.map(c => `<button class="${d.channel===c?'on':''}" data-act="channel" data-c="${c}">${c}</button>`).join('')}</div>
       <div class="small muted">Screenshot of your message</div>
-      <label class="drop" for="f_shot">${d.shotUrl ? `<img src="${d.shotUrl}" alt="Message screenshot">` : 'Tap to add a screenshot, or paste one'}<input type="file" id="f_shot" accept="image/*" hidden></label>
-      ${d.shotUrl ? `<button class="sm" data-act="noshot" style="justify-self:start">Remove screenshot</button>` : ''}
-      <label class="f">Message text ${d.shot ? '(optional, Claude reads the screenshot)' : ''}<textarea id="f_opener" rows="4" placeholder="Hey Sarah, made you a quick video on…">${esc(d.opener)}</textarea></label>`;
+      <label class="drop" for="f_shot" data-drop="flow">${d.shotUrl ? `<img src="${d.shotUrl}" alt="Message screenshot">` : 'Drag & drop the screenshot here<br>or tap to choose'}<input type="file" id="f_shot" accept="image/*" hidden></label>
+      ${d.shotUrl ? `<button class="sm" data-act="noshot" style="justify-self:start">Remove screenshot</button>` : ''}`;
   } else {
     body = `<label class="f">Loom transcript<textarea id="f_loom" rows="9" placeholder="Paste the Loom transcript here">${esc(d.loom)}</textarea></label>`;
   }
@@ -228,15 +265,16 @@ function renderFlow(){
 function renderResult(){
   const r = flow.result, sc = r.score;
   $('#flow').innerHTML = `<div class="card" style="display:grid;gap:14px">
-    <div class="row" style="justify-content:space-between"><b>@${esc(r.handle)} logged</b><span class="pill good">Sent</span></div>
+    <div class="row" style="justify-content:space-between"><b>@${esc(r.handle)} logged</b><span class="pill ${r.reply ? 'solid' : 'good'}">${r.reply ? 'Replied' : 'Sent'}</span></div>
     ${sc ? `<div class="score">
         <div class="big-n">${sc.overall}<span class="small muted">/10</span></div>
         <div class="small" style="display:grid;gap:2px">
-          <div>Opener <b>${sc.opener}/10</b> · Loom <b>${sc.loom}/10</b></div>
-          <div class="muted">Style: ${esc(sc.style)}</div>
+          <div class="muted">Style</div><div><b>${esc(sc.style)}</b></div>
         </div>
       </div>
-      <div class="notice">${esc(sc.feedback)}</div>`
+      ${critHTML(sc)}
+      <div class="notice"><b>Next time:</b> ${esc(sc.feedback)}</div>
+      ${r.reply ? `<div class="notice"><span class="pill good">Reply spotted</span> ${esc(r.reply.text)}</div>` : ''}`
     : flow.scoring ? `<div class="notice">Scoring…</div>`
     : `<div class="notice">Saved. Scoring isn't available here right now. Ask Claude in chat to score it.</div>`}
     <button class="primary big" data-act="start">Next DM</button>
@@ -246,7 +284,7 @@ function renderResult(){
 
 function readStep(){
   const d = flow.d;
-  for(const k of ['url','followers','avgLikes','avgComments','opener','loom']){
+  for(const k of ['url','followers','avgLikes','avgComments','loom']){
     const i = $('#f_'+k); if(i) d[k] = i.value;
   }
 }
@@ -260,38 +298,64 @@ function setShot(file){
 }
 
 async function scoreDM(doc, shot){
-  if(!sample) return null;
-  const useShot = shot && canImages;
-  const prompt = `You score cold outreach sent via ${doc.channel}. The sender messages a short opener and a personalised Loom video.
-Score how likely this gets a reply, given the prospect's profile engagement.
+  if(!sample || !shot || !canImages) return null;
+  const prompt = `You score cold outreach for an agency owner. Each DM is sent via ${doc.channel} with a personalised Loom video. The attached screenshot shows the conversation.
 
-Prospect: @${doc.handle}. Followers: ${doc.followers ?? 'unknown'}. Avg likes: ${doc.avgLikes ?? 'unknown'}. Avg comments: ${doc.avgComments ?? 'unknown'}. Engagement rate: ${doc.er != null ? (doc.er*100).toFixed(2)+'%' : 'unknown'}.
+Prospect: @${doc.handle}. Followers: ${doc.followers ?? 'unknown'}. Avg likes: ${doc.avgLikes ?? 'unknown'}. Avg comments: ${doc.avgComments ?? 'unknown'}. Engagement rate: ${doc.er != null ? (doc.er*100).toFixed(2)+'%' : 'unknown'}. Weigh how hard this prospect is to reach given their audience size and engagement.
 
-Opener message:
-${useShot ? 'It is in the attached screenshot. Read it from there.' + (doc.opener ? ' The sender also typed: """' + doc.opener + '"""' : '') : '"""' + doc.opener + '"""'}
+${RUBRIC}
 
 Loom transcript:
-"""${(doc.loom || '').slice(0, 12000)}"""
+"""${(doc.loom || '(none)').slice(0, 12000)}"""
 
-Reply with only JSON: {"openerText": "the opener message, transcribed word for word", "opener": 1-10, "loom": 1-10, "overall": 1-10, "style": "2-4 word label for the opener's approach", "feedback": "one specific sentence on what to change next time"}`;
-  const r = await sample.json(prompt, useShot ? { modelTier:'default', images:[shot] } : { modelTier:'default' });
-  const clamp = v => Math.max(1, Math.min(10, Math.round(+v || 0))) || null;
-  if(!r || !clamp(r.overall)) return null;
-  return { openerText:String(r.openerText || '').slice(0,4000), overall:clamp(r.overall), opener:clamp(r.opener), loom:clamp(r.loom), style:String(r.style || 'Unlabelled').slice(0,40), feedback:String(r.feedback || '').slice(0,300) };
+Also check the screenshot for a reply: any message from the prospect after the sender's opener.
+
+Reply with only JSON:
+{"openerText": "the sender's opener, word for word", "criteria": {"human":1-10,"personal":1-10,"value":1-10,"lowNo":1-10,"status":1-10,"clarity":1-10,"loom":1-10}, "overall": 1-10, "style": "2-4 word label for the opener's approach", "feedback": "the single most important change for next time, one sentence", "reply": {"replied": true|false, "text": "the prospect's reply, word for word", "sentiment": "positive|neutral|negative", "booked": true|false}}`;
+  const r = await sample.json(prompt, { modelTier:'default', images:[shot] });
+  if(!r || !clamp10(r.overall)) return null;
+  const criteria = {};
+  for(const [k] of CRITERIA) criteria[k] = clamp10(r.criteria?.[k]);
+  return {
+    openerText:String(r.openerText || '').slice(0,4000),
+    score:{ overall:clamp10(r.overall), criteria, style:String(r.style || 'Unlabelled').slice(0,40), feedback:String(r.feedback || '').slice(0,300) },
+    reply:readReply(r)
+  };
+}
+
+// A newer screenshot of the thread: Claude checks it for a reply and updates the DM.
+async function checkReply(handle, file){
+  if(!file || !file.type.startsWith('image/')) return;
+  if(!sample || !canImages){ toast("Claude can't read screenshots here. Mark it by hand."); return; }
+  const d = dms.find(x => x.handle === handle); if(!d) return;
+  toast(`Checking @${handle} for a reply…`);
+  try{
+    const r = await sample.json(`This is a screenshot of a ${d.channel || 'Instagram'} conversation. The sender's first message was: """${(d.opener || '').slice(0,2000)}"""
+Is there any message from the prospect (the other person) after the sender's messages? Did they agree to a call?
+Reply with only JSON: {"reply": {"replied": true|false, "text": "their latest reply, word for word", "sentiment": "positive|neutral|negative", "booked": true|false}}`, { modelTier:'quick', images:[file] });
+    const reply = readReply(r);
+    const patch = {};
+    if(assets){ try{ const a = await assets.upload(file); patch.replyShotId = a.id; patch.replyShotUrl = a.url; }catch(e){} }
+    if(reply){
+      Object.assign(patch, { status: reply.booked ? 'booked' : 'replied', repliedAt: d.repliedAt || new Date().toISOString(), reply:{ text:reply.text, sentiment:reply.sentiment } });
+    }
+    if(Object.keys(patch).length) await store.collection('dms').doc(handle).update(patch);
+    toast(reply ? (reply.booked ? `@${handle} booked a call` : `@${handle} replied`) : `No reply from @${handle} in that screenshot`);
+  }catch(e){ toast("Couldn't read that screenshot. Try again."); }
 }
 
 async function save(){
   readStep();
   const d = flow.d, handle = parseHandle(d.url);
   if(!handle){ flow.step = 0; renderFlow(); toast('Add a valid Instagram profile link'); return; }
-  if(!d.opener.trim() && !d.shot){ flow.step = 1; renderFlow(); toast('Add a screenshot or the message text'); return; }
+  if(!d.shot){ flow.step = 1; renderFlow(); toast('Drop in the screenshot of your message'); return; }
   const existing = dms.find(x => x.handle === handle);
   if(existing){ toast(`@${handle} is already logged (${new Date(existing.sentAt).toLocaleDateString()})`); return; }
   const er = engagement(d);
   const doc = {
     handle, url:`https://instagram.com/${handle}`,
     followers:num(d.followers), avgLikes:num(d.avgLikes), avgComments:num(d.avgComments), er,
-    channel:d.channel || 'Instagram', opener:d.opener.trim(), loom:d.loom.trim(),
+    channel:d.channel || 'Instagram', opener:'', loom:d.loom.trim(),
     sentAt:new Date().toISOString(), day:localDay(), status:'sent'
   };
   flow.saving = true; renderFlow();
@@ -303,16 +367,17 @@ async function save(){
   try{ await store.collection('dms').doc(handle).set(doc); }
   catch(e){ flow.saving = false; renderFlow(); toast("Couldn't save. Check your connection and try again."); return; }
   try{ localStorage.removeItem('outreach-draft'); }catch(e){}
-  flow = { result:{ handle }, scoring:!!sample };
+  flow = { result:{ handle }, scoring:!!(sample && canImages) };
   renderResult();
-  if(!sample) return;
+  if(!flow.scoring) return;
   try{
-    const score = await scoreDM(doc, shot);
-    if(score){
-      const { openerText, ...rest } = score;
-      await store.collection('dms').doc(handle).update(doc.opener || !openerText ? { score:rest } : { score:rest, opener:openerText });
+    const res = await scoreDM(doc, shot);
+    if(res){
+      const patch = { score:res.score, opener:res.openerText };
+      if(res.reply) Object.assign(patch, { status: res.reply.booked ? 'booked' : 'replied', repliedAt:new Date().toISOString(), reply:{ text:res.reply.text, sentiment:res.reply.sentiment } });
+      await store.collection('dms').doc(handle).update(patch);
     }
-    if(flow && flow.result && flow.result.handle === handle){ flow.result.score = score; flow.scoring = false; renderResult(); }
+    if(flow && flow.result && flow.result.handle === handle){ Object.assign(flow.result, res ? { score:res.score, reply:res.reply } : {}); flow.scoring = false; renderResult(); }
   }catch(e){
     if(flow && flow.result && flow.result.handle === handle){ flow.scoring = false; renderResult(); }
   }
@@ -356,11 +421,13 @@ function renderTrack(){
   const row = d => {
     const f = followState(d), sc = d.score?.overall;
     const status = d.status === 'booked' ? '<span class="pill solid">Booked</span>' : d.status === 'replied' ? '<span class="pill good">Replied</span>' : '';
-    const fu = f ? `<span class="pill ${f.k==='due'?'warn':f.k==='late'?'bad':''}">${f.label}</span>` : '';
+    const fu = f ? `<span class="pill ${f.k==='due'?'fu':f.k==='late'?'bad':f.k==='wait'?'fu-soft':''}">${f.label}</span>` : '';
+    const h = esc(d.handle);
     const btns = d.status === 'sent'
-      ? `${f && (f.k==='due' || f.k==='wait') ? `<button class="sm" data-act="followed" data-h="${esc(d.handle)}">Followed up</button>` : ''}<button class="sm" data-act="replied" data-h="${esc(d.handle)}">Replied</button>`
-      : d.status === 'replied' ? `<button class="sm" data-act="booked" data-h="${esc(d.handle)}">Booked call</button>` : '';
-    return `<div class="dm">
+      ? `${f && (f.k==='due' || f.k==='wait') ? `<button class="sm" data-act="followed" data-h="${h}">Followed up</button>` : ''}`
+        + (canImages ? `<label class="btnlike">Check for reply<input type="file" accept="image/*" data-reply="${h}" hidden></label>` : `<button class="sm" data-act="replied" data-h="${h}">Replied</button>`)
+      : d.status === 'replied' ? `<button class="sm" data-act="booked" data-h="${h}">Booked call</button>` : '';
+    return `<div class="dm"${d.status === 'sent' && canImages ? ` data-drop="${h}"` : ''}>
       <div class="top">
         <a href="${esc(d.url)}" target="_blank" rel="noopener">@${esc(d.handle)}</a>
         <span class="small muted">${new Date(d.sentAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})}${d.channel ? ' · '+esc(d.channel) : ''}${tier(d.er) ? ' · '+tier(d.er)+' eng.' : ''}${sc ? ` · score ${sc}/10` : ''}</span>
@@ -370,7 +437,8 @@ function renderTrack(){
       <details><summary>Message, Loom & feedback</summary>
         ${d.shotId ? `<img src="${esc(d.shotUrl || '/_blob/'+d.shotId)}" alt="Message screenshot" style="margin-top:6px" loading="lazy">` : ''}
         ${d.opener ? `<pre>${esc(d.opener)}</pre>` : ''}
-        ${d.score?.feedback ? `<div class="small" style="margin-top:6px"><b>${esc(d.score.style)}</b> · ${esc(d.score.feedback)}</div>` : ''}
+        ${d.reply ? `<div class="small" style="margin-top:6px"><span class="pill ${d.reply.sentiment==='positive'?'good':d.reply.sentiment==='negative'?'bad':''}">Reply · ${esc(d.reply.sentiment)}</span> ${esc(d.reply.text)}</div>` : ''}
+        ${d.score?.feedback ? `<div class="small" style="margin:8px 0"><b>${esc(d.score.style)}</b> · ${esc(d.score.feedback)}</div>${critHTML(d.score)}` : ''}
         ${d.loom ? `<pre>${esc(d.loom)}</pre>` : ''}
       </details>
     </div>`;
@@ -386,9 +454,9 @@ function renderTrack(){
     <div class="stat"><span>Missed follow-ups</span><b style="${late?'color:var(--bad)':''}">${late}</b></div>
   </div>
 
-  <h2>Follow up now</h2>
+  <h2 class="fu-h">Follow up now</h2>
   ${due.length ? `<div class="card list">${due.map(row).join('')}</div>`
-    : `<div class="card empty small">Nothing due. DMs show up here ${FOLLOW_UP_AFTER} days after sending without a reply. After ${TOO_LATE} days it's too late.</div>`}
+    : `<div class="card empty small">Nothing due. DMs show up here ${FOLLOW_UP_AFTER} days after sending without a reply. After ${TOO_LATE} days it's too late. To check for a reply, drop a fresh screenshot on any DM below.</div>`}
 
   <h2>What gets replies</h2>
   ${bucketTable('Opener style', group(d => d.score?.style))}
@@ -422,7 +490,7 @@ document.addEventListener('click', async e => {
         const ex = dms.find(x => x.handle === h);
         if(ex){ toast(`You already DMed @${h} on ${new Date(ex.sentAt).toLocaleDateString()}`); return; }
       }
-      if(flow.step === 1 && !flow.d.opener.trim() && !flow.d.shot){ toast('Add a screenshot or the message text'); return; }
+      if(flow.step === 1 && !flow.d.shot){ toast('Drop in the screenshot of your message'); return; }
       flow.step++; renderFlow(); break;
     case 'save': save(); break;
     case 'channel': readStep(); flow.d.channel = b.dataset.c; renderFlow(); break;
@@ -448,7 +516,21 @@ document.addEventListener('input', e => {
     $('#erOut').innerHTML = er==null ? 'Engagement rate appears here.' : `Engagement rate <b>${(er*100).toFixed(1)}%</b> · ${tier(er)}`;
   }
 });
-document.addEventListener('change', e => { if(e.target.id === 'f_shot') setShot(e.target.files[0]); });
+document.addEventListener('change', e => {
+  if(e.target.id === 'f_shot') setShot(e.target.files[0]);
+  else if(e.target.dataset.reply){ checkReply(e.target.dataset.reply, e.target.files[0]); e.target.value = ''; }
+});
+// Drag and drop: onto the message step, or onto any sent DM in Tracking to check for a reply.
+const dropTarget = e => e.target.closest?.('[data-drop]');
+document.addEventListener('dragover', e => { const t = dropTarget(e); if(t){ e.preventDefault(); t.classList.add('over'); } });
+document.addEventListener('dragleave', e => { const t = dropTarget(e); if(t && !t.contains(e.relatedTarget)) t.classList.remove('over'); });
+document.addEventListener('drop', e => {
+  const t = dropTarget(e); if(!t) return;
+  e.preventDefault(); t.classList.remove('over');
+  const f = [...(e.dataTransfer?.files || [])].find(f => f.type.startsWith('image/'));
+  if(!f){ toast('Drop an image file'); return; }
+  if(t.dataset.drop === 'flow') setShot(f); else checkReply(t.dataset.drop, f);
+});
 document.addEventListener('paste', e => {
   if(!flow || flow.result || flow.step !== 1) return;
   const f = [...(e.clipboardData?.files || [])].find(f => f.type.startsWith('image/'));
