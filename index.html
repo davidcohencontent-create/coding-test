@@ -10,12 +10,14 @@
   --accent:#4f46e5; --accent-ink:#fff; --good:#16a34a; --warn:#d97706; --bad:#dc2626; --soft:#f5f5f4;
 }
 @media (prefers-color-scheme: dark){
-  :root{ --bg:#0c0a09; --panel:#1c1917; --ink:#f5f5f4; --muted:#a8a29e; --line:#292524;
-    --accent:#818cf8; --accent-ink:#0c0a09; --good:#4ade80; --warn:#fbbf24; --bad:#f87171; --soft:#292524; }
+  :root:not([data-theme="light"]){ --bg:#0c0a09; --panel:#1c1917; --ink:#f5f5f4; --muted:#a8a29e; --line:#292524;
+    --accent:#818cf8; --accent-ink:#0c0a09; --good:#4ade80; --warn:#fbbf24; --bad:#f87171; --soft:#292524; color-scheme:dark; }
 }
+:root[data-theme="dark"]{ --bg:#0c0a09; --panel:#1c1917; --ink:#f5f5f4; --muted:#a8a29e; --line:#292524;
+    --accent:#818cf8; --accent-ink:#0c0a09; --good:#4ade80; --warn:#fbbf24; --bad:#f87171; --soft:#292524; color-scheme:dark; }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-header{display:flex;align-items:center;gap:16px;padding:12px 20px;border-bottom:1px solid var(--line);background:var(--panel);position:sticky;top:0;z-index:5;flex-wrap:wrap}
+header{display:flex;align-items:center;gap:16px;padding:12px 20px;border-bottom:1px solid var(--line);background:var(--panel);position:sticky;top:env(safe-area-inset-top,0px);z-index:5;flex-wrap:wrap}
 header h1{font-size:15px;margin:0;font-weight:650}
 nav{display:flex;gap:4px}
 nav button{background:none;border:0;padding:6px 12px;border-radius:6px;color:var(--muted);font:inherit;cursor:pointer}
@@ -82,6 +84,7 @@ dialog .bd{padding:18px;display:grid;gap:12px}
 dialog .ft{padding:12px 18px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
 label.f{display:grid;gap:4px;font-size:12px;color:var(--muted)}
 .empty{text-align:center;padding:40px;color:var(--muted)}
+#ask{width:min(400px,calc(100vw - 32px))}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:8px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:50}
 .toast.show{opacity:1}
 @media (max-width:640px){ .hide-sm{display:none} header{padding:10px 16px} }
@@ -102,6 +105,7 @@ label.f{display:grid;gap:4px;font-size:12px;color:var(--muted)}
 <main id="app"></main>
 
 <dialog id="dlg"></dialog>
+<dialog id="ask"></dialog>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -125,7 +129,7 @@ function load(){
   return blank();
 }
 let db = load();
-let ui = { view: localStorage.getItem(KEY+'.view') || 'dashboard', filter:'all', q:'', msgFilter:'' };
+let ui = { view: (()=>{ try{ return localStorage.getItem(KEY+'.view'); }catch(e){} })() || 'dashboard', filter:'all', q:'', msgFilter:'' };
 
 function save(){
   try{ localStorage.setItem(KEY, JSON.stringify(db)); }catch(e){ toast('Could not save — export your data!'); }
@@ -140,6 +144,16 @@ const pct = (a,b) => b ? (100*a/b).toFixed(1)+'%' : '—';
 const $ = s => document.querySelector(s);
 const msgById = id => db.messages.find(m => m.id === id);
 const leadById = id => db.leads.find(l => l.id === id);
+
+function ask(msg, ok='Delete'){
+  return new Promise(res => {
+    const d = $('#ask');
+    d.innerHTML = `<div class="bd"><p style="margin:0">${esc(msg)}</p></div><div class="ft"><button value="no">Cancel</button><button value="yes" style="color:var(--bad)">${esc(ok)}</button></div>`;
+    d.onclick = e => { const b = e.target.closest('button'); if(b){ d.close(); res(b.value==='yes'); } };
+    d.onclose = () => res(false);
+    d.showModal();
+  });
+}
 
 function toast(t){ const el=$('#toast'); el.textContent=t; el.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove('show'),1800); }
 
@@ -522,7 +536,7 @@ function sendDialog(leadId){
     </div>
     <div class="ft">
       ${session?`<button data-action="skip" data-id="${l.id}" style="margin-right:auto">Skip</button>`:''}
-      <button data-action="copy-open" data-id="${l.id}">Copy &amp; open DM</button>
+      <a class="btn" href="https://ig.me/m/${encodeURIComponent(l.handle)}" target="_blank" rel="noopener" data-action="copy-open" data-id="${l.id}" style="text-decoration:none">Copy &amp; open DM</a>
       <button class="primary" data-action="mark-sent" data-id="${l.id}">Mark sent${session?' → next':''}</button>
     </div>`);
   d.querySelector('#sMsg').onchange = e => { d.querySelector('#sBody').value = fill(msgById(e.target.value).body, l); };
@@ -537,7 +551,7 @@ function nextInSession(afterId){
 document.addEventListener('click', async e => {
   const b = e.target.closest('[data-action],[data-view]');
   if(!b) return;
-  if(b.dataset.view){ ui.view=b.dataset.view; localStorage.setItem(KEY+'.view',ui.view); render(); return; }
+  if(b.dataset.view){ ui.view=b.dataset.view; try{ localStorage.setItem(KEY+'.view',ui.view); }catch(err){} render(); return; }
   const id = b.dataset.id, a = b.dataset.action;
   switch(a){
     case 'close': session=null; closeDialog(); break;
@@ -558,7 +572,7 @@ document.addEventListener('click', async e => {
     }
     case 'del-msg': {
       const used = msgUsage(id);
-      if(used && !confirm(`This message was sent ${used} times. Deleting it removes it from your stats (leads keep their status). Archive instead?\n\nOK = delete anyway, Cancel = keep`)) return;
+      if(!(await ask(used ? `This message was sent ${used} times. Deleting it removes it from your stats (leads keep their status). Archiving keeps the stats.` : 'Delete this message?'))) return;
       db.messages = db.messages.filter(m=>m.id!==id);
       db.leads.forEach(l=>{ if(l.messageId===id) l.messageId=null; });
       closeDialog(); save(); break;
@@ -568,7 +582,7 @@ document.addEventListener('click', async e => {
       Object.assign(leadById(id), { name:$('#lName').value.trim(), niche:$('#lNiche').value.trim(), followers:$('#lFol').value.trim(), notes:$('#lNotes').value, updatedAt:now() });
       closeDialog(); save(); break;
     }
-    case 'del-lead': if(confirm('Delete this lead?')){ db.leads=db.leads.filter(l=>l.id!==id); closeDialog(); save(); } break;
+    case 'del-lead': if(await ask('Delete this lead?')){ db.leads=db.leads.filter(l=>l.id!==id); closeDialog(); save(); } break;
     case 'followup': { const l=leadById(id); l.followUps=(l.followUps||0)+1; l.lastTouchAt=now(); save(); toast(`Follow-up #${l.followUps} logged`); break; }
     case 'send': session=null; sendDialog(id); break;
     case 'session': {
@@ -577,9 +591,7 @@ document.addEventListener('click', async e => {
     }
     case 'skip': session.skipped.add(id); nextInSession(id); break;
     case 'copy-open': {
-      const l=leadById(id);
       try{ await navigator.clipboard.writeText($('#sBody').value); toast('Copied — paste it in the DM'); }catch(err){ $('#sBody').select(); toast('Select & copy manually'); }
-      window.open('https://ig.me/m/'+l.handle, '_blank', 'noopener');
       break;
     }
     case 'mark-sent': {
@@ -597,7 +609,7 @@ document.addEventListener('click', async e => {
       const lines=[cols.join(',')].concat(db.leads.map(l=>cols.map(c=>q(c==='message'?(msgById(l.messageId)?.name||''):l[c])).join(',')));
       download(`leads-${new Date().toISOString().slice(0,10)}.csv`, lines.join('\n'), 'text/csv'); break;
     }
-    case 'wipe': if(confirm('Delete ALL leads and messages? Export a backup first.') && confirm('Really delete everything?')){ db=blank(); save(); } break;
+    case 'wipe': if(await ask('Delete ALL leads and messages? This can\'t be undone — export a backup first.', 'Delete everything')){ db=blank(); save(); } break;
   }
 });
 
@@ -608,11 +620,11 @@ document.addEventListener('change', e => {
   else if(t.id==='msgFilter'){ ui.msgFilter=t.value; render(); }
   else if(t.id==='minSample'||t.id==='followUpDays'){ db.settings[t.id]=Math.max(1,parseInt(t.value)||1); save(); }
   else if(t.id==='importFile' && t.files[0]){
-    t.files[0].text().then(txt=>{
+    t.files[0].text().then(async txt=>{
       try{
         const d=JSON.parse(txt);
         if(!Array.isArray(d.leads)||!Array.isArray(d.messages)) throw 0;
-        if(confirm(`Replace current data with ${d.leads.length} leads and ${d.messages.length} messages?`)){ db={...blank(),...d,settings:{...blank().settings,...d.settings}}; save(); toast('Imported'); }
+        if(await ask(`Replace current data with ${d.leads.length} leads and ${d.messages.length} messages?`, 'Replace')){ db={...blank(),...d,settings:{...blank().settings,...d.settings}}; save(); toast('Imported'); }
       }catch(err){ toast('Not a valid backup file'); }
     });
   }
@@ -623,7 +635,13 @@ document.addEventListener('input', e => {
 });
 $('#dlg').addEventListener('close', ()=>{ session=null; });
 
-function download(name, text, type){
+async function download(name, text, type){
+  const dl = window.claude?.use ? await window.claude.use('downloads').catch(()=>null) : null;
+  if(dl){
+    try{ await dl.save({ filename:name, data:new Blob([text],{type}) }); toast('Saved'); }
+    catch(err){ if(err?.code!=='declined') toast('Download unavailable here'); }
+    return;
+  }
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([text],{type}));
   a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1000);
