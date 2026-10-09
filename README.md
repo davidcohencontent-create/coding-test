@@ -1,5 +1,8 @@
 # Outreach CRM
 
-A read-only scoreboard for Instagram Loom DMs. Each DM is logged by Claude from the opener screenshot, profile link and Loom transcript. The page shows DMs sent, replies, response rate, calls booked, and which opener style works best.
+A CRM for Instagram Loom DMs, built to run as a Claude artifact.
 
-The live version runs as a Claude artifact, where the data is stored. Opened outside Claude, `index.html` shows a notice instead of data.
+- **Start** – daily goal of 5 DMs, then a 3-step log: profile link + engagement (followers, avg likes, avg comments), the opener, and the Loom transcript. On save, Claude scores the DM 1–10 and suggests one improvement.
+- **Tracking** – DMs sent, replies, response rate, calls booked, average score; a follow-up list (due after 3 days without a reply, too late after 7); reply rates by opener style, score and profile engagement.
+
+Data lives in the artifact's database. Opened outside Claude, `index.html` shows a notice instead of data.

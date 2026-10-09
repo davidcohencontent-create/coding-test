@@ -5,145 +5,446 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Outreach CRM</title>
 <style>
-/* Layout: read-only scoreboard in one column. Claude logs every DM; nothing to click. */
+/* Layout: two screens in one narrow column. Start = daily goal + 3-step DM log. Tracking = metrics + follow-ups. */
 :root{
   --bg:#f7f7f5; --panel:#fff; --ink:#1b1a1f; --muted:#75737d; --line:#e6e5ea; --soft:#f0eff3;
-  --accent:#4f46e5; --good:#15803d;
+  --accent:#4f46e5; --accent-ink:#fff; --good:#15803d; --warn:#b45309; --bad:#c62828;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){ --bg:#111014; --panel:#1a191e; --ink:#f2f1f5; --muted:#a09ea8; --line:#2b2a31; --soft:#24232a;
-    --accent:#8b85ff; --good:#4ade80; color-scheme:dark; }
+    --accent:#8b85ff; --accent-ink:#111014; --good:#4ade80; --warn:#fbbf24; --bad:#f87171; color-scheme:dark; }
 }
 :root[data-theme="dark"]{ --bg:#111014; --panel:#1a191e; --ink:#f2f1f5; --muted:#a09ea8; --line:#2b2a31; --soft:#24232a;
-  --accent:#8b85ff; --good:#4ade80; color-scheme:dark; }
+  --accent:#8b85ff; --accent-ink:#111014; --good:#4ade80; --warn:#fbbf24; --bad:#f87171; color-scheme:dark; }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-main{max-width:720px;margin:0 auto;padding:28px 16px 60px;display:grid;gap:18px}
-main>*{min-width:0}
-h1{font-size:20px;margin:0}
-h2{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:10px 0 -8px;font-weight:600}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--panel);border-bottom:1px solid var(--line)}
+header .in{max-width:720px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px}
+header h1{font-size:15px;margin:0;font-weight:650;flex:1}
+nav{display:flex;gap:2px}
+nav button{background:none;border:0;padding:6px 14px;border-radius:999px;color:var(--muted);font:inherit;cursor:pointer}
+nav button.on{background:var(--soft);color:var(--ink);font-weight:600}
+nav .count{display:inline-block;min-width:18px;padding:0 5px;margin-left:4px;border-radius:999px;background:var(--warn);color:var(--panel);font-size:11px;font-weight:700;line-height:18px;text-align:center}
+main{max-width:720px;margin:0 auto;padding:20px 16px 60px;display:grid;gap:16px}
+main>*,section>*{min-width:0}
+section{display:grid;gap:16px}
+button{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:8px 14px;border-radius:8px;cursor:pointer}
+button:hover{border-color:var(--muted)}
+button:disabled{opacity:.5;cursor:default}
+button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.big{font-size:17px;padding:16px 20px;border-radius:12px;width:100%}
+.sm{font-size:12px;padding:4px 10px}
+input,textarea{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:9px 11px;width:100%}
+textarea{resize:vertical}
+input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:-1px}
+label.f{display:grid;gap:4px;font-size:13px;color:var(--muted)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .muted{color:var(--muted)}
 .small{font-size:13px}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+h2{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:6px 0 -8px;font-weight:600}
+/* daily goal */
+.goal{display:grid;gap:10px}
+.goal .n{font-size:34px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}
+.goal .n small{font-size:16px;color:var(--muted);font-weight:500}
+.slots{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.slots i{height:10px;border-radius:5px;background:var(--soft)}
+.slots i.on{background:var(--accent)}
+.slots.done i.on{background:var(--good)}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center;font-size:11px;color:var(--muted)}
+.week b{display:block;margin:0 auto 2px;width:26px;height:26px;line-height:26px;border-radius:50%;background:var(--soft);color:var(--muted);font-size:12px}
+.week b.hit{background:var(--good);color:var(--panel)}
+.week b.part{background:color-mix(in srgb,var(--accent) 25%,var(--soft));color:var(--ink)}
+/* stepper */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;font-size:12px;color:var(--muted)}
+.steps div{border-top:3px solid var(--soft);padding-top:6px}
+.steps div.on{border-color:var(--accent);color:var(--ink);font-weight:600}
+.steps div.past{border-color:var(--accent)}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.er{font-size:13px;padding:8px 10px;background:var(--soft);border-radius:8px}
+/* scores & metrics */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px}
-.stat b{display:block;font-size:26px;font-variant-numeric:tabular-nums}
+.stat b{display:block;font-size:24px;font-variant-numeric:tabular-nums}
 .stat span{font-size:12px;color:var(--muted)}
 .stat.hero{border-color:var(--accent)}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:12px}
+.score{display:flex;gap:16px;align-items:center}
+.score .big-n{font-size:44px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--soft);color:var(--muted);white-space:nowrap}
+.pill.good{color:var(--good)} .pill.warn{background:var(--warn);color:var(--panel)} .pill.bad{color:var(--bad)} .pill.solid{background:var(--good);color:var(--panel)}
 table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
-td,th{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+td,th{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left}
 th{font-size:12px;color:var(--muted);font-weight:500}
 tr:last-child td{border-bottom:0}
 .num{text-align:right;white-space:nowrap}
-.badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;padding:2px 8px;border-radius:999px;background:var(--soft);color:var(--muted);vertical-align:middle;white-space:nowrap}
-.badge.win{background:var(--good);color:var(--panel)}
-.badge.replied{color:var(--good)}
-.badge.booked{background:var(--good);color:var(--panel)}
-.dm{padding:12px 14px;border-bottom:1px solid var(--line);display:grid;gap:4px}
+.list{padding:0}
+.dm{padding:12px 14px;border-bottom:1px solid var(--line)}
 .dm:last-child{border-bottom:0}
 .dm .top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .dm a{color:var(--ink);font-weight:600;text-decoration:none}
 .dm a:hover{text-decoration:underline}
-.dm q{display:block;font-size:13px;color:var(--muted);quotes:none;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.tip{font-size:14px;padding:12px 14px;background:var(--soft);border-radius:10px}
-.empty{padding:28px 16px;text-align:center;color:var(--muted)}
-@media (max-width:560px){ .stats{grid-template-columns:repeat(2,1fr)} }
+.dm details{margin-top:6px}
+.dm summary{cursor:pointer;font-size:12px;color:var(--muted)}
+.dm pre{white-space:pre-wrap;font:inherit;font-size:13px;background:var(--soft);padding:8px 10px;border-radius:8px;margin:6px 0 0;max-height:200px;overflow:auto}
+.empty{padding:24px 16px;text-align:center;color:var(--muted)}
+.notice{font-size:14px;padding:12px 14px;background:var(--soft);border-radius:10px}
+.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:8px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:50;max-width:calc(100vw - 32px)}
+.toast.show{opacity:1}
+@media (max-width:560px){ .stats{grid-template-columns:repeat(2,1fr)} .grid3{grid-template-columns:1fr 1fr} .grid3 label:first-child{grid-column:1/-1} }
+@media (prefers-reduced-motion:reduce){ .toast{transition:none} }
 </style>
 </head>
 <body>
+<header><div class="in">
+  <h1>Outreach CRM</h1>
+  <nav>
+    <button data-tab="start">Start</button>
+    <button data-tab="track">Tracking<span id="fuCount"></span></button>
+  </nav>
+</div></header>
+
 <main>
-  <div>
-    <h1>Outreach CRM</h1>
-    <div class="muted small">Send Claude the opener screenshot, the profile link and the Loom transcript. Claude logs it here and keeps score.</div>
-  </div>
-  <div id="app"><div class="card empty">Loading your DMs…</div></div>
+  <section id="start">
+    <div class="card goal" id="goal"></div>
+    <div id="flow"></div>
+  </section>
+  <section id="track" hidden></section>
 </main>
+<div class="toast" id="toast"></div>
 
 <script>
-// Each DM is one document in the "dms" collection, written by Claude:
-// { handle, url, sentAt, opener, angle, loomHook, loomSummary, replied, repliedAt, booked, notes }
-const MIN = 10; // sends per opener style before calling a winner
+/* Each DM is one document in "dms", keyed by IG handle:
+   { handle, url, followers, avgLikes, avgComments, er, opener, loom, sentAt, day,
+     status: sent|replied|booked, repliedAt, followedUpAt, score:{overall, opener, loom, style, feedback} } */
+const GOAL = 5, FOLLOW_UP_AFTER = 3, TOO_LATE = 7, DAY = 864e5;
 
+let store = null, sample = null, dms = [], loaded = false;
+let tab = 'start';
+let flow = null;          // null = not started; else { step, d:{...}, result }
+
+const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pct = (a,b) => b ? Math.round(1000*a/b)/10 + '%' : '—';
-const day = iso => iso ? new Date(iso).toLocaleDateString(undefined, { month:'short', day:'numeric' }) : '';
+const num = v => { const n = parseFloat(String(v ?? '').replace(/[, ]/g,'').replace(/k$/i,'e3').replace(/m$/i,'e6')); return isFinite(n) ? n : null; };
+const localDay = (d = new Date()) => d.toLocaleDateString('en-CA');
+const daysSince = iso => Math.floor((Date.now() - new Date(iso)) / DAY);
+function toast(t){ const el=$('#toast'); el.textContent=t; el.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove('show'),2200); }
 
-// Wilson lower bound: ranks reply rates without being fooled by tiny samples.
-function wilson(k,n){
-  if(!n) return 0;
-  const z=1.96, p=k/n;
-  return (p + z*z/(2*n) - z*Math.sqrt(p*(1-p)/n + z*z/(4*n*n))) / (1+z*z/n);
+function parseHandle(raw){
+  raw = (raw || '').trim();
+  const m = raw.match(/instagram\.com\/([A-Za-z0-9._]+)/i);
+  const h = (m ? m[1] : raw.replace(/^@/,'')).replace(/\/$/,'').toLowerCase();
+  return /^[a-z0-9._]{1,30}$/.test(h) && !['p','reel','reels','stories','explore'].includes(h) ? h : null;
+}
+function engagement(d){
+  const f = num(d.followers), l = num(d.avgLikes) || 0, c = num(d.avgComments) || 0;
+  if(!f || (!l && !c)) return null;
+  return (l + c) / f;
+}
+function tier(er){
+  if(er == null) return null;
+  return er >= .03 ? 'High' : er >= .01 ? 'Medium' : 'Low';
+}
+// Where a DM stands on follow-up: none needed, waiting, due, too late.
+function followState(d){
+  if(d.status !== 'sent') return null;
+  if(d.followedUpAt) return { k:'done', label:'Followed up' };
+  const days = daysSince(d.sentAt);
+  if(days >= TOO_LATE) return { k:'late', label:'Too late', days };
+  if(days >= FOLLOW_UP_AFTER) return { k:'due', label:`Follow up · ${TOO_LATE-days}d left`, days };
+  return { k:'wait', label:`Follow up in ${FOLLOW_UP_AFTER-days}d`, days };
 }
 
-function render(dms){
-  const app = document.getElementById('app');
-  const sent = dms.length;
-  const replies = dms.filter(d => d.replied || d.booked).length;
-  const booked = dms.filter(d => d.booked).length;
-
-  const groups = {};
-  for(const d of dms){
-    const k = d.angle || 'Unlabelled';
-    const g = groups[k] ||= { angle:k, sent:0, replies:0, booked:0 };
-    g.sent++; if(d.replied || d.booked) g.replies++; if(d.booked) g.booked++;
+/* ---------- Start screen ---------- */
+function renderGoal(){
+  const today = localDay();
+  const n = dms.filter(d => d.day === today).length;
+  const week = [];
+  for(let i=6;i>=0;i--){
+    const dt = new Date(Date.now() - i*DAY), k = localDay(dt);
+    const c = dms.filter(d => d.day === k).length;
+    week.push(`<div><b class="${c>=GOAL?'hit':c?'part':''}">${c}</b>${dt.toLocaleDateString(undefined,{weekday:'narrow'})}</div>`);
   }
-  const angles = Object.values(groups).map(g => ({ ...g, score: wilson(g.replies, g.sent) })).sort((a,b) => b.score-a.score || b.sent-a.sent);
-  const best = angles.find(g => g.sent >= MIN && g.replies > 0);
+  $('#goal').innerHTML = `
+    <div class="row" style="justify-content:space-between;align-items:flex-end">
+      <div><div class="small muted">Today's DMs</div><div class="n">${n}<small> / ${GOAL}</small></div></div>
+      <div class="small ${n>=GOAL?'':'muted'}" style="${n>=GOAL?'color:var(--good);font-weight:600':''}">${n>=GOAL ? 'Goal hit' : `${GOAL-n} to go`}</div>
+    </div>
+    <div class="slots ${n>=GOAL?'done':''}">${Array.from({length:GOAL},(_,i)=>`<i class="${i<n?'on':''}"></i>`).join('')}</div>
+    <div class="week">${week.join('')}</div>`;
+}
 
-  let tip;
-  if(!sent) tip = 'Nothing logged yet. Send Claude your first DM: the opener screenshot, the profile link and the Loom transcript.';
-  else if(best) tip = `<b>${esc(best.angle)}</b> works best so far: ${pct(best.replies,best.sent)} reply rate over ${best.sent} DMs. Ask Claude how to beat it.`;
-  else tip = `Each opener style needs ${MIN} DMs before a winner is clear. Keep sending.`;
+function renderFlow(){
+  const el = $('#flow');
+  if(!store){ el.innerHTML = `<div class="notice">${loaded ? 'Open this page in Claude to log DMs.' : 'Connecting…'}</div>`; return; }
+  if(!flow){
+    el.innerHTML = `<button class="primary big" data-act="start">Start outreach</button>`;
+    return;
+  }
+  if(flow.result) return renderResult();
+  const d = flow.d, s = flow.step;
+  const labels = ['Account','Message','Loom'];
+  let body = '';
+  if(s === 0){
+    const er = engagement(d), t = tier(er);
+    body = `
+      <label class="f">Instagram profile link<input id="f_url" value="${esc(d.url)}" placeholder="https://instagram.com/username" autocomplete="off"></label>
+      <div class="small muted">Profile engagement (check their last 3 posts)</div>
+      <div class="grid3">
+        <label class="f">Followers<input id="f_followers" inputmode="decimal" value="${esc(d.followers)}" placeholder="12.4k"></label>
+        <label class="f">Avg likes<input id="f_avgLikes" inputmode="decimal" value="${esc(d.avgLikes)}" placeholder="350"></label>
+        <label class="f">Avg comments<input id="f_avgComments" inputmode="decimal" value="${esc(d.avgComments)}" placeholder="20"></label>
+      </div>
+      <div class="er" id="erOut">${er==null ? 'Engagement rate appears here.' : `Engagement rate <b>${(er*100).toFixed(1)}%</b> · ${t}`}</div>`;
+  } else if(s === 1){
+    body = `<label class="f">The message you sent (your opener)<textarea id="f_opener" rows="5" placeholder="Hey Sarah, made you a quick video on…">${esc(d.opener)}</textarea></label>`;
+  } else {
+    body = `<label class="f">Loom transcript<textarea id="f_loom" rows="9" placeholder="Paste the Loom transcript here">${esc(d.loom)}</textarea></label>`;
+  }
+  el.innerHTML = `<div class="card" style="display:grid;gap:14px">
+    <div class="steps">${labels.map((l,i)=>`<div class="${i===s?'on':i<s?'past':''}">${i+1}. ${l}</div>`).join('')}</div>
+    ${body}
+    <div class="row" style="justify-content:space-between">
+      <button data-act="${s ? 'back' : 'cancel'}">${s ? 'Back' : 'Cancel'}</button>
+      <button class="primary" data-act="${s<2 ? 'next' : 'save'}" ${flow.saving?'disabled':''}>${s<2 ? 'Next' : flow.saving ? 'Saving…' : 'Save & score'}</button>
+    </div>
+  </div>`;
+  const first = el.querySelector('input,textarea'); if(first) first.focus();
+}
 
-  const recent = dms.slice().sort((a,b) => String(b.sentAt).localeCompare(String(a.sentAt)));
+function renderResult(){
+  const r = flow.result, sc = r.score;
+  $('#flow').innerHTML = `<div class="card" style="display:grid;gap:14px">
+    <div class="row" style="justify-content:space-between"><b>@${esc(r.handle)} logged</b><span class="pill good">Sent</span></div>
+    ${sc ? `<div class="score">
+        <div class="big-n">${sc.overall}<span class="small muted">/10</span></div>
+        <div class="small" style="display:grid;gap:2px">
+          <div>Opener <b>${sc.opener}/10</b> · Loom <b>${sc.loom}/10</b></div>
+          <div class="muted">Style: ${esc(sc.style)}</div>
+        </div>
+      </div>
+      <div class="notice">${esc(sc.feedback)}</div>`
+    : flow.scoring ? `<div class="notice">Scoring…</div>`
+    : `<div class="notice">Saved. Scoring isn't available here right now. Ask Claude in chat to score it.</div>`}
+    <button class="primary big" data-act="start">Next DM</button>
+    <button data-act="done" style="justify-self:center;border:0;background:none;color:var(--muted)">Done for now</button>
+  </div>`;
+}
 
-  app.style.display = 'grid'; app.style.gap = '18px';
-  app.innerHTML = `
+function readStep(){
+  const d = flow.d;
+  for(const k of ['url','followers','avgLikes','avgComments','opener','loom']){
+    const i = $('#f_'+k); if(i) d[k] = i.value;
+  }
+}
+
+async function scoreDM(doc){
+  if(!sample) return null;
+  const prompt = `You score Instagram cold outreach. The sender DMs a short opener and a personalised Loom video.
+Score how likely this gets a reply, given the prospect's profile engagement.
+
+Prospect: @${doc.handle}. Followers: ${doc.followers ?? 'unknown'}. Avg likes: ${doc.avgLikes ?? 'unknown'}. Avg comments: ${doc.avgComments ?? 'unknown'}. Engagement rate: ${doc.er != null ? (doc.er*100).toFixed(2)+'%' : 'unknown'}.
+
+Opener message:
+"""${doc.opener}"""
+
+Loom transcript:
+"""${(doc.loom || '').slice(0, 12000)}"""
+
+Reply with only JSON: {"opener": 1-10, "loom": 1-10, "overall": 1-10, "style": "2-4 word label for the opener's approach", "feedback": "one specific sentence on what to change next time"}`;
+  const r = await sample.json(prompt, { modelTier:'default' });
+  const clamp = v => Math.max(1, Math.min(10, Math.round(+v || 0))) || null;
+  if(!r || !clamp(r.overall)) return null;
+  return { overall:clamp(r.overall), opener:clamp(r.opener), loom:clamp(r.loom), style:String(r.style || 'Unlabelled').slice(0,40), feedback:String(r.feedback || '').slice(0,300) };
+}
+
+async function save(){
+  readStep();
+  const d = flow.d, handle = parseHandle(d.url);
+  if(!handle){ flow.step = 0; renderFlow(); toast('Add a valid Instagram profile link'); return; }
+  if(!d.opener.trim()){ flow.step = 1; renderFlow(); toast('Add the message you sent'); return; }
+  const existing = dms.find(x => x.handle === handle);
+  if(existing){ toast(`@${handle} is already logged (${new Date(existing.sentAt).toLocaleDateString()})`); return; }
+  const er = engagement(d);
+  const doc = {
+    handle, url:`https://instagram.com/${handle}`,
+    followers:num(d.followers), avgLikes:num(d.avgLikes), avgComments:num(d.avgComments), er,
+    opener:d.opener.trim(), loom:d.loom.trim(),
+    sentAt:new Date().toISOString(), day:localDay(), status:'sent'
+  };
+  flow.saving = true; renderFlow();
+  try{ await store.collection('dms').doc(handle).set(doc); }
+  catch(e){ flow.saving = false; renderFlow(); toast("Couldn't save. Check your connection and try again."); return; }
+  try{ localStorage.removeItem('outreach-draft'); }catch(e){}
+  flow = { result:{ handle }, scoring:!!sample };
+  renderResult();
+  if(!sample) return;
+  try{
+    const score = await scoreDM(doc);
+    if(score){ await store.collection('dms').doc(handle).update({ score }); }
+    if(flow && flow.result && flow.result.handle === handle){ flow.result.score = score; flow.scoring = false; renderResult(); }
+  }catch(e){
+    if(flow && flow.result && flow.result.handle === handle){ flow.scoring = false; renderResult(); }
+  }
+}
+
+/* ---------- Tracking screen ---------- */
+function bucketTable(title, rows){
+  rows = rows.filter(r => r.sent);
+  if(!rows.length) return '';
+  const best = rows.filter(r => r.sent >= 5).sort((a,b) => b.replies/b.sent - a.replies/a.sent)[0];
+  return `<div class="card list" style="overflow-x:auto"><table>
+    <tr><th>${title}</th><th class="num">Sent</th><th class="num">Replies</th><th class="num">Rate</th></tr>
+    ${rows.map(r => `<tr><td>${esc(r.label)} ${best && r===best && r.replies ? '<span class="pill solid">BEST</span>' : ''}</td><td class="num">${r.sent}</td><td class="num">${r.replies}</td><td class="num"><b>${pct(r.replies,r.sent)}</b></td></tr>`).join('')}
+  </table></div>`;
+}
+function group(keyFn, order){
+  const g = {};
+  for(const d of dms){
+    const k = keyFn(d); if(k == null) continue;
+    const r = g[k] ||= { label:k, sent:0, replies:0 };
+    r.sent++; if(d.status !== 'sent') r.replies++;
+  }
+  const rows = Object.values(g);
+  return order ? order.map(k => g[k]).filter(Boolean) : rows.sort((a,b) => b.sent - a.sent);
+}
+
+function renderTrack(){
+  const el = $('#track');
+  const due = dms.filter(d => followState(d)?.k === 'due').sort((a,b) => a.sentAt.localeCompare(b.sentAt));
+  $('#fuCount').innerHTML = due.length ? `<span class="count">${due.length}</span>` : '';
+  if(tab !== 'track') return;
+  if(!store){ el.innerHTML = `<div class="notice">${loaded ? 'Open this page in Claude to see your tracking.' : 'Connecting…'}</div>`; return; }
+  if(!dms.length){ el.innerHTML = `<div class="card empty">No DMs yet. Go to Start and log your first one.</div>`; return; }
+
+  const sent = dms.length, replies = dms.filter(d => d.status !== 'sent').length, booked = dms.filter(d => d.status === 'booked').length;
+  const scored = dms.filter(d => d.score?.overall);
+  const avg = scored.length ? (scored.reduce((s,d) => s + d.score.overall, 0) / scored.length).toFixed(1) : '—';
+  const late = dms.filter(d => followState(d)?.k === 'late').length;
+  const all = dms.slice().sort((a,b) => b.sentAt.localeCompare(a.sentAt));
+
+  const row = d => {
+    const f = followState(d), sc = d.score?.overall;
+    const status = d.status === 'booked' ? '<span class="pill solid">Booked</span>' : d.status === 'replied' ? '<span class="pill good">Replied</span>' : '';
+    const fu = f ? `<span class="pill ${f.k==='due'?'warn':f.k==='late'?'bad':''}">${f.label}</span>` : '';
+    const btns = d.status === 'sent'
+      ? `${f && (f.k==='due' || f.k==='wait') ? `<button class="sm" data-act="followed" data-h="${esc(d.handle)}">Followed up</button>` : ''}<button class="sm" data-act="replied" data-h="${esc(d.handle)}">Replied</button>`
+      : d.status === 'replied' ? `<button class="sm" data-act="booked" data-h="${esc(d.handle)}">Booked call</button>` : '';
+    return `<div class="dm">
+      <div class="top">
+        <a href="${esc(d.url)}" target="_blank" rel="noopener">@${esc(d.handle)}</a>
+        <span class="small muted">${new Date(d.sentAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})}${tier(d.er) ? ' · '+tier(d.er)+' eng.' : ''}${sc ? ` · score ${sc}/10` : ''}</span>
+        <span style="flex:1"></span>${status}${fu}
+      </div>
+      <div class="row" style="margin-top:8px">${btns}</div>
+      <details><summary>Opener, Loom & feedback</summary>
+        <pre>${esc(d.opener)}</pre>
+        ${d.score?.feedback ? `<div class="small" style="margin-top:6px"><b>${esc(d.score.style)}</b> · ${esc(d.score.feedback)}</div>` : ''}
+        ${d.loom ? `<pre>${esc(d.loom)}</pre>` : ''}
+      </details>
+    </div>`;
+  };
+
+  el.innerHTML = `
   <div class="stats">
     <div class="stat"><span>DMs sent</span><b>${sent}</b></div>
     <div class="stat"><span>Replies</span><b>${replies}</b></div>
     <div class="stat hero"><span>Response rate</span><b>${pct(replies,sent)}</b></div>
     <div class="stat"><span>Calls booked</span><b>${booked}</b></div>
+    <div class="stat"><span>Avg score</span><b>${avg}</b></div>
+    <div class="stat"><span>Missed follow-ups</span><b style="${late?'color:var(--bad)':''}">${late}</b></div>
   </div>
-  <div class="tip">${tip}</div>
 
-  ${angles.length ? `
-  <h2>Opener styles</h2>
-  <div class="card" style="overflow-x:auto"><table>
-    <tr><th>Style</th><th class="num">Sent</th><th class="num">Replies</th><th class="num">Rate</th></tr>
-    ${angles.map(g => `<tr>
-      <td>${esc(g.angle)} ${best && g.angle===best.angle ? '<span class="badge win">BEST</span>' : ''}</td>
-      <td class="num">${g.sent}</td><td class="num">${g.replies}</td><td class="num"><b>${pct(g.replies,g.sent)}</b></td>
-    </tr>`).join('')}
-  </table></div>` : ''}
+  <h2>Follow up now</h2>
+  ${due.length ? `<div class="card list">${due.map(row).join('')}</div>`
+    : `<div class="card empty small">Nothing due. DMs show up here ${FOLLOW_UP_AFTER} days after sending without a reply. After ${TOO_LATE} days it's too late.</div>`}
 
-  ${recent.length ? `
+  <h2>What gets replies</h2>
+  ${bucketTable('Opener style', group(d => d.score?.style))}
+  ${bucketTable('Score', group(d => { const s = d.score?.overall; return s == null ? null : s >= 8 ? '8–10' : s >= 5 ? '5–7' : '1–4'; }, ['8–10','5–7','1–4']))}
+  ${bucketTable('Profile engagement', group(d => tier(d.er), ['High','Medium','Low']))}
+
   <h2>All DMs</h2>
-  <div class="card">
-    ${recent.map(d => `<div class="dm">
-      <div class="top">
-        <a href="${esc(d.url || 'https://instagram.com/'+encodeURIComponent(d.handle||''))}" target="_blank" rel="noopener">@${esc(d.handle)}</a>
-        <span class="muted small">${esc(day(d.sentAt))}${d.angle ? ' · '+esc(d.angle) : ''}</span>
-        <span style="flex:1"></span>
-        ${d.booked ? '<span class="badge booked">Booked</span>' : (d.replied ? '<span class="badge replied">Replied</span>' : '<span class="badge">Waiting</span>')}
-      </div>
-      ${d.opener ? `<q>${esc(d.opener)}</q>` : ''}
-      ${d.notes ? `<div class="small muted">${esc(d.notes)}</div>` : ''}
-    </div>`).join('')}
-  </div>` : ''}`;
+  <div class="card list">${all.map(row).join('')}</div>`;
 }
 
-(async () => {
-  const db = window.claude?.use ? await window.claude.use('db') : null;
-  if(!db){
-    document.getElementById('app').innerHTML = '<div class="card empty">Open this page in Claude to see your DMs.</div>';
-    return;
+/* ---------- Events ---------- */
+document.addEventListener('click', async e => {
+  const t = e.target.closest('[data-tab]');
+  if(t){ tab = t.dataset.tab; showTab(); return; }
+  const b = e.target.closest('[data-act]'); if(!b) return;
+  switch(b.dataset.act){
+    case 'start': {
+      let d = { url:'', followers:'', avgLikes:'', avgComments:'', opener:'', loom:'' };
+      if(!flow || flow.result){ // carry the last opener over: most DMs reuse it
+        const last = dms.slice().sort((a,b) => b.sentAt.localeCompare(a.sentAt))[0];
+        if(last) d.opener = last.opener;
+      }
+      flow = { step:0, d }; renderFlow(); break;
+    }
+    case 'cancel': flow = null; renderFlow(); break;
+    case 'done': flow = null; renderFlow(); break;
+    case 'back': readStep(); flow.step--; renderFlow(); break;
+    case 'next':
+      readStep();
+      if(flow.step === 0){
+        const h = parseHandle(flow.d.url);
+        if(!h){ toast('Paste their Instagram profile link'); return; }
+        const ex = dms.find(x => x.handle === h);
+        if(ex){ toast(`You already DMed @${h} on ${new Date(ex.sentAt).toLocaleDateString()}`); return; }
+      }
+      if(flow.step === 1 && !flow.d.opener.trim()){ toast('Add the message you sent'); return; }
+      flow.step++; renderFlow(); break;
+    case 'save': save(); break;
+    case 'followed': case 'replied': case 'booked': {
+      const h = b.dataset.h, now = new Date().toISOString();
+      const patch = b.dataset.act === 'followed' ? { followedUpAt:now }
+                  : b.dataset.act === 'replied' ? { status:'replied', repliedAt:now }
+                  : { status:'booked' };
+      b.disabled = true;
+      try{ await store.collection('dms').doc(h).update(patch); toast(b.dataset.act === 'followed' ? 'Follow-up logged' : b.dataset.act === 'replied' ? `@${h} replied` : `Call booked with @${h}`); }
+      catch(err){ b.disabled = false; toast("Couldn't save. Try again."); }
+      break;
+    }
   }
-  db.collection('dms').onSnapshot(
-    snap => render(snap.docs.map(d => d.data())),
-    () => { document.getElementById('app').innerHTML = '<div class="card empty">Couldn\'t load your DMs. Reload the page to try again.</div>'; }
+});
+document.addEventListener('input', e => {
+  if(!flow || flow.result) return;
+  const id = e.target.id; if(!id.startsWith('f_')) return;
+  flow.d[id.slice(2)] = e.target.value;
+  if(['f_followers','f_avgLikes','f_avgComments'].includes(id)){
+    const er = engagement(flow.d);
+    $('#erOut').innerHTML = er==null ? 'Engagement rate appears here.' : `Engagement rate <b>${(er*100).toFixed(1)}%</b> · ${tier(er)}`;
+  }
+});
+document.addEventListener('keydown', e => {
+  if(e.key === 'Enter' && e.target.tagName === 'INPUT' && flow && !flow.result){ e.preventDefault(); $('[data-act=next]')?.click(); }
+});
+
+function showTab(){
+  document.querySelectorAll('[data-tab]').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
+  $('#start').hidden = tab !== 'start';
+  $('#track').hidden = tab !== 'track';
+  renderTrack();
+}
+
+/* ---------- Boot ---------- */
+showTab(); renderGoal(); renderFlow();
+(async () => {
+  const c = window.claude;
+  [store, sample] = c?.use ? await Promise.all([c.use('db'), c.use('sample')]) : [null, null];
+  loaded = true;
+  renderFlow(); renderTrack();
+  if(!store) return;
+  store.collection('dms').onSnapshot(
+    snap => { dms = snap.docs.map(d => d.data()); renderGoal(); renderTrack(); },
+    () => toast("Lost connection to your data. Reload the page.")
   );
 })();
+// Refresh day-based labels (goal, follow-up timers) every 10 minutes.
+setInterval(() => { renderGoal(); renderTrack(); }, 6e5);
 </script>
 </body>
 </html>
