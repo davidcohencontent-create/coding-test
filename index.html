@@ -1,0 +1,638 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Outreach CRM</title>
+<style>
+:root{
+  --bg:#fafaf9; --panel:#fff; --ink:#1c1917; --muted:#78716c; --line:#e7e5e4;
+  --accent:#4f46e5; --accent-ink:#fff; --good:#16a34a; --warn:#d97706; --bad:#dc2626; --soft:#f5f5f4;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#0c0a09; --panel:#1c1917; --ink:#f5f5f4; --muted:#a8a29e; --line:#292524;
+    --accent:#818cf8; --accent-ink:#0c0a09; --good:#4ade80; --warn:#fbbf24; --bad:#f87171; --soft:#292524; }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{display:flex;align-items:center;gap:16px;padding:12px 20px;border-bottom:1px solid var(--line);background:var(--panel);position:sticky;top:0;z-index:5;flex-wrap:wrap}
+header h1{font-size:15px;margin:0;font-weight:650}
+nav{display:flex;gap:4px}
+nav button{background:none;border:0;padding:6px 12px;border-radius:6px;color:var(--muted);font:inherit;cursor:pointer}
+nav button.on{background:var(--soft);color:var(--ink);font-weight:600}
+.spacer{flex:1}
+main{max-width:1100px;margin:0 auto;padding:20px 16px 60px}
+button,.btn{font:inherit;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:6px 12px;border-radius:6px;cursor:pointer}
+button:hover{border-color:var(--muted)}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+button.ghost{border-color:transparent;background:none;color:var(--muted);padding:4px 8px}
+button.ghost:hover{color:var(--ink)}
+button.small{padding:3px 8px;font-size:12px}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px 8px}
+textarea{width:100%;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:-1px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
+.grid{display:grid;gap:12px}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+.kpi .v{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums}
+.kpi .l{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.kpi .s{color:var(--muted);font-size:12px}
+h2{font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:24px 0 10px;font-weight:600}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:8px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:12px;color:var(--muted);font-weight:500}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.tablewrap{overflow-x:auto}
+.chip{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--line);border-radius:999px;padding:3px 10px;background:var(--panel);cursor:pointer;font-size:13px;color:var(--muted)}
+.chip.on{border-color:var(--accent);color:var(--ink);background:var(--soft)}
+.chip b{font-weight:600;color:var(--ink)}
+.badge{display:inline-block;font-size:11px;font-weight:600;padding:1px 7px;border-radius:999px;background:var(--soft);color:var(--muted)}
+.badge.win{background:var(--good);color:var(--bg)}
+.badge.warn{color:var(--warn)}
+.badge.arch{opacity:.7}
+.muted{color:var(--muted)}
+.handle a{color:var(--ink);font-weight:600;text-decoration:none}
+.handle a:hover{text-decoration:underline}
+.st{font-size:12px;padding:3px 6px}
+.st-new{color:var(--muted)}
+.st-sent{color:var(--accent)}
+.st-replied,.st-interested,.st-booked,.st-won{color:var(--good);font-weight:600}
+.st-not_interested,.st-ghosted{color:var(--bad)}
+.due{color:var(--warn);font-size:12px;font-weight:600}
+.msg{display:grid;gap:10px}
+.msg pre{white-space:pre-wrap;margin:0;font:inherit;background:var(--soft);padding:10px;border-radius:6px}
+.bar{height:6px;background:var(--soft);border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent)}
+.stats{display:flex;gap:18px;flex-wrap:wrap;font-variant-numeric:tabular-nums}
+.stats div span{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.stats div b{font-size:18px}
+.insight{border-left:3px solid var(--accent);padding:10px 14px;background:var(--panel);border-radius:0 8px 8px 0;margin-top:12px}
+.chart{display:flex;align-items:flex-end;gap:4px;height:120px;padding-top:8px}
+.chart .col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:2px;height:100%;min-width:0}
+.chart .stack{width:100%;display:flex;flex-direction:column;justify-content:flex-end;flex:1}
+.chart .s{background:var(--line);border-radius:3px 3px 0 0}
+.chart .r{background:var(--good)}
+.chart small{font-size:10px;color:var(--muted)}
+dialog{border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);padding:0;width:min(560px,calc(100vw - 32px))}
+dialog::backdrop{background:rgba(0,0,0,.4)}
+dialog .hd{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px}
+dialog .hd h3{margin:0;font-size:15px;flex:1}
+dialog .bd{padding:18px;display:grid;gap:12px}
+dialog .ft{padding:12px 18px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+label.f{display:grid;gap:4px;font-size:12px;color:var(--muted)}
+.empty{text-align:center;padding:40px;color:var(--muted)}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:8px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:50}
+.toast.show{opacity:1}
+@media (max-width:640px){ .hide-sm{display:none} header{padding:10px 16px} }
+</style>
+</head>
+<body>
+<header>
+  <h1>Outreach CRM</h1>
+  <nav id="nav">
+    <button data-view="dashboard">Dashboard</button>
+    <button data-view="leads">Leads</button>
+    <button data-view="messages">Messages</button>
+    <button data-view="settings">Data</button>
+  </nav>
+  <div class="spacer"></div>
+  <button class="primary" data-action="session">▶ Start outreach</button>
+</header>
+<main id="app"></main>
+
+<dialog id="dlg"></dialog>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------- Storage ---------- */
+const KEY = 'outreach-crm.v1';
+const DAY = 864e5;
+const STATUSES = [
+  ['new','New'],['sent','Sent'],['replied','Replied'],['interested','Interested'],
+  ['booked','Call booked'],['won','Won'],['not_interested','Not interested'],['ghosted','Ghosted'],
+];
+const STATUS_LABEL = Object.fromEntries(STATUSES);
+const REPLY_STATES = new Set(['replied','interested','booked','won','not_interested']);
+const POSITIVE_STATES = new Set(['interested','booked','won']);
+
+function blank(){ return { leads:[], messages:[], settings:{ minSample:20, followUpDays:3 } }; }
+function load(){
+  try{
+    const d = JSON.parse(localStorage.getItem(KEY));
+    if(d && Array.isArray(d.leads)) return { ...blank(), ...d, settings:{ ...blank().settings, ...d.settings } };
+  }catch(e){}
+  return blank();
+}
+let db = load();
+let ui = { view: localStorage.getItem(KEY+'.view') || 'dashboard', filter:'all', q:'', msgFilter:'' };
+
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(db)); }catch(e){ toast('Could not save — export your data!'); }
+  render();
+}
+
+/* ---------- Helpers ---------- */
+const uid = () => Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4);
+const now = () => new Date().toISOString();
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pct = (a,b) => b ? (100*a/b).toFixed(1)+'%' : '—';
+const $ = s => document.querySelector(s);
+const msgById = id => db.messages.find(m => m.id === id);
+const leadById = id => db.leads.find(l => l.id === id);
+
+function toast(t){ const el=$('#toast'); el.textContent=t; el.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove('show'),1800); }
+
+function ago(iso){
+  if(!iso) return '';
+  const d = (Date.now() - new Date(iso)) / DAY;
+  if(d < 1/24) return 'just now';
+  if(d < 1) return Math.round(d*24)+'h ago';
+  return Math.round(d)+'d ago';
+}
+
+// Parse "@handle", "instagram.com/handle", or "handle, Name, niche, followers"
+function parseHandle(raw){
+  raw = raw.trim();
+  const m = raw.match(/instagram\.com\/([A-Za-z0-9._]+)/i);
+  let h = m ? m[1] : raw.replace(/^@/,'');
+  h = h.replace(/\/$/,'').toLowerCase();
+  return /^[a-z0-9._]{1,30}$/.test(h) ? h : null;
+}
+
+// Wilson score lower bound (95%) – ranks variants without being fooled by tiny samples.
+function wilson(k,n){
+  if(!n) return 0;
+  const z=1.96, p=k/n, d=1+z*z/n;
+  return (p + z*z/(2*n) - z*Math.sqrt(p*(1-p)/n + z*z/(4*n*n))) / d;
+}
+
+function isFollowUpDue(l){
+  if(l.status !== 'sent') return false;
+  const last = l.lastTouchAt || l.sentAt;
+  return last && (Date.now() - new Date(last)) > db.settings.followUpDays*DAY;
+}
+
+function fill(body, lead){
+  const name = lead.name || lead.handle;
+  return body
+    .replaceAll('{name}', name)
+    .replaceAll('{first}', name.split(/\s+/)[0])
+    .replaceAll('{handle}', '@'+lead.handle)
+    .replaceAll('{niche}', lead.niche || '');
+}
+
+/* ---------- Stats ---------- */
+function messageStats(){
+  const map = {};
+  for(const m of db.messages) map[m.id] = { m, sent:0, replies:0, positive:0, booked:0 };
+  for(const l of db.leads){
+    if(!l.sentAt || !map[l.messageId]) continue;
+    const s = map[l.messageId];
+    s.sent++;
+    if(l.repliedAt) s.replies++;
+    if(POSITIVE_STATES.has(l.status)) s.positive++;
+    if(l.status==='booked' || l.status==='won') s.booked++;
+  }
+  const list = Object.values(map).map(s => ({ ...s, rate: s.sent ? s.replies/s.sent : 0, score: wilson(s.replies, s.sent) }));
+  const qualified = list.filter(s => s.sent >= db.settings.minSample).sort((a,b)=>b.score-a.score);
+  const winner = qualified[0] && qualified[0].replies > 0 ? qualified[0].m.id : null;
+  return { list: list.sort((a,b)=> b.score-a.score || b.sent-a.sent), winner };
+}
+
+function totals(){
+  const t = { leads:db.leads.length, sent:0, replies:0, positive:0, booked:0, won:0, due:0, fresh:0 };
+  for(const l of db.leads){
+    if(l.status==='new') t.fresh++;
+    if(l.sentAt) t.sent++;
+    if(l.repliedAt) t.replies++;
+    if(POSITIVE_STATES.has(l.status)) t.positive++;
+    if(l.status==='booked'||l.status==='won') t.booked++;
+    if(l.status==='won') t.won++;
+    if(isFollowUpDue(l)) t.due++;
+  }
+  return t;
+}
+
+// Rotate evenly across active variants so each gets a fair test.
+function suggestMessage(){
+  const active = db.messages.filter(m => !m.archived);
+  if(!active.length) return null;
+  const counts = Object.fromEntries(active.map(m => [m.id, 0]));
+  for(const l of db.leads) if(l.sentAt && l.messageId in counts) counts[l.messageId]++;
+  return active.sort((a,b)=> counts[a.id]-counts[b.id])[0];
+}
+
+/* ---------- Mutations ---------- */
+function setStatus(l, s){
+  const t = now();
+  l.status = s;
+  if(s === 'new'){ l.sentAt = null; l.repliedAt = null; }
+  else if(s === 'sent' || s === 'ghosted'){ l.sentAt ||= t; l.repliedAt = null; }
+  else if(REPLY_STATES.has(s)){ l.sentAt ||= t; l.repliedAt ||= t; }
+  l.updatedAt = t;
+}
+
+function addLeads(text, niche){
+  const existing = new Set(db.leads.map(l => l.handle));
+  let added = 0, dup = 0, bad = 0;
+  for(const line of text.split(/\n/)){
+    if(!line.trim()) continue;
+    const [h, name, n, followers] = line.split(/\t|,/).map(s => s && s.trim());
+    const handle = parseHandle(h);
+    if(!handle){ bad++; continue; }
+    if(existing.has(handle)){ dup++; continue; }
+    existing.add(handle);
+    db.leads.unshift({ id:uid(), handle, name:name||'', niche:n||niche||'', followers:followers||'',
+      status:'new', messageId:null, sentAt:null, repliedAt:null, followUps:0, lastTouchAt:null, notes:'', createdAt:now() });
+    added++;
+  }
+  save();
+  toast(`Added ${added}` + (dup?` · ${dup} duplicate`:'') + (bad?` · ${bad} invalid`:''));
+}
+
+/* ---------- Views ---------- */
+function render(){
+  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.view === ui.view));
+  $('#app').innerHTML = ({ dashboard:viewDashboard, leads:viewLeads, messages:viewMessages, settings:viewSettings }[ui.view] || viewDashboard)();
+  const q = $('#q'); if(q && ui._focusQ){ q.focus(); q.setSelectionRange(q.value.length,q.value.length); ui._focusQ=false; }
+}
+
+function viewDashboard(){
+  const t = totals();
+  const { list, winner } = messageStats();
+  const min = db.settings.minSample;
+
+  // Last 14 days: sends and replies per day
+  const days = [];
+  for(let i=13;i>=0;i--){ const d=new Date(Date.now()-i*DAY); days.push({ key:d.toISOString().slice(0,10), label:d.getDate(), s:0, r:0 }); }
+  const idx = Object.fromEntries(days.map((d,i)=>[d.key,i]));
+  for(const l of db.leads){
+    if(l.sentAt && idx[l.sentAt.slice(0,10)] != null){ const d = days[idx[l.sentAt.slice(0,10)]]; d.s++; if(l.repliedAt) d.r++; }
+  }
+  const max = Math.max(1, ...days.map(d=>d.s));
+
+  let insight;
+  const active = list.filter(s => !s.m.archived);
+  if(!db.messages.length) insight = 'Start by writing 2–3 opener variants in <b>Messages</b>, then add the IG accounts you\'ve collected in <b>Leads</b>.';
+  else if(!t.sent) insight = `You have ${t.fresh} lead${t.fresh===1?'':'s'} ready. Hit <b>▶ Start outreach</b> to send — variants rotate automatically so each gets a fair test.`;
+  else if(winner){
+    const w = list.find(s=>s.m.id===winner);
+    const losers = active.filter(s => s.m.id!==winner && s.sent>=min && s.score < w.score);
+    insight = `🏆 <b>${esc(w.m.name)}</b> is winning at <b>${pct(w.replies,w.sent)}</b> reply rate (${w.replies}/${w.sent}). `
+      + (losers.length ? `Archive <b>${losers.map(s=>esc(s.m.name)).join(', ')}</b> and ` : '')
+      + `create a new variant of the winner to beat it — change one thing at a time.`;
+  } else {
+    const need = active.filter(s=>s.sent<min).map(s=>`${esc(s.m.name)} (${min-s.sent} more)`);
+    insight = need.length ? `Not enough data to pick a winner yet. Keep sending: ${need.join(', ')}.` : 'No replies yet on qualified variants — time to try a different angle.';
+  }
+
+  return `
+  <div class="grid kpis">
+    ${kpi('Leads', t.leads, `${t.fresh} not contacted`)}
+    ${kpi('Sent', t.sent, t.due ? `<span class="due">${t.due} follow-ups due</span>` : 'DMs sent')}
+    ${kpi('Replies', t.replies, '')}
+    ${kpi('Response rate', pct(t.replies,t.sent), 'replies ÷ sent')}
+    ${kpi('Positive rate', pct(t.positive,t.sent), `${t.positive} interested+`)}
+    ${kpi('Booked / Won', `${t.booked} / ${t.won}`, pct(t.booked,t.sent)+' of sent')}
+  </div>
+  <div class="insight">${insight}</div>
+
+  <h2>Last 14 days</h2>
+  <div class="card">
+    <div class="chart">${days.map(d=>`
+      <div class="col" title="${d.key}: ${d.s} sent, ${d.r} replied">
+        <div class="stack"><div class="s" style="height:${100*(d.s-d.r)/max}%"></div><div class="r" style="height:${100*d.r/max}%"></div></div>
+        <small>${d.label}</small>
+      </div>`).join('')}
+    </div>
+    <div class="row muted" style="font-size:12px;margin-top:8px"><span>■ sent</span><span style="color:var(--good)">■ replied</span></div>
+  </div>
+
+  <h2>Message leaderboard</h2>
+  ${leaderboard(list, winner)}
+  `;
+}
+
+function kpi(l,v,s){ return `<div class="card kpi"><div class="l">${l}</div><div class="v">${v}</div><div class="s">${s}</div></div>`; }
+
+function leaderboard(list, winner){
+  if(!list.length) return `<div class="card empty">No messages yet. <button data-action="new-msg">Write your first opener</button></div>`;
+  const min = db.settings.minSample;
+  return `<div class="card tablewrap"><table>
+    <tr><th>#</th><th>Message</th><th class="num">Sent</th><th class="num">Replies</th><th class="num">Reply rate</th><th class="num hide-sm">Positive</th><th class="num hide-sm">Booked</th><th></th></tr>
+    ${list.map((s,i)=>`<tr>
+      <td class="muted">${i+1}</td>
+      <td><b>${esc(s.m.name)}</b> ${s.m.id===winner?'<span class="badge win">WINNER</span>':''} ${s.m.archived?'<span class="badge arch">archived</span>':''}
+        ${s.sent<min?`<span class="badge warn">${s.sent}/${min} sends</span>`:''}</td>
+      <td class="num">${s.sent}</td><td class="num">${s.replies}</td>
+      <td class="num"><b>${pct(s.replies,s.sent)}</b></td>
+      <td class="num hide-sm">${pct(s.positive,s.sent)}</td>
+      <td class="num hide-sm">${s.booked}</td>
+      <td class="num"><button class="small" data-action="iterate" data-id="${s.m.id}">Iterate</button></td>
+    </tr>`).join('')}
+  </table></div>`;
+}
+
+function viewLeads(){
+  const counts = { all: db.leads.length, due: 0 };
+  for(const [k] of STATUSES) counts[k] = 0;
+  for(const l of db.leads){ counts[l.status]++; if(isFollowUpDue(l)) counts.due++; }
+  const q = ui.q.toLowerCase();
+  const rows = db.leads.filter(l =>
+    (ui.filter==='all' || (ui.filter==='due' ? isFollowUpDue(l) : l.status===ui.filter)) &&
+    (!ui.msgFilter || l.messageId===ui.msgFilter) &&
+    (!q || (l.handle+' '+l.name+' '+l.niche+' '+l.notes).toLowerCase().includes(q))
+  );
+  const msgOpts = sel => `<option value="">—</option>` + db.messages.map(m=>`<option value="${m.id}" ${m.id===sel?'selected':''}>${esc(m.name)}${m.archived?' (archived)':''}</option>`).join('');
+  const chips = [['all','All'],['due','Follow-up due'],...STATUSES].map(([k,label]) =>
+    `<span class="chip ${ui.filter===k?'on':''}" data-action="filter" data-f="${k}">${label} <b>${counts[k]}</b></span>`).join('');
+
+  return `
+  <div class="card">
+    <div class="row" style="align-items:flex-start">
+      <textarea id="bulk" rows="3" placeholder="Paste IG accounts — one per line. @handle, instagram.com/handle, or: handle, Name, niche, followers" style="flex:1;min-width:240px"></textarea>
+      <div class="grid" style="gap:6px">
+        <input id="bulkNiche" placeholder="Niche/tag (optional)">
+        <button class="primary" data-action="add-leads">Add leads</button>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="margin:16px 0 10px">${chips}</div>
+  <div class="row" style="margin-bottom:10px">
+    <input id="q" placeholder="Search handle, name, niche, notes…" value="${esc(ui.q)}" style="flex:1;min-width:200px">
+    <select id="msgFilter"><option value="">All messages</option>${db.messages.map(m=>`<option value="${m.id}" ${m.id===ui.msgFilter?'selected':''}>${esc(m.name)}</option>`).join('')}</select>
+  </div>
+  ${rows.length ? `<div class="card tablewrap" style="padding:4px 8px"><table>
+    <tr><th>Account</th><th class="hide-sm">Niche</th><th>Status</th><th>Message</th><th class="hide-sm">Activity</th><th></th></tr>
+    ${rows.slice(0,500).map(l => `<tr>
+      <td class="handle"><a href="https://instagram.com/${l.handle}" target="_blank" rel="noopener">@${esc(l.handle)}</a>
+        <div class="muted" style="font-size:12px">${esc(l.name)}${l.followers?` · ${esc(l.followers)}`:''}${l.notes?` · 📝`:''}</div></td>
+      <td class="hide-sm muted">${esc(l.niche)}</td>
+      <td><select class="st st-${l.status}" data-change="status" data-id="${l.id}">${STATUSES.map(([k,lab])=>`<option value="${k}" ${k===l.status?'selected':''}>${lab}</option>`).join('')}</select></td>
+      <td><select class="st" data-change="msg" data-id="${l.id}">${msgOpts(l.messageId)}</select></td>
+      <td class="hide-sm" style="font-size:12px">
+        ${l.repliedAt ? `<span class="muted">replied ${ago(l.repliedAt)}</span>` : l.sentAt ? `<span class="muted">sent ${ago(l.sentAt)}</span>` : ''}
+        ${l.followUps ? `<span class="muted"> · ${l.followUps} FU</span>` : ''}
+        ${isFollowUpDue(l) ? `<div class="due">follow-up due</div>` : ''}
+      </td>
+      <td class="num" style="white-space:nowrap">
+        ${l.status==='new' ? `<button class="small primary" data-action="send" data-id="${l.id}">Send</button>` : ''}
+        ${l.status==='sent' ? `<button class="small" data-action="followup" data-id="${l.id}" title="Log a follow-up">+FU</button>` : ''}
+        <button class="ghost small" data-action="edit-lead" data-id="${l.id}" title="Edit">✎</button>
+      </td>
+    </tr>`).join('')}
+  </table>${rows.length>500?`<div class="muted" style="padding:8px">Showing 500 of ${rows.length} — refine your search.</div>`:''}</div>`
+  : `<div class="card empty">${db.leads.length ? 'No leads match this filter.' : 'No leads yet — paste the IG accounts you\'ve collected above.'}</div>`}
+  `;
+}
+
+function viewMessages(){
+  const { list, winner } = messageStats();
+  const min = db.settings.minSample;
+  const best = list.find(s=>s.m.id===winner);
+  return `
+  <div class="row" style="justify-content:space-between">
+    <p class="muted" style="margin:0;max-width:640px">Keep 2–3 variants active. They rotate evenly when you send. Once each has ${min}+ sends, archive the loser and <b>Iterate</b> on the winner — change one thing per variant and write down your hypothesis.</p>
+    <button class="primary" data-action="new-msg">+ New message</button>
+  </div>
+  <div class="muted" style="font-size:12px;margin-top:8px">Placeholders: <code>{first}</code> <code>{name}</code> <code>{handle}</code> <code>{niche}</code></div>
+  <div class="grid" style="margin-top:16px">
+  ${list.length ? list.map(s => {
+    const parent = s.m.parentId && msgById(s.m.parentId);
+    const lift = best && s.m.id!==winner && s.sent ? ((s.rate - best.rate)*100).toFixed(1) : null;
+    return `<div class="card msg" style="${s.m.archived?'opacity:.6':''}">
+      <div class="row">
+        <b style="font-size:15px">${esc(s.m.name)}</b>
+        ${s.m.id===winner?'<span class="badge win">WINNER</span>':''}
+        ${s.m.archived?'<span class="badge arch">archived</span>':'<span class="badge">active</span>'}
+        ${s.sent<min?`<span class="badge warn">needs ${min-s.sent} more sends</span>`:''}
+        <div class="spacer"></div>
+        <button class="small" data-action="iterate" data-id="${s.m.id}">Iterate</button>
+        <button class="small" data-action="edit-msg" data-id="${s.m.id}">Edit</button>
+        <button class="small" data-action="toggle-arch" data-id="${s.m.id}">${s.m.archived?'Reactivate':'Archive'}</button>
+      </div>
+      ${parent?`<div class="muted" style="font-size:12px">↳ iteration of <b>${esc(parent.name)}</b></div>`:''}
+      ${s.m.hypothesis?`<div style="font-size:13px"><span class="muted">Testing:</span> ${esc(s.m.hypothesis)}</div>`:''}
+      <pre>${esc(s.m.body)}</pre>
+      <div class="stats">
+        <div><span>Sent</span><b>${s.sent}</b></div>
+        <div><span>Replies</span><b>${s.replies}</b></div>
+        <div><span>Reply rate</span><b>${pct(s.replies,s.sent)}</b></div>
+        <div><span>Positive</span><b>${pct(s.positive,s.sent)}</b></div>
+        <div><span>Booked</span><b>${s.booked}</b></div>
+        ${lift!==null?`<div><span>vs winner</span><b style="color:${lift>=0?'var(--good)':'var(--bad)'}">${lift>0?'+':''}${lift} pts</b></div>`:''}
+      </div>
+      <div class="bar" title="Reply rate"><i style="width:${Math.min(100,s.rate*100)}%"></i></div>
+    </div>`;}).join('') : `<div class="card empty">No messages yet. Write your first opener and a variant to test against it.</div>`}
+  </div>`;
+}
+
+function viewSettings(){
+  return `
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+    <div class="card grid">
+      <b>Settings</b>
+      <label class="f">Sends needed before a message can be called a winner
+        <input type="number" min="1" id="minSample" value="${db.settings.minSample}"></label>
+      <label class="f">Follow-up due after (days without reply)
+        <input type="number" min="1" id="followUpDays" value="${db.settings.followUpDays}"></label>
+      <div class="muted" style="font-size:12px">Winners are ranked by the lower bound of a 95% confidence interval on reply rate, so a lucky 2/3 doesn't beat a solid 12/60.</div>
+    </div>
+    <div class="card grid">
+      <b>Backup &amp; move data</b>
+      <div class="muted" style="font-size:12px">Everything is stored in this browser only. Export a backup regularly, and import it to move to another device.</div>
+      <div class="row">
+        <button data-action="export-json">Export backup (.json)</button>
+        <button data-action="export-csv">Export leads (.csv)</button>
+      </div>
+      <label class="btn" style="text-align:center">Import backup (.json)<input type="file" id="importFile" accept=".json,application/json" hidden></label>
+      <button data-action="wipe" style="color:var(--bad)">Delete all data</button>
+    </div>
+  </div>`;
+}
+
+/* ---------- Dialogs ---------- */
+function openDialog(html){ const d=$("#dlg"); d.innerHTML=html; if(!d.open) d.showModal(); return d; }
+function closeDialog(){ $('#dlg').close(); }
+
+function msgDialog(m, parent){
+  const isNew = !m;
+  m = m || (parent ? { name: nextVersionName(parent.name), body: parent.body, parentId: parent.id, hypothesis:'' } : { name:'', body:'', hypothesis:'' });
+  const d = openDialog(`
+    <div class="hd"><h3>${isNew ? (parent?`Iterate on “${esc(parent.name)}”`:'New message') : 'Edit message'}</h3><button class="ghost" data-action="close">✕</button></div>
+    <div class="bd">
+      <label class="f">Name<input id="mName" value="${esc(m.name)}" placeholder="e.g. Compliment + question"></label>
+      <label class="f">What are you testing? (hypothesis)<input id="mHyp" value="${esc(m.hypothesis||'')}" placeholder="e.g. Shorter opener, ends with a question"></label>
+      <label class="f">Message<textarea id="mBody" rows="7" placeholder="Hey {first}, loved your recent reel on…">${esc(m.body)}</textarea></label>
+      ${!isNew && msgUsage(m.id) ? `<div class="muted" style="font-size:12px">⚠ This message has been sent ${msgUsage(m.id)} times. For a real change, use <b>Iterate</b> instead so your stats stay clean.</div>`:''}
+      ${parent?`<label class="row" style="font-size:13px"><input type="checkbox" id="mArchParent"> Archive “${esc(parent.name)}” (stop sending it)</label>`:''}
+    </div>
+    <div class="ft">
+      ${!isNew?`<button data-action="del-msg" data-id="${m.id}" style="color:var(--bad);margin-right:auto">Delete</button>`:''}
+      <button data-action="close">Cancel</button>
+      <button class="primary" data-action="save-msg" data-id="${m.id||''}" data-parent="${m.parentId||''}">Save</button>
+    </div>`);
+  d.querySelector(parent ? '#mBody' : '#mName').focus();
+}
+function msgUsage(id){ return db.leads.filter(l=>l.messageId===id && l.sentAt).length; }
+function nextVersionName(name){
+  const m = name.match(/^(.*?)\s*v(\d+)$/);
+  const base = m ? m[1] : name, n = m ? +m[2]+1 : 2;
+  let candidate = `${base} v${n}`, k = n;
+  while(db.messages.some(x=>x.name===candidate)) candidate = `${base} v${++k}`;
+  return candidate;
+}
+
+function leadDialog(l){
+  openDialog(`
+    <div class="hd"><h3>@${esc(l.handle)}</h3><a href="https://instagram.com/${l.handle}" target="_blank" rel="noopener" class="muted">Open profile ↗</a><button class="ghost" data-action="close">✕</button></div>
+    <div class="bd">
+      <div class="row">
+        <label class="f" style="flex:1">Name<input id="lName" value="${esc(l.name)}"></label>
+        <label class="f" style="flex:1">Niche<input id="lNiche" value="${esc(l.niche)}"></label>
+        <label class="f" style="width:110px">Followers<input id="lFol" value="${esc(l.followers)}"></label>
+      </div>
+      <label class="f">Notes (what they replied, objections, context)<textarea id="lNotes" rows="5">${esc(l.notes)}</textarea></label>
+      <div class="muted" style="font-size:12px">Added ${ago(l.createdAt)}${l.sentAt?` · sent ${ago(l.sentAt)}`:''}${l.repliedAt?` · replied ${ago(l.repliedAt)}`:''} · ${l.followUps||0} follow-ups</div>
+    </div>
+    <div class="ft">
+      <button data-action="del-lead" data-id="${l.id}" style="color:var(--bad);margin-right:auto">Delete</button>
+      <button data-action="close">Cancel</button>
+      <button class="primary" data-action="save-lead" data-id="${l.id}">Save</button>
+    </div>`);
+}
+
+// Send flow: shows the rotated message filled in, copy + open DM, mark sent, next.
+let session = null;
+function sendDialog(leadId){
+  const l = leadById(leadId);
+  if(!l){ closeDialog(); return; }
+  const active = db.messages.filter(m=>!m.archived);
+  if(!active.length){ toast('Create an active message first'); ui.view='messages'; render(); msgDialog(); return; }
+  const m = (l.messageId && msgById(l.messageId) && !msgById(l.messageId).archived) ? msgById(l.messageId) : suggestMessage();
+  const left = db.leads.filter(x=>x.status==='new').length;
+  const d = openDialog(`
+    <div class="hd"><h3>Send to @${esc(l.handle)}</h3>${session?`<span class="muted" style="font-size:12px">${left} left in queue</span>`:''}<button class="ghost" data-action="close">✕</button></div>
+    <div class="bd">
+      <div class="muted" style="font-size:12px">${[l.name,l.niche,l.followers].filter(Boolean).map(esc).join(' · ')}</div>
+      <label class="f">Message variant
+        <select id="sMsg">${active.map(x=>`<option value="${x.id}" ${x.id===m.id?'selected':''}>${esc(x.name)}</option>`).join('')}</select></label>
+      <textarea id="sBody" rows="7">${esc(fill(m.body,l))}</textarea>
+    </div>
+    <div class="ft">
+      ${session?`<button data-action="skip" data-id="${l.id}" style="margin-right:auto">Skip</button>`:''}
+      <button data-action="copy-open" data-id="${l.id}">Copy &amp; open DM</button>
+      <button class="primary" data-action="mark-sent" data-id="${l.id}">Mark sent${session?' → next':''}</button>
+    </div>`);
+  d.querySelector('#sMsg').onchange = e => { d.querySelector('#sBody').value = fill(msgById(e.target.value).body, l); };
+}
+function nextInSession(afterId){
+  const queue = db.leads.filter(x=>x.status==='new' && !session.skipped.has(x.id) && x.id!==afterId);
+  if(!queue.length){ session=null; closeDialog(); toast('Queue done 🎉'); return; }
+  sendDialog(queue[queue.length-1].id); // oldest first
+}
+
+/* ---------- Events ---------- */
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-action],[data-view]');
+  if(!b) return;
+  if(b.dataset.view){ ui.view=b.dataset.view; localStorage.setItem(KEY+'.view',ui.view); render(); return; }
+  const id = b.dataset.id, a = b.dataset.action;
+  switch(a){
+    case 'close': session=null; closeDialog(); break;
+    case 'filter': ui.filter=b.dataset.f; render(); break;
+    case 'add-leads': addLeads($('#bulk').value, $('#bulkNiche').value.trim()); break;
+    case 'new-msg': msgDialog(); break;
+    case 'edit-msg': msgDialog(msgById(id)); break;
+    case 'iterate': msgDialog(null, msgById(id)); break;
+    case 'toggle-arch': { const m=msgById(id); m.archived=!m.archived; save(); break; }
+    case 'save-msg': {
+      const name=$('#mName').value.trim(), body=$('#mBody').value.trim();
+      if(!name||!body){ toast('Name and message are required'); return; }
+      let m = id && msgById(id);
+      if(!m){ m={ id:uid(), parentId:b.dataset.parent||null, archived:false, createdAt:now() }; db.messages.push(m); }
+      Object.assign(m, { name, body, hypothesis:$('#mHyp').value.trim() });
+      const ap = $('#mArchParent'); if(ap && ap.checked) msgById(m.parentId).archived = true;
+      closeDialog(); save(); break;
+    }
+    case 'del-msg': {
+      const used = msgUsage(id);
+      if(used && !confirm(`This message was sent ${used} times. Deleting it removes it from your stats (leads keep their status). Archive instead?\n\nOK = delete anyway, Cancel = keep`)) return;
+      db.messages = db.messages.filter(m=>m.id!==id);
+      db.leads.forEach(l=>{ if(l.messageId===id) l.messageId=null; });
+      closeDialog(); save(); break;
+    }
+    case 'edit-lead': leadDialog(leadById(id)); break;
+    case 'save-lead': {
+      Object.assign(leadById(id), { name:$('#lName').value.trim(), niche:$('#lNiche').value.trim(), followers:$('#lFol').value.trim(), notes:$('#lNotes').value, updatedAt:now() });
+      closeDialog(); save(); break;
+    }
+    case 'del-lead': if(confirm('Delete this lead?')){ db.leads=db.leads.filter(l=>l.id!==id); closeDialog(); save(); } break;
+    case 'followup': { const l=leadById(id); l.followUps=(l.followUps||0)+1; l.lastTouchAt=now(); save(); toast(`Follow-up #${l.followUps} logged`); break; }
+    case 'send': session=null; sendDialog(id); break;
+    case 'session': {
+      if(!db.leads.some(l=>l.status==='new')){ toast('No new leads — add some first'); ui.view='leads'; render(); return; }
+      session={ skipped:new Set() }; nextInSession(null); break;
+    }
+    case 'skip': session.skipped.add(id); nextInSession(id); break;
+    case 'copy-open': {
+      const l=leadById(id);
+      try{ await navigator.clipboard.writeText($('#sBody').value); toast('Copied — paste it in the DM'); }catch(err){ $('#sBody').select(); toast('Select & copy manually'); }
+      window.open('https://ig.me/m/'+l.handle, '_blank', 'noopener');
+      break;
+    }
+    case 'mark-sent': {
+      const l=leadById(id);
+      l.messageId=$('#sMsg').value; setStatus(l,'sent');
+      try{ localStorage.setItem(KEY, JSON.stringify(db)); }catch(err){}
+      if(session) nextInSession(id); else closeDialog();
+      render(); toast(`Sent to @${l.handle}`);
+      break;
+    }
+    case 'export-json': download(`outreach-crm-${new Date().toISOString().slice(0,10)}.json`, JSON.stringify(db,null,2), 'application/json'); break;
+    case 'export-csv': {
+      const cols=['handle','name','niche','followers','status','message','sentAt','repliedAt','followUps','notes'];
+      const q=v=>`"${String(v??'').replace(/"/g,'""')}"`;
+      const lines=[cols.join(',')].concat(db.leads.map(l=>cols.map(c=>q(c==='message'?(msgById(l.messageId)?.name||''):l[c])).join(',')));
+      download(`leads-${new Date().toISOString().slice(0,10)}.csv`, lines.join('\n'), 'text/csv'); break;
+    }
+    case 'wipe': if(confirm('Delete ALL leads and messages? Export a backup first.') && confirm('Really delete everything?')){ db=blank(); save(); } break;
+  }
+});
+
+document.addEventListener('change', e => {
+  const t = e.target;
+  if(t.dataset.change==='status'){ setStatus(leadById(t.dataset.id), t.value); save(); }
+  else if(t.dataset.change==='msg'){ leadById(t.dataset.id).messageId = t.value || null; save(); }
+  else if(t.id==='msgFilter'){ ui.msgFilter=t.value; render(); }
+  else if(t.id==='minSample'||t.id==='followUpDays'){ db.settings[t.id]=Math.max(1,parseInt(t.value)||1); save(); }
+  else if(t.id==='importFile' && t.files[0]){
+    t.files[0].text().then(txt=>{
+      try{
+        const d=JSON.parse(txt);
+        if(!Array.isArray(d.leads)||!Array.isArray(d.messages)) throw 0;
+        if(confirm(`Replace current data with ${d.leads.length} leads and ${d.messages.length} messages?`)){ db={...blank(),...d,settings:{...blank().settings,...d.settings}}; save(); toast('Imported'); }
+      }catch(err){ toast('Not a valid backup file'); }
+    });
+  }
+});
+
+document.addEventListener('input', e => {
+  if(e.target.id==='q'){ ui.q=e.target.value; ui._focusQ=true; render(); }
+});
+$('#dlg').addEventListener('close', ()=>{ session=null; });
+
+function download(name, text, type){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([text],{type}));
+  a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+
+// Keep tabs in sync if the app is open twice.
+window.addEventListener('storage', e => { if(e.key===KEY){ db=load(); render(); } });
+
+render();
+</script>
+</body>
+</html>
