@@ -525,7 +525,8 @@ function renderTrack(){
     const h = esc(d.handle);
     const btns = d.status === 'sent'
       ? `${f && (f.k==='due' || f.k==='wait') ? `<button class="sm" data-act="followed" data-h="${h}">Followed up</button>` : ''}`
-        + (canImages ? `<label class="btnlike">Check for reply<input type="file" accept="image/*" data-reply="${h}" hidden></label>` : `<button class="sm" data-act="replied" data-h="${h}">Replied</button>`)
+        + `<button class="sm" data-act="replied" data-h="${h}">Responded</button>`
+        + (canImages ? `<label class="btnlike">Check for reply<input type="file" accept="image/*" data-reply="${h}" hidden></label>` : '')
       : '';
     const bookBtn = `<button class="sm${d.status === 'replied' ? ' primary' : ''}" data-act="bookopen" data-h="${h}">${d.status === 'booked' ? 'Change call time' : 'Book call'}</button>`;
     const pad = n => String(n).padStart(2,'0');
@@ -621,7 +622,7 @@ document.addEventListener('click', async e => {
                   : b.dataset.act === 'replied' ? { status:'replied', repliedAt:now }
                   : { status:'booked' };
       b.disabled = true;
-      try{ await store.collection('dms').doc(h).update(patch); toast(b.dataset.act === 'followed' ? 'Follow-up logged' : b.dataset.act === 'replied' ? `@${h} replied` : `Call booked with @${h}`); }
+      try{ await store.collection('dms').doc(h).update(patch); toast(b.dataset.act === 'followed' ? 'Follow-up logged' : b.dataset.act === 'replied' ? `@${h} marked as responded` : `Call booked with @${h}`); }
       catch(err){ b.disabled = false; toast("Couldn't save. Try again."); }
       break;
     }
