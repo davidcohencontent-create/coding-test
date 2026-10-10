@@ -84,6 +84,16 @@ h2{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--mute
 .btnlike{display:inline-block;font-size:12px;padding:4px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);cursor:pointer}
 .btnlike:hover{border-color:var(--muted)}
 .fu-h{color:var(--fu)}
+.fu-card{border-color:var(--fu)}
+.fu-card .steps{grid-template-columns:repeat(2,1fr)}
+.fu-card .steps div.on,.fu-card .steps div.past{border-color:var(--fu)}
+.fuitem{padding:12px 14px;border-bottom:1px solid var(--line);display:grid;gap:4px}
+.fuitem:last-child{border-bottom:0}
+.fuitem .top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.fuitem .txt{font-size:13px;white-space:pre-line;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+.fuitem img{max-width:100%;max-height:320px;border-radius:8px;display:block;margin-top:6px}
+.fuitem pre{white-space:pre-wrap;font:inherit;font-size:13px;background:var(--soft);padding:8px 10px;border-radius:8px;margin:6px 0 0;max-height:200px;overflow:auto}
+.fuitem summary{cursor:pointer;font-size:12px;color:var(--muted)}
 .rank{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-bottom:1px solid var(--line)}
 .rank:last-child{border-bottom:0}
 .rank .pos{font-size:20px;font-weight:700;width:1.5em;line-height:1.2;font-variant-numeric:tabular-nums;color:var(--muted)}
@@ -152,6 +162,7 @@ tr:last-child td{border-bottom:0}
 /* Each DM is one document in "dms", keyed by IG handle:
    { handle, url, followers, avgLikes, avgComments, er, channel, shotId, opener (read from the screenshot), loom,
      sentAt, day, status: sent|replied|booked, repliedAt, bookedFor, seen, followedUpAt, reply:{text, sentiment},
+     followUps:[{at, text, loom, shotId}],
      score:{overall, criteria:{human, personal, value, lowNo, status, clarity, loom}, style, feedback} } */
 const GOAL = 5, FOLLOW_UP_AFTER = 3, TOO_LATE = 7, DAY = 864e5;
 
@@ -215,6 +226,9 @@ const fmtCall = iso => new Date(iso).toLocaleString(undefined, { weekday:'short'
 const upcomingCalls = () => dms.filter(d => d.status === 'booked' && d.bookedFor && new Date(d.bookedFor) > Date.now() - 2*3600e3)
   .sort((a,b) => a.bookedFor.localeCompare(b.bookedFor));
 let booking = null; // handle whose booking form is open
+let fuFlow = null;  // follow-up being logged: { handle, step, shot, shotUrl, loom, saving }
+// Every logged follow-up, oldest first. Older DMs only have followedUpAt, so count that as one.
+const followUpsOf = d => d.followUps?.length ? d.followUps : d.followedUpAt ? [{ at:d.followedUpAt, text:'', legacy:true }] : [];
 // Where a DM stands on follow-up: none needed, waiting, due, too late.
 function followState(d){
   if(d.status !== 'sent') return null;
@@ -506,6 +520,84 @@ function openerRanking(){
     </div>`).join('')}</div>`;
 }
 
+function fuCardHTML(){
+  if(!fuFlow) return '';
+  const d = dms.find(x => x.handle === fuFlow.handle); if(!d) return '';
+  const n = followUpsOf(d).length + 1, s = fuFlow.step;
+  const body = s === 0
+    ? `<div class="small muted">Screenshot of your follow-up</div>
+       <label class="drop" for="f_fushot" data-drop="fu">${fuFlow.shotUrl ? `<img src="${fuFlow.shotUrl}" alt="Follow-up screenshot">` : 'Drag & drop the screenshot here<br>or tap to choose'}<input type="file" id="f_fushot" accept="image/*" hidden></label>
+       ${fuFlow.shotUrl ? `<button class="sm" data-act="funoshot" style="justify-self:start">Remove screenshot</button>` : ''}`
+    : `<label class="f">Loom transcript (only if you sent a Loom with this follow-up)<textarea id="fu_loom" rows="8" placeholder="Paste the Loom transcript here, or leave empty">${esc(fuFlow.loom)}</textarea></label>`;
+  return `<div class="card fu-card" style="display:grid;gap:14px">
+    <div class="row" style="justify-content:space-between"><b>Follow-up #${n} · @${esc(d.handle)}</b><span class="small muted">${esc(d.channel || 'Instagram')}</span></div>
+    <div class="steps">${['Message','Loom'].map((l,i)=>`<div class="${i===s?'on':i<s?'past':''}">${i+1}. ${l}</div>`).join('')}</div>
+    ${body}
+    <div class="row" style="justify-content:space-between">
+      <button data-act="${s ? 'fuback' : 'fucancel'}">${s ? 'Back' : 'Cancel'}</button>
+      <button class="primary" data-act="${s ? 'fusave' : 'funext'}" ${fuFlow.saving ? 'disabled' : ''}>${s ? (fuFlow.saving ? 'Saving…' : 'Save follow-up') : 'Next'}</button>
+    </div>
+  </div>`;
+}
+
+function followUpHistory(){
+  const items = [];
+  for(const d of dms) followUpsOf(d).forEach((f,i) => items.push({ d, f, n:i+1 }));
+  if(!items.length) return `<div class="card empty small">No follow-ups logged yet. Tap <b>Log follow-up</b> on a DM to add one, with or without a Loom.</div>`;
+  items.sort((a,b) => b.f.at.localeCompare(a.f.at));
+  // A follow-up "worked" if the reply came in after it.
+  const worked = x => x.d.status !== 'sent' && x.d.repliedAt && x.d.repliedAt > x.f.at;
+  const withLoom = items.filter(x => x.f.loom).length, wins = items.filter(worked).length;
+  return `<div class="small muted">${items.length} follow-up${items.length===1?'':'s'} · ${wins} got a reply after (${pct(wins, items.length)}) · ${withLoom} with a Loom</div>
+  <div class="card list">${items.map(x => `<div class="fuitem">
+      <div class="top">
+        <a href="${esc(x.d.url)}" target="_blank" rel="noopener" style="color:var(--ink);font-weight:600;text-decoration:none">@${esc(x.d.handle)}</a>
+        <span class="small muted">Follow-up #${x.n} · ${new Date(x.f.at).toLocaleDateString(undefined,{month:'short',day:'numeric'})}</span>
+        ${x.f.loom ? '<span class="pill fu-soft">Loom</span>' : ''}
+        <span style="flex:1"></span>
+        <span class="pill ${worked(x) ? 'good' : ''}">${worked(x) ? 'Replied after' : 'No reply yet'}</span>
+      </div>
+      ${x.f.text ? `<div class="txt">${esc(x.f.text)}</div>` : ''}
+      ${x.f.shotId || x.f.loom ? `<details><summary>Screenshot${x.f.loom ? ' & Loom' : ''}</summary>
+        ${x.f.shotId ? `<img src="${esc(x.f.shotUrl || '/_blob/'+x.f.shotId)}" alt="Follow-up screenshot" loading="lazy">` : ''}
+        ${x.f.loom ? `<pre>${esc(x.f.loom)}</pre>` : ''}
+      </details>` : ''}
+    </div>`).join('')}</div>`;
+}
+
+function setFuShot(file){
+  if(!fuFlow || !file || !file.type.startsWith('image/')) return;
+  if(fuFlow.shotUrl) URL.revokeObjectURL(fuFlow.shotUrl);
+  fuFlow.shot = file; fuFlow.shotUrl = URL.createObjectURL(file);
+  renderTrack();
+}
+
+async function saveFollowUp(){
+  const d = dms.find(x => x.handle === fuFlow.handle); if(!d) return;
+  if(!fuFlow.shot && !fuFlow.loom.trim()){ fuFlow.step = 0; renderTrack(); toast('Add the screenshot of your follow-up'); return; }
+  fuFlow.saving = true; renderTrack();
+  const now = new Date().toISOString(), entry = { at:now, text:'', loom:fuFlow.loom.trim() };
+  let reply = null;
+  if(fuFlow.shot && assets){ try{ const a = await assets.upload(fuFlow.shot); entry.shotId = a.id; entry.shotUrl = a.url; }catch(e){} }
+  if(fuFlow.shot && sample && canImages){
+    try{
+      const r = await sample.json(`This screenshot shows a ${d.channel || 'Instagram'} conversation where the sender is following up with a prospect.
+Transcribe the sender's latest follow-up message(s), word for word. Then check whether the prospect replied after it, and whether they agreed to a call.
+Reply with only JSON: {"text": "the follow-up, word for word", "reply": {"replied": true|false, "text": "their reply, word for word", "sentiment": "positive|neutral|negative", "booked": true|false}}`, { modelTier:'quick', images:[fuFlow.shot] });
+      entry.text = String(r?.text || '').slice(0,2000);
+      reply = readReply(r);
+    }catch(e){}
+  }
+  const list = (d.followUps || (d.followedUpAt ? [{ at:d.followedUpAt, text:'' }] : [])).concat(entry);
+  const patch = { followUps:list, followedUpAt:now };
+  if(reply && d.status === 'sent') Object.assign(patch, { status: reply.booked ? 'booked' : 'replied', repliedAt:now, reply:{ text:reply.text, sentiment:reply.sentiment } });
+  try{
+    await store.collection('dms').doc(d.handle).update(patch);
+    fuFlow = null; renderTrack();
+    toast(reply && d.status === 'sent' ? `Follow-up logged · @${d.handle} replied` : `Follow-up #${list.length} logged for @${d.handle}`);
+  }catch(e){ fuFlow.saving = false; renderTrack(); toast("Couldn't save. Try again."); }
+}
+
 function renderTrack(){
   const el = $('#track');
   const due = dms.filter(d => followState(d)?.k === 'due').sort((a,b) => a.sentAt.localeCompare(b.sentAt));
@@ -523,11 +615,13 @@ function renderTrack(){
     const status = d.status === 'booked' ? `<span class="pill solid">Booked${d.bookedFor ? ' · ' + esc(fmtCall(d.bookedFor)) : ''}</span>` : d.status === 'replied' ? '<span class="pill good">Replied</span>' : (d.seen ? '<span class="pill">Seen</span>' : '');
     const fu = f ? `<span class="pill ${f.k==='due'?'fu':f.k==='late'?'bad':f.k==='wait'?'fu-soft':''}">${f.label}</span>` : '';
     const h = esc(d.handle);
+    const fuN = followUpsOf(d).length;
+    const fuBtn = d.status !== 'booked' ? `<button class="sm" data-act="fuopen" data-h="${h}" style="${f?.k==='due' ? 'border-color:var(--fu);color:var(--fu)' : ''}">Log follow-up${fuN ? ` (${fuN})` : ''}</button>` : '';
     const btns = d.status === 'sent'
-      ? `${f && (f.k==='due' || f.k==='wait') ? `<button class="sm" data-act="followed" data-h="${h}">Followed up</button>` : ''}`
+      ? fuBtn
         + `<button class="sm" data-act="replied" data-h="${h}">Responded</button>`
         + (canImages ? `<label class="btnlike">Check for reply<input type="file" accept="image/*" data-reply="${h}" hidden></label>` : '')
-      : '';
+      : fuBtn;
     const bookBtn = `<button class="sm${d.status === 'replied' ? ' primary' : ''}" data-act="bookopen" data-h="${h}">${d.status === 'booked' ? 'Change call time' : 'Book call'}</button>`;
     const pad = n => String(n).padStart(2,'0');
     const local = iso => { const x = new Date(iso); return `${x.getFullYear()}-${pad(x.getMonth()+1)}-${pad(x.getDate())}T${pad(x.getHours())}:${pad(x.getMinutes())}`; };
@@ -550,6 +644,7 @@ function renderTrack(){
   };
 
   el.innerHTML = `
+  ${fuCardHTML()}
   <div class="stats">
     <div class="stat"><span>DMs sent</span><b>${sent}</b></div>
     <div class="stat"><span>Replies</span><b>${replies}</b></div>
@@ -565,6 +660,9 @@ function renderTrack(){
   <h2 class="fu-h">Follow up now</h2>
   ${due.length ? `<div class="card list">${due.map(row).join('')}</div>`
     : `<div class="card empty small">Nothing due. DMs show up here ${FOLLOW_UP_AFTER} days after sending without a reply. After ${TOO_LATE} days it's too late. To check for a reply, drop a fresh screenshot on any DM below.</div>`}
+
+  <h2 class="fu-h">Follow-ups</h2>
+  ${followUpHistory()}
 
   <h2>Opener ranking</h2>
   ${openerRanking()}
@@ -604,6 +702,12 @@ document.addEventListener('click', async e => {
     case 'save': save(); break;
     case 'channel': readStep(); flow.d.channel = b.dataset.c; renderFlow(); break;
     case 'noshot': readStep(); URL.revokeObjectURL(flow.d.shotUrl); flow.d.shot = null; flow.d.shotUrl = ''; renderFlow(); break;
+    case 'fuopen': fuFlow = { handle:b.dataset.h, step:0, shot:null, shotUrl:'', loom:'', saving:false }; renderTrack(); window.scrollTo({ top:0, behavior:'smooth' }); break;
+    case 'fucancel': fuFlow = null; renderTrack(); break;
+    case 'fuback': fuFlow.step = 0; renderTrack(); break;
+    case 'funext': if(!fuFlow.shot){ toast('Drop in the screenshot of your follow-up'); return; } fuFlow.step = 1; renderTrack(); $('#fu_loom')?.focus(); break;
+    case 'funoshot': URL.revokeObjectURL(fuFlow.shotUrl); fuFlow.shot = null; fuFlow.shotUrl = ''; renderTrack(); break;
+    case 'fusave': saveFollowUp(); break;
     case 'bookopen': booking = b.dataset.h; renderTrack(); b.closest('.dm')?.querySelector('.book input')?.focus(); break;
     case 'bookcancel': booking = null; renderTrack(); break;
     case 'booksave': {
@@ -629,6 +733,7 @@ document.addEventListener('click', async e => {
   }
 });
 document.addEventListener('input', e => {
+  if(e.target.id === 'fu_loom' && fuFlow){ fuFlow.loom = e.target.value; return; }
   if(!flow || flow.result) return;
   const id = e.target.id; if(!id.startsWith('f_')) return;
   flow.d[id.slice(2)] = e.target.value;
@@ -639,6 +744,7 @@ document.addEventListener('input', e => {
 });
 document.addEventListener('change', e => {
   if(e.target.id === 'f_shot') setShot(e.target.files[0]);
+  else if(e.target.id === 'f_fushot') setFuShot(e.target.files[0]);
   else if(e.target.dataset.reply){ checkReply(e.target.dataset.reply, e.target.files[0]); e.target.value = ''; }
 });
 // Drag and drop: onto the message step, or onto any sent DM in Tracking to check for a reply.
@@ -650,12 +756,14 @@ document.addEventListener('drop', e => {
   e.preventDefault(); t.classList.remove('over');
   const f = [...(e.dataTransfer?.files || [])].find(f => f.type.startsWith('image/'));
   if(!f){ toast('Drop an image file'); return; }
-  if(t.dataset.drop === 'flow') setShot(f); else checkReply(t.dataset.drop, f);
+  if(t.dataset.drop === 'flow') setShot(f); else if(t.dataset.drop === 'fu') setFuShot(f); else checkReply(t.dataset.drop, f);
 });
 document.addEventListener('paste', e => {
-  if(!flow || flow.result || flow.step !== 1) return;
   const f = [...(e.clipboardData?.files || [])].find(f => f.type.startsWith('image/'));
-  if(f){ e.preventDefault(); setShot(f); }
+  if(!f) return;
+  if(tab === 'track' && fuFlow && fuFlow.step === 0){ e.preventDefault(); setFuShot(f); return; }
+  if(!flow || flow.result || flow.step !== 1) return;
+  e.preventDefault(); setShot(f);
 });
 document.addEventListener('keydown', e => {
   if(e.key === 'Enter' && e.target.tagName === 'INPUT' && flow && !flow.result){ e.preventDefault(); $('[data-act=next]')?.click(); }
