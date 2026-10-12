@@ -5,401 +5,327 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Curso de Confianza · Judith Calzada</title>
 <meta name="description" content="Un programa de 10 días para dejar de dudar de ti y ocupar el lugar que ya te has ganado.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,600;1,700&family=Jost:wght@400;500;600&display=swap">
 <style>
-/* Look: warm greige cards with soft rounded corners (rhode), editorial serif headlines with
-   italic emphasis and a wine + blush accent pair (She Sells), pill buttons throughout.
-   Image placeholders are <div class="ph">: swap each one for an <img> with the same class. */
+/* Minimal, monochrome. PP Neue Montreal if installed or self-hosted (add an @font-face), Helvetica otherwise.
+   Image placeholders are <div class="ph">: swap each one for an <img class="ph"> or <video class="ph">. */
 :root{
-  --page:#fbfaf8; --card:#f1efec; --card-2:#e9e6e2; --line:#dedad4;
-  --ink:#3d3a37; --muted:#77726c; --wine:#6b1d24; --wine-2:#541419; --blush:#f6d6e4;
-  --serif:'Cormorant Garamond',Georgia,serif; --sans:'Jost',system-ui,-apple-system,'Helvetica Neue',sans-serif;
-  --r:18px;
+  --bg:#fafaf9; --soft:#f0f0ee; --line:#e2e2df; --ink:#141414; --muted:#6e6e6a;
+  --font:'PP Neue Montreal','PP Montreal','Helvetica Neue',Helvetica,Arial,sans-serif;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;background:var(--page);color:var(--ink);font:17px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
-img{max-width:100%;display:block}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 var(--font);-webkit-font-smoothing:antialiased}
 a{color:inherit}
-.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
-section{padding:44px 0}
-section.wrap.center{padding-top:72px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+section{padding:96px 0;border-top:1px solid var(--line)}
+section:first-of-type{border-top:0;padding-top:24px}
 
-/* Header */
-.bar{position:sticky;top:0;z-index:10;background:rgba(251,250,248,.92);backdrop-filter:blur(10px);border-bottom:2px solid var(--blush)}
-.bar .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;height:72px}
-.logo{font-family:var(--serif);font-size:28px;font-weight:600;text-decoration:none;letter-spacing:-.01em}
-.logo em{color:var(--wine)}
-.bar nav{display:flex;gap:28px}
-.bar nav a{font-size:13px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;color:var(--muted)}
-.bar nav a:hover{color:var(--ink)}
+header .wrap{display:flex;justify-content:space-between;align-items:center;height:72px}
+.name{font-weight:500;font-size:16px;text-decoration:none;letter-spacing:-.01em}
 
-/* Buttons */
-.btn{display:inline-block;font:500 14px/1 var(--sans);letter-spacing:.12em;text-transform:uppercase;text-decoration:none;padding:16px 30px;border-radius:999px;border:1.5px solid transparent;cursor:pointer;transition:transform .15s,background .15s}
-.btn:hover{transform:translateY(-1px)}
-.btn-wine{background:var(--wine);color:#fff;box-shadow:0 6px 18px rgba(107,29,36,.22)}
-.btn-wine:hover{background:var(--wine-2)}
-.btn-blush{background:var(--blush);color:var(--wine)}
-.btn-line{border-color:currentColor;background:transparent}
-.btn-sm{padding:12px 20px;font-size:12px}
+h1,h2,h3{font-weight:500;letter-spacing:-.025em;line-height:1.08;margin:0}
+h1{font-size:clamp(34px,4.6vw,56px)}
+h2{font-size:clamp(28px,3.4vw,40px);max-width:720px}
+h3{font-size:20px;letter-spacing:-.01em;line-height:1.25}
+p{margin:0}
+.label{font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:20px}
+.muted{color:var(--muted)}
+.todo{color:var(--muted);font-style:italic}
 
-/* Type */
-.eyebrow{font-size:13px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--wine);margin:0 0 14px}
-h1,h2,h3{font-family:var(--serif);font-weight:600;line-height:1.05;letter-spacing:-.01em;margin:0}
-h1{font-size:clamp(40px,5.6vw,68px)}
-h2{font-size:clamp(34px,4.4vw,52px)}
-h3{font-size:28px}
-h1 em,h2 em{color:var(--wine);font-weight:700}
-.lead{font-size:19px;color:var(--muted);max-width:560px;margin:22px 0 30px}
-.center{text-align:center}
-.center .lead{margin-left:auto;margin-right:auto}
-.todo{background:var(--blush);color:var(--wine);padding:1px 8px;border-radius:6px;font-size:.9em}
+.btn{display:inline-block;background:var(--ink);color:#fff;text-decoration:none;font-size:14px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding:16px 28px;border-radius:999px;border:1px solid var(--ink);transition:opacity .15s}
+.btn:hover{opacity:.82}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.sm{padding:10px 18px;font-size:12px}
 
-/* Cards + placeholders */
-.card{background:var(--card);border-radius:var(--r);overflow:hidden}
-.ph{position:relative;background:repeating-linear-gradient(135deg,var(--card-2) 0 14px,#e3dfda 14px 28px);display:grid;place-items:center;color:var(--muted);font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;text-align:center;padding:16px;min-height:220px;object-fit:cover;width:100%;height:100%}
-.ph::before{content:"";position:absolute;inset:14px;border:1.5px dashed #c9c3bc;border-radius:12px;pointer-events:none}
+.ph{width:100%;height:100%;background:var(--soft);display:grid;place-items:center;color:var(--muted);font-size:12px;letter-spacing:.1em;text-transform:uppercase;text-align:center;padding:16px;border-radius:12px;object-fit:cover}
 
-/* Hero */
-.hero{display:grid;grid-template-columns:1fr 1.15fr;gap:0;min-height:600px}
-.hero .ph{min-height:420px}
-.hero .copy{padding:64px 56px;display:flex;flex-direction:column;justify-content:center}
+/* Hero: video first */
+.video{position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden}
+.video .ph{place-items:end start;padding:24px;border-radius:0}
+.play{position:absolute;inset:0;margin:auto;width:76px;height:76px;border-radius:50%;background:#fff;display:grid;place-items:center}
+.play::after{content:"";margin-left:5px;border-left:20px solid var(--ink);border-top:12px solid transparent;border-bottom:12px solid transparent}
+.intro{display:grid;grid-template-columns:1.4fr 1fr;gap:48px;align-items:end;margin-top:48px}
+.intro p{color:var(--muted);margin-bottom:28px}
 
-/* VSL */
-.vsl{position:relative;aspect-ratio:16/9;max-width:960px;margin:36px auto 32px;border-radius:var(--r);overflow:hidden}
-.vsl .ph{height:100%;min-height:0;place-items:end center;padding-bottom:40px}
-.play{position:absolute;inset:0;margin:auto;width:88px;height:88px;border-radius:50%;background:var(--wine);display:grid;place-items:center;box-shadow:0 10px 30px rgba(107,29,36,.3)}
-.play::after{content:"";margin-left:6px;border-left:24px solid #fff;border-top:15px solid transparent;border-bottom:15px solid transparent}
-
-/* Mechanism */
-.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:40px}
-.step{padding:30px 26px 34px}
-.step .n{font-family:var(--serif);font-style:italic;font-size:64px;line-height:1;color:var(--wine);margin-bottom:22px}
-.step h3{font-size:25px;margin-bottom:12px}
-.step p{margin:0;color:var(--muted);font-size:16px}
-.note{margin:22px auto 0;max-width:640px;text-align:center;background:#fff;border:1px solid var(--line);border-radius:999px;padding:14px 26px;font-size:15px}
+/* Method */
+.steps{display:grid;grid-template-columns:1fr 1fr;gap:48px 64px;margin-top:56px}
+.step{border-top:1px solid var(--ink);padding-top:20px}
+.step .n{font-size:13px;color:var(--muted);margin-bottom:12px}
+.step p{color:var(--muted);margin-top:10px}
+.aside{margin-top:48px;color:var(--muted)}
 
 /* Proof */
-.split{display:grid;grid-template-columns:1fr 1fr;min-height:620px}
-.split .copy{padding:64px 56px;display:flex;flex-direction:column;justify-content:flex-end}
-.split .copy p{margin:0 0 16px;color:var(--muted)}
-.split .copy p.strong{color:var(--ink);font-family:var(--serif);font-size:26px;line-height:1.25;font-style:italic;margin-top:10px}
-.gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:16px}
-.gallery .ph{border-radius:var(--r);min-height:240px}
-.logos{margin-top:16px;padding:22px 26px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.logos span:first-child{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-right:8px}
-.logos .ph{width:120px;height:48px;min-height:0;border-radius:10px;padding:0;font-size:10px}
-.logos .ph::before{inset:6px;border-radius:6px}
+.about{display:grid;grid-template-columns:1fr 1.1fr;gap:64px;align-items:start}
+.about .ph{aspect-ratio:4/5}
+.about p{color:var(--muted);margin-top:18px}
+.about p.end{color:var(--ink);font-size:20px;line-height:1.4;margin-top:28px}
+.row4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:48px}
+.row4 .ph{aspect-ratio:4/3}
 
 /* Program */
-.days{margin-top:36px;padding:8px 0}
-.day{display:grid;grid-template-columns:120px 1fr;gap:20px;align-items:center;padding:20px 36px;border-top:1px solid var(--line)}
-.day:first-child{border-top:0}
-.day b{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--wine);font-weight:600}
-.day span{font-family:var(--serif);font-size:26px;font-weight:600;line-height:1.2}
+.list{margin-top:48px;border-top:1px solid var(--line)}
+.list div{display:grid;grid-template-columns:140px 1fr;padding:18px 0;border-bottom:1px solid var(--line)}
+.list span:first-child{color:var(--muted)}
 
 /* For whom */
-.fit{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:36px}
-.fit .card{padding:40px 40px 44px}
-.fit .yes{background:var(--blush)}
-.fit h3{margin-bottom:22px}
-.fit ol{list-style:none;margin:0;padding:0;counter-reset:i}
-.fit li{counter-increment:i;position:relative;padding:0 0 18px 48px;font-size:17px}
-.fit li::before{content:counter(i);position:absolute;left:0;top:-2px;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:14px;font-weight:600;background:#fff;color:var(--wine)}
-.fit .no li::before{background:var(--card-2);color:var(--muted)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:64px;margin-top:48px}
+.cols ul{list-style:none;margin:20px 0 0;padding:0}
+.cols li{padding:14px 0;border-top:1px solid var(--line)}
+.cols .no li{color:var(--muted)}
 
 /* Pricing */
-.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px;align-items:stretch}
-.plan{padding:36px 32px;display:flex;flex-direction:column;position:relative}
-.plan.pick{background:#fff;border:2px solid var(--wine);box-shadow:0 18px 40px rgba(61,58,55,.08)}
-.badge{position:absolute;top:18px;right:18px;background:var(--wine);color:#fff;font-size:11px;font-weight:600;letter-spacing:.08em;padding:5px 12px;border-radius:999px}
-.plan h3{font-size:32px}
-.price{font-family:var(--serif);font-size:64px;font-weight:600;line-height:1;margin:18px 0 24px}
-.price small{font-size:26px;margin-left:4px}
-.plan ul{list-style:none;margin:0 0 32px;padding:0;flex:1}
-.plan li{padding:12px 0 12px 30px;border-top:1px solid var(--line);position:relative;font-size:16px}
-.plan li::before{content:"✓";position:absolute;left:4px;color:var(--wine);font-weight:600}
-.plan li.off{color:#aaa49d}
-.plan li.off::before{content:"—";color:#c2bcb5}
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:56px}
+.plan{border:1px solid var(--line);border-radius:12px;padding:32px;display:flex;flex-direction:column}
+.plan.pick{border-color:var(--ink)}
+.plan .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.plan .tag{font-size:12px;color:var(--muted)}
+.price{font-size:48px;font-weight:500;letter-spacing:-.03em;margin:20px 0 24px}
+.plan ul{list-style:none;margin:0 0 32px;padding:0;flex:1;font-size:15px}
+.plan li{padding:10px 0;border-top:1px solid var(--line)}
+.plan li.off{color:#b4b4b0;text-decoration:line-through}
 .plan .btn{text-align:center}
 
 /* FAQ */
-.faq{max-width:820px;margin:36px auto 0}
-.faq details{background:var(--card);border-radius:14px;margin-bottom:10px;padding:0 28px}
-.faq summary{list-style:none;cursor:pointer;padding:22px 0;font-family:var(--serif);font-size:24px;font-weight:600;display:flex;justify-content:space-between;gap:16px;align-items:center}
+.faq{margin-top:48px;border-top:1px solid var(--line)}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{list-style:none;cursor:pointer;padding:22px 0;font-size:18px;display:flex;justify-content:space-between;gap:16px}
 .faq summary::-webkit-details-marker{display:none}
-.faq summary::after{content:"+";font-family:var(--sans);font-weight:400;font-size:26px;color:var(--wine);transition:transform .2s}
-.faq details[open] summary::after{transform:rotate(45deg)}
-.faq details p{margin:0;padding:0 0 24px;color:var(--muted)}
+.faq summary::after{content:"+";color:var(--muted)}
+.faq details[open] summary::after{content:"–"}
+.faq details p{color:var(--muted);padding:0 0 24px;max-width:720px}
 
-/* Final CTA */
-.final{position:relative;min-height:560px;display:flex;align-items:flex-end}
-.final .ph{position:absolute;inset:0;min-height:0;background:repeating-linear-gradient(135deg,#4a2125 0 14px,#552a2e 14px 28px);color:#c9a9ae;place-items:start end;padding:34px 40px}
-.final .ph::before{border-color:rgba(255,255,255,.25)}
-.final .copy{position:relative;padding:56px;max-width:760px;color:#fff}
-.final h2{color:#fff}
-.final h2 em{color:var(--blush)}
-.final p{font-size:19px;opacity:.85;margin:20px 0 30px}
+/* Final */
+.final{text-align:center}
+.final h2{margin:0 auto}
+.final p{color:var(--muted);margin:20px 0 36px}
 
-footer{padding:40px 0 56px;color:var(--muted);font-size:14px}
-footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+footer{padding:32px 0 48px;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}
 
-@media (max-width:980px){
-  .steps{grid-template-columns:1fr 1fr}
-  .gallery{grid-template-columns:1fr 1fr}
-  .plans{grid-template-columns:1fr;max-width:520px;margin-left:auto;margin-right:auto}
-}
 @media (max-width:760px){
   body{font-size:16px}
   .wrap{padding:0 16px}
-  .bar nav{display:none}
-  .bar .wrap{height:64px}
-  .logo{font-size:24px}
-  .hero,.split,.fit{grid-template-columns:1fr}
-  .hero .ph{min-height:360px}
-  .hero .copy,.split .copy{padding:36px 26px 40px}
-  .split .ph{min-height:380px}
-  .steps{grid-template-columns:1fr}
-  .day{grid-template-columns:1fr;gap:4px;padding:18px 24px}
-  .fit .card{padding:30px 26px}
-  .final .copy{padding:36px 26px}
-  .faq details{padding:0 20px}
-  .faq summary{font-size:21px}
-  .note{border-radius:16px}
+  section{padding:64px 0}
+  .intro,.steps,.about,.cols,.plans{grid-template-columns:1fr}
+  .intro{gap:20px;margin-top:32px}
+  .steps{gap:36px}
+  .about{gap:32px}
+  .cols{gap:40px}
+  .row4{grid-template-columns:1fr 1fr}
+  .list div{grid-template-columns:96px 1fr}
+  .play{width:60px;height:60px}
 }
 </style>
 </head>
 <body>
 
-<header class="bar">
+<header>
   <div class="wrap">
-    <a href="#top" class="logo">Judith <em>Calzada</em></a>
-    <nav>
-      <a href="#metodo">Método</a>
-      <a href="#sobre-mi">Sobre mí</a>
-      <a href="#programa">Programa</a>
-      <a href="#precios">Precios</a>
-    </nav>
-    <a href="#precios" class="btn btn-wine btn-sm">Quiero empezar</a>
+    <a href="#top" class="name">Judith Calzada</a>
+    <a href="#precios" class="btn sm">Quiero empezar</a>
   </div>
 </header>
 
 <main id="top">
 
-  <!-- Hero -->
-  <section class="wrap">
-    <div class="card hero">
-      <div class="ph">Foto de Judith (retrato principal)</div>
-      <div class="copy">
-        <p class="eyebrow">Curso de Confianza · 10 días</p>
-        <h1>Ayudo a mujeres profesionales a <em>dejar de dudar de sí mismas</em> y a ocupar el lugar que ya se han ganado</h1>
-        <p class="lead">Un programa de 10 días creado por una directora general que también dudó de sí misma. Sin promesas mágicas: un método diario que puedes aplicar desde mañana.</p>
-        <div><a href="#precios" class="btn btn-blush">Quiero empezar</a></div>
+  <!-- Hero: video first -->
+  <section>
+    <div class="wrap">
+      <div class="video">
+        <div class="ph">Vídeo · 10–15 min</div>
+        <span class="play" aria-hidden="true"></span>
+      </div>
+      <div class="intro">
+        <h1>Ayudo a mujeres profesionales a dejar de dudar de sí mismas y a ocupar el lugar que ya se han ganado.</h1>
+        <div>
+          <p>Un programa de 10 días creado por una directora general que también dudó de sí misma. Sin promesas mágicas: un método diario que puedes aplicar desde mañana.</p>
+          <a href="#precios" class="btn">Quiero empezar</a>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- VSL -->
-  <section class="wrap center">
-    <p class="eyebrow">Mira esto antes de empezar</p>
-    <h2>La confianza <em>no se tiene,</em> se entrena</h2>
-    <div class="vsl">
-      <div class="ph">Vídeo de ventas · 10–15 min</div>
-      <span class="play" aria-hidden="true"></span>
+  <!-- Method -->
+  <section>
+    <div class="wrap">
+      <p class="label">El método</p>
+      <h2>La confianza no se tiene. Se entrena.</h2>
+      <div class="steps">
+        <div class="step">
+          <p class="n">01</p>
+          <h3>La confianza no se tiene, se entrena</h3>
+          <p>La confianza no es un rasgo con el que naces. Es un hábito. Y como cualquier hábito, se construye con práctica diaria, no con motivación.</p>
+        </div>
+        <div class="step">
+          <p class="n">02</p>
+          <h3>Deja de interpretar un personaje</h3>
+          <p>Muchas mujeres llegan lejos actuando como creen que “deberían” ser. Aquí aprendes a ver la película que proyectas y a sustituirla por la tuya.</p>
+        </div>
+        <div class="step">
+          <p class="n">03</p>
+          <h3>Cambia la voz que te habla</h3>
+          <p>Pasas de una voz interna que te juzga a una que te entrena. Y aprendes a leer tus emociones como información, no como órdenes.</p>
+        </div>
+        <div class="step">
+          <p class="n">04</p>
+          <h3>Presencia y criterio propio</h3>
+          <p>Tu cuerpo, tu voz y tu forma de ocupar el espacio comunican antes que tus palabras. Y cuando dejas de buscar validación fuera, decides desde ti.</p>
+        </div>
+      </div>
+      <p class="aside">Cada día incluye una meditación guiada para entrenar la mente en lo que trabajas.</p>
     </div>
-    <a href="#precios" class="btn btn-wine">Quiero empezar</a>
-  </section>
-
-  <!-- Mechanism -->
-  <section class="wrap center" id="metodo">
-    <p class="eyebrow">El método</p>
-    <h2>Cuatro pasos para <em>entrenar</em> tu confianza</h2>
-    <div class="steps" style="text-align:left">
-      <article class="card step">
-        <div class="n">01</div>
-        <h3>La confianza no se tiene, se entrena</h3>
-        <p>La confianza no es un rasgo con el que naces. Es un hábito. Y como cualquier hábito, se construye con práctica diaria, no con motivación.</p>
-      </article>
-      <article class="card step">
-        <div class="n">02</div>
-        <h3>Deja de interpretar un personaje</h3>
-        <p>Muchas mujeres llegan lejos actuando como creen que “deberían” ser. Aquí aprendes a ver la película que proyectas y a sustituirla por la tuya.</p>
-      </article>
-      <article class="card step">
-        <div class="n">03</div>
-        <h3>Cambia la voz que te habla</h3>
-        <p>Pasas de una voz interna que te juzga a una que te entrena. Y aprendes a leer tus emociones como información, no como órdenes.</p>
-      </article>
-      <article class="card step">
-        <div class="n">04</div>
-        <h3>Presencia y criterio propio</h3>
-        <p>Tu cuerpo, tu voz y tu forma de ocupar el espacio comunican antes que tus palabras. Y cuando dejas de buscar validación fuera, decides desde ti.</p>
-      </article>
-    </div>
-    <p class="note">Cada día incluye una <strong>meditación guiada</strong> para entrenar la mente en lo que trabajas.</p>
   </section>
 
   <!-- Proof -->
-  <section class="wrap" id="sobre-mi">
-    <div class="card split">
-      <div class="ph">Foto de Judith de adolescente / Aitona</div>
-      <div class="copy">
-        <p class="eyebrow">Sobre mí</p>
-        <h2 style="margin-bottom:24px">Me dijeron que <em>no servía</em> para la universidad</h2>
-        <p>Crecí en Aitona, un pueblo de 2.000 habitantes. A los 16 años, después de una tragedia en casa, empecé a suspender. Mis profesores, e incluso mi familia, me dijeron que no servía para la universidad.</p>
-        <p>Estudié periodismo, trabajé en Televisión Española y, tras un proceso de coaching, di el salto al mundo empresa. Hice un máster en inglés sin dominarlo, entré en Revlon cubriendo una baja de maternidad y me quedé hasta las 11 de la noche hasta que decidieron que me quedaba.</p>
-        <p>Hoy soy directora general, profesora en ESADE y he dado una charla TED que tuve en mi vision board durante diez años.</p>
-        <p class="strong">Y aun así, todavía hay días en que dudo. La diferencia es que ya sé qué hacer con esa duda.</p>
+  <section>
+    <div class="wrap">
+      <div class="about">
+        <div class="ph">Foto de Judith</div>
+        <div>
+          <p class="label">Sobre mí</p>
+          <h2>Me dijeron que no servía para la universidad.</h2>
+          <p>Crecí en Aitona, un pueblo de 2.000 habitantes. A los 16 años, después de una tragedia en casa, empecé a suspender. Mis profesores, e incluso mi familia, me dijeron que no servía para la universidad.</p>
+          <p>Estudié periodismo, trabajé en Televisión Española y, tras un proceso de coaching, di el salto al mundo empresa. Hice un máster en inglés sin dominarlo, entré en Revlon cubriendo una baja de maternidad y me quedé hasta las 11 de la noche hasta que decidieron que me quedaba.</p>
+          <p>Hoy soy directora general, profesora en ESADE y he dado una charla TED que tuve en mi vision board durante diez años.</p>
+          <p class="end">Y aun así, todavía hay días en que dudo. La diferencia es que ya sé qué hacer con esa duda.</p>
+        </div>
       </div>
-    </div>
-    <div class="gallery">
-      <div class="ph">Charla TED</div>
-      <div class="ph">Clase en ESADE</div>
-      <div class="ph">Conferencia</div>
-      <div class="ph">Foto del pueblo</div>
-    </div>
-    <!-- Logos: only if Judith clears them -->
-    <div class="card logos">
-      <span>Como en</span>
-      <div class="ph">Logo</div>
-      <div class="ph">Logo</div>
-      <div class="ph">Logo</div>
-      <div class="ph">Logo</div>
+      <div class="row4">
+        <div class="ph">Charla TED</div>
+        <div class="ph">ESADE</div>
+        <div class="ph">Conferencia</div>
+        <div class="ph">Aitona</div>
+      </div>
     </div>
   </section>
 
   <!-- Program -->
-  <section class="wrap center" id="programa">
-    <p class="eyebrow">Programa día tras día</p>
-    <h2>Diez días, <em>un hábito</em></h2>
-    <div class="card days" style="text-align:left">
-      <div class="day"><b>Día 1</b><span>La confianza es un hábito</span></div>
-      <div class="day"><b>Día 2</b><span>Deja de interpretar un personaje</span></div>
-      <div class="day"><b>Día 3</b><span>La película que proyectas</span></div>
-      <div class="day"><b>Día 4</b><span>De jueza a entrenadora</span></div>
-      <div class="day"><b>Día 5</b><span>Cuerpo y presencia (hilo plateado)</span></div>
-      <div class="day"><b>Día 6</b><span>Emociones como información (semáforo)</span></div>
-      <div class="day"><b>Día 7</b><span>Deja de buscar validación (dos círculos)</span></div>
-      <div class="day"><b>Días 8–10</b><span><span class="todo">[pendiente]</span></span></div>
+  <section>
+    <div class="wrap">
+      <p class="label">Programa</p>
+      <h2>Diez días. Un hábito.</h2>
+      <div class="list">
+        <div><span>Día 1</span><span>La confianza es un hábito</span></div>
+        <div><span>Día 2</span><span>Deja de interpretar un personaje</span></div>
+        <div><span>Día 3</span><span>La película que proyectas</span></div>
+        <div><span>Día 4</span><span>De jueza a entrenadora</span></div>
+        <div><span>Día 5</span><span>Cuerpo y presencia</span></div>
+        <div><span>Día 6</span><span>Emociones como información</span></div>
+        <div><span>Día 7</span><span>Deja de buscar validación</span></div>
+        <div><span>Días 8–10</span><span class="todo">Pendiente</span></div>
+      </div>
     </div>
   </section>
 
   <!-- For whom -->
-  <section class="wrap center">
-    <p class="eyebrow">Antes de decidir</p>
-    <h2>¿Para quién es? <em>¿Para quién no?</em></h2>
-    <div class="fit" style="text-align:left">
-      <div class="card yes">
-        <h3>Es para ti si…</h3>
-        <ol>
-          <li>Rindes en tu trabajo, pero en las reuniones te callas lo que piensas.</li>
-          <li>Te han propuesto un ascenso o un nuevo puesto y sientes que no estás a la altura.</li>
-          <li>Sabes que puedes llegar más lejos, pero no sabes cuál es tu siguiente paso.</li>
-        </ol>
-      </div>
-      <div class="card no">
-        <h3>No es para ti si…</h3>
-        <ol>
-          <li>Estás pasando por una depresión o una ansiedad intensa. Esto no es terapia: en ese caso, te recomiendo un psicólogo.</li>
-          <li>Buscas una fórmula mágica. Los cambios llegan haciendo el trabajo cada día.</li>
-          <li>No estás dispuesta a dedicar un rato al día durante 10 días.</li>
-        </ol>
+  <section>
+    <div class="wrap">
+      <h2>¿Para quién es?</h2>
+      <div class="cols">
+        <div>
+          <h3>Es para ti si…</h3>
+          <ul>
+            <li>Rindes en tu trabajo, pero en las reuniones te callas lo que piensas.</li>
+            <li>Te han propuesto un ascenso o un nuevo puesto y sientes que no estás a la altura.</li>
+            <li>Sabes que puedes llegar más lejos, pero no sabes cuál es tu siguiente paso.</li>
+          </ul>
+        </div>
+        <div class="no">
+          <h3>No es para ti si…</h3>
+          <ul>
+            <li>Estás pasando por una depresión o una ansiedad intensa. Esto no es terapia: en ese caso, te recomiendo un psicólogo.</li>
+            <li>Buscas una fórmula mágica. Los cambios llegan haciendo el trabajo cada día.</li>
+            <li>No estás dispuesta a dedicar un rato al día durante 10 días.</li>
+          </ul>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- Pricing -->
-  <section class="wrap center" id="precios">
-    <p class="eyebrow">Elige tu plan</p>
-    <h2>Empieza <em>hoy</em></h2>
-    <div class="plans" style="text-align:left">
-      <div class="card plan">
-        <h3>Esencial</h3>
-        <div class="price">50<small>€</small></div>
-        <ul>
-          <li>10 días de vídeos + meditaciones</li>
-          <li class="off">Material accionable descargable</li>
-          <li class="off">Sesión grupal en directo con Judith</li>
-        </ul>
-        <a href="#" class="btn btn-line">Elegir Esencial</a>
-      </div>
-      <div class="card plan pick">
-        <span class="badge">Más elegido</span>
-        <h3>Completo</h3>
-        <div class="price">97<small>€</small></div>
-        <ul>
-          <li>10 días de vídeos + meditaciones</li>
-          <li>Material accionable descargable</li>
-          <li class="off">Sesión grupal en directo con Judith</li>
-        </ul>
-        <a href="#" class="btn btn-wine">Elegir Completo</a>
-      </div>
-      <div class="card plan">
-        <h3>Con Judith</h3>
-        <div class="price">225<small>€</small></div>
-        <ul>
-          <li>10 días de vídeos + meditaciones</li>
-          <li>Material accionable descargable</li>
-          <li>Sesión grupal en directo con Judith</li>
-        </ul>
-        <a href="#" class="btn btn-line">Elegir Con Judith</a>
+  <section id="precios">
+    <div class="wrap">
+      <h2>Elige tu plan.</h2>
+      <div class="plans">
+        <div class="plan">
+          <div class="top"><h3>Esencial</h3></div>
+          <p class="price">50 €</p>
+          <ul>
+            <li>10 días de vídeos + meditaciones</li>
+            <li class="off">Material accionable descargable</li>
+            <li class="off">Sesión grupal en directo con Judith</li>
+          </ul>
+          <a href="#" class="btn ghost">Elegir</a>
+        </div>
+        <div class="plan pick">
+          <div class="top"><h3>Completo</h3><span class="tag">Más elegido</span></div>
+          <p class="price">97 €</p>
+          <ul>
+            <li>10 días de vídeos + meditaciones</li>
+            <li>Material accionable descargable</li>
+            <li class="off">Sesión grupal en directo con Judith</li>
+          </ul>
+          <a href="#" class="btn">Elegir</a>
+        </div>
+        <div class="plan">
+          <div class="top"><h3>Con Judith</h3></div>
+          <p class="price">225 €</p>
+          <ul>
+            <li>10 días de vídeos + meditaciones</li>
+            <li>Material accionable descargable</li>
+            <li>Sesión grupal en directo con Judith</li>
+          </ul>
+          <a href="#" class="btn ghost">Elegir</a>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- FAQ -->
-  <section class="wrap center">
-    <p class="eyebrow">Preguntas frecuentes</p>
-    <h2>Lo que <em>te estás preguntando</em></h2>
-    <div class="faq" style="text-align:left">
-      <details open>
-        <summary>¿Esto funciona?</summary>
-        <p>No te voy a prometer que tendrás confianza de un día para otro, porque eso no le pasa a nadie. Lo que sí te digo: si haces el trabajo cada día, vas a notar cambios en cómo actúas.</p>
-      </details>
-      <details>
-        <summary>¿Cuánto tiempo necesito al día?</summary>
-        <p><span class="todo">[X minutos: vídeo + meditación]</span></p>
-      </details>
-      <details>
-        <summary>¿Es terapia?</summary>
-        <p>No. Es un programa de crecimiento personal y profesional. Si estás pasando por un momento de salud mental complicado, lo primero es un profesional de la psicología.</p>
-      </details>
-      <details>
-        <summary>¿Tengo que ser directiva?</summary>
-        <p>No. Es para cualquier mujer que quiera dejar de dudar de sí misma en su vida profesional, estés empezando o ya tengas un cargo.</p>
-      </details>
-      <details>
-        <summary>¿Cuánto tiempo tengo acceso?</summary>
-        <p><span class="todo">[confirmar]</span></p>
-      </details>
-      <details>
-        <summary>¿Y si no me gusta?</summary>
-        <p><span class="todo">[garantía: definir condiciones]</span></p>
-      </details>
+  <section>
+    <div class="wrap">
+      <h2>Preguntas frecuentes</h2>
+      <div class="faq">
+        <details>
+          <summary>¿Esto funciona?</summary>
+          <p>No te voy a prometer que tendrás confianza de un día para otro, porque eso no le pasa a nadie. Lo que sí te digo: si haces el trabajo cada día, vas a notar cambios en cómo actúas.</p>
+        </details>
+        <details>
+          <summary>¿Cuánto tiempo necesito al día?</summary>
+          <p class="todo">[X minutos: vídeo + meditación]</p>
+        </details>
+        <details>
+          <summary>¿Es terapia?</summary>
+          <p>No. Es un programa de crecimiento personal y profesional. Si estás pasando por un momento de salud mental complicado, lo primero es un profesional de la psicología.</p>
+        </details>
+        <details>
+          <summary>¿Tengo que ser directiva?</summary>
+          <p>No. Es para cualquier mujer que quiera dejar de dudar de sí misma en su vida profesional, estés empezando o ya tengas un cargo.</p>
+        </details>
+        <details>
+          <summary>¿Cuánto tiempo tengo acceso?</summary>
+          <p class="todo">[confirmar]</p>
+        </details>
+        <details>
+          <summary>¿Y si no me gusta?</summary>
+          <p class="todo">[garantía: definir condiciones]</p>
+        </details>
+      </div>
     </div>
   </section>
 
   <!-- Final CTA -->
-  <section class="wrap">
-    <div class="card final">
-      <div class="ph">Foto de Judith (cierre)</div>
-      <div class="copy">
-        <h2>Llevas suficiente tiempo esperando a <em>sentirte preparada.</em></h2>
-        <p>La confianza no llega antes de actuar: llega actuando.</p>
-        <a href="#precios" class="btn btn-blush">Empieza hoy</a>
-      </div>
+  <section class="final">
+    <div class="wrap">
+      <h2>Llevas suficiente tiempo esperando a sentirte preparada.</h2>
+      <p>La confianza no llega antes de actuar: llega actuando.</p>
+      <a href="#precios" class="btn">Empieza hoy</a>
     </div>
   </section>
 
 </main>
 
 <footer>
-  <div class="wrap">
-    <span>© 2026 Judith Calzada</span>
-    <span>Curso de Confianza</span>
-  </div>
+  <div class="wrap">© 2026 Judith Calzada</div>
 </footer>
 
 </body>
