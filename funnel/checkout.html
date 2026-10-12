@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inscripción · Curso de Confianza</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a href="index.html" class="name">Judith Calzada</a>
+    <span class="steps-bar"><b>Paso 1</b> de 2 · Inscripción</span>
+  </div>
+</header>
+
+<main>
+  <section>
+    <div class="wrap checkout">
+      <div>
+        <p class="label">Curso de Confianza</p>
+        <h1>Completa tu inscripción.</h1>
+        <!-- Payment placeholder: replace this form with the Stripe / Hotmart / ThriveCart checkout embed.
+             Until then, submitting just moves on to the next step. -->
+        <form id="pay">
+          <label>Nombre<input name="nombre" autocomplete="name" required></label>
+          <label>Email<input name="email" type="email" autocomplete="email" required></label>
+          <div class="ph pay">Pago · pasarela por definir</div>
+          <button type="submit" class="btn">Pagar <span data-plan-price></span></button>
+          <p class="fine"><span class="todo">[garantía: definir condiciones]</span></p>
+        </form>
+      </div>
+
+      <aside class="summary">
+        <p class="label" style="margin-bottom:8px">Tu plan</p>
+        <h3 data-plan-name></h3>
+        <ul>
+          <li>10 días de vídeos + meditaciones</li>
+          <li data-if-material>Material accionable descargable</li>
+          <li data-if-sesion>Sesión grupal en directo con Judith</li>
+        </ul>
+        <div class="total"><span>Total</span><b data-plan-price></b></div>
+        <a href="index.html#precios">Cambiar de plan</a>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap">© 2026 Judith Calzada</div></footer>
+
+<script src="funnel.js"></script>
+<script>
+document.getElementById('pay').addEventListener('submit', e => {
+  e.preventDefault();
+  // Con Judith already includes everything, so it skips the upsell.
+  location.href = (planId === 'con-judith' ? 'gracias.html' : 'mejora.html') + '?plan=' + planId;
+});
+</script>
+</body>
+</html>

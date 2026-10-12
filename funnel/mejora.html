@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Un último paso · Curso de Confianza</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <span class="name">Judith Calzada</span>
+    <span class="steps-bar"><b>Paso 2</b> de 2 · Un último paso</span>
+  </div>
+</header>
+
+<main>
+  <section class="offer">
+    <div class="wrap">
+      <p class="label">Inscripción confirmada · Plan <span data-plan-name></span></p>
+      <h1 class="narrow">¿Quieres practicarlo en directo conmigo?</h1>
+      <p class="lead">Pasa a <strong>Con Judith</strong> y suma una sesión grupal en directo, donde llevamos lo que trabajas en el curso a tus situaciones reales.</p>
+
+      <div class="card">
+        <ul>
+          <li>Sesión grupal en directo con Judith <span class="todo">[duración, frecuencia y plazas: pendiente]</span></li>
+          <li data-if-not-material>Material accionable descargable</li>
+        </ul>
+        <div class="total"><span>Mejora</span><b id="diff"></b></div>
+        <a href="gracias.html?plan=con-judith" class="btn">Sí, quiero la sesión en directo</a>
+        <!-- Payment placeholder: this button should charge the difference through the payment tool. -->
+      </div>
+      <a href="gracias.html?plan=PLAN" class="no-thanks" data-plan-id>No, gracias. Continuar con mi plan</a>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap">© 2026 Judith Calzada</div></footer>
+
+<script src="funnel.js"></script>
+<script>
+// Upgrade price = difference to Con Judith. Confirm with Judith before launch.
+document.getElementById('diff').textContent = '+' + (PLANS['con-judith'].price - plan.price) + ' €';
+</script>
+</body>
+</html>

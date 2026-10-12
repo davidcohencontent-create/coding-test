@@ -1,0 +1,154 @@
+/* Minimal, warm neutrals with a wine accent. PP Neue Montreal if installed or self-hosted (add an @font-face), Helvetica otherwise.
+   Image placeholders are <div class="ph">: swap each one for an <img class="ph"> or <video class="ph">. */
+:root{
+  --bg:#fbfaf8; --soft:#f1efec; --ph:#e7e3de; --line:#e4e0da; --ink:#2b2826; --muted:#77716b;
+  --accent:#6b1d24; --blush:#f6dfe8;
+  --font:'PP Neue Montreal','PP Montreal','Helvetica Neue',Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 var(--font);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+section{padding:96px 0;border-top:1px solid var(--line)}
+section:first-of-type{border-top:0;padding-top:24px}
+
+header .wrap{display:flex;justify-content:space-between;align-items:center;height:72px}
+.name{font-weight:500;font-size:16px;text-decoration:none;letter-spacing:-.01em}
+
+h1,h2,h3{font-weight:500;letter-spacing:-.025em;line-height:1.08;margin:0}
+h1{font-size:clamp(34px,4.6vw,56px)}
+h2{font-size:clamp(28px,3.4vw,40px);max-width:720px}
+h3{font-size:20px;letter-spacing:-.01em;line-height:1.25}
+p{margin:0}
+.label{font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);margin-bottom:20px}
+.muted{color:var(--muted)}
+.todo{color:var(--muted);font-style:italic}
+
+.btn{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;font-size:14px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding:16px 28px;border-radius:999px;border:1px solid var(--accent);transition:opacity .15s}
+.btn:hover{opacity:.82}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn.sm{padding:10px 18px;font-size:12px}
+
+.ph{width:100%;height:100%;background:var(--ph);display:grid;place-items:center;color:var(--muted);font-size:12px;letter-spacing:.1em;text-transform:uppercase;text-align:center;padding:16px;border-radius:12px;object-fit:cover}
+
+/* Hero: video first */
+.video{position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden}
+.video .ph{place-items:end start;padding:24px;border-radius:0}
+.play{position:absolute;inset:0;margin:auto;width:76px;height:76px;border-radius:50%;background:#fff;display:grid;place-items:center}
+.play::after{content:"";margin-left:5px;border-left:20px solid var(--accent);border-top:12px solid transparent;border-bottom:12px solid transparent}
+.intro{text-align:center;max-width:860px;margin:32px auto 40px}
+.intro p{color:var(--muted);max-width:620px;margin:20px auto 0}
+.video{max-width:960px;margin:0 auto}
+.cta{text-align:center;margin-top:36px}
+
+/* Method */
+.steps{display:grid;grid-template-columns:1fr 1fr;gap:48px 64px;margin-top:56px}
+.step{border-top:2px solid var(--accent);padding-top:20px}
+.step .n{font-size:13px;color:var(--accent);font-weight:500;margin-bottom:12px}
+.step p{color:var(--muted);margin-top:10px}
+.aside{margin-top:48px;color:var(--muted)}
+
+/* Proof */
+.about{display:grid;grid-template-columns:1fr 1.1fr;gap:64px;align-items:start}
+.about .ph{aspect-ratio:4/5}
+.about p{color:var(--muted);margin-top:18px}
+.about p.end{color:var(--ink);font-size:20px;line-height:1.4;margin-top:28px}
+.row4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:48px}
+.row4 .ph{aspect-ratio:4/3}
+
+/* Program */
+.list{margin-top:48px;border-top:1px solid var(--line)}
+.list div{display:grid;grid-template-columns:140px 1fr;padding:18px 0;border-bottom:1px solid var(--line)}
+.list span:first-child{color:var(--muted)}
+
+/* For whom */
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:48px}
+.cols ul{list-style:none;margin:20px 0 0;padding:0}
+.cols li{padding:14px 0;border-top:1px solid var(--line)}
+.cols>div{background:var(--soft);border-radius:12px;padding:32px}
+.cols>.yes{background:var(--blush)}
+.cols li{border-color:rgba(0,0,0,.08)}
+.cols .no li{color:var(--muted)}
+
+/* Pricing */
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:56px}
+.plan{background:var(--soft);border:1px solid var(--soft);border-radius:12px;padding:32px;display:flex;flex-direction:column}
+.plan.pick{background:#fff;border:2px solid var(--accent)}
+.plan .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.plan .tag{font-size:12px;color:var(--accent);background:var(--blush);padding:3px 10px;border-radius:999px}
+.price{font-size:48px;font-weight:500;letter-spacing:-.03em;margin:20px 0 24px}
+.plan ul{list-style:none;margin:0 0 32px;padding:0;flex:1;font-size:15px}
+.plan li{padding:10px 0;border-top:1px solid rgba(0,0,0,.08)}
+.plan li.off{color:#b5aea7;text-decoration:line-through}
+.plan .btn{text-align:center}
+
+/* FAQ */
+.faq{margin-top:48px;border-top:1px solid var(--line)}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{list-style:none;cursor:pointer;padding:22px 0;font-size:18px;display:flex;justify-content:space-between;gap:16px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";color:var(--accent)}
+.faq details[open] summary::after{content:"–"}
+.faq details p{color:var(--muted);padding:0 0 24px;max-width:720px}
+
+/* Final */
+.final{text-align:center;background:var(--soft)}
+.final h2{margin:0 auto}
+.final p{color:var(--muted);margin:20px 0 36px}
+
+footer{padding:32px 0 48px;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}
+
+@media (max-width:760px){
+  body{font-size:16px}
+  .wrap{padding:0 16px}
+  section{padding:64px 0}
+  .intro,.steps,.about,.cols,.plans{grid-template-columns:1fr}
+  .intro{margin:16px auto 28px}
+  .steps{gap:36px}
+  .about{gap:32px}
+  .cols>div{padding:24px}
+  .row4{grid-template-columns:1fr 1fr}
+  .list div{grid-template-columns:96px 1fr}
+  .play{width:60px;height:60px}
+}
+
+/* Funnel steps: checkout, upsell, thank you */
+.steps-bar{font-size:13px;color:var(--muted)}
+.steps-bar b{color:var(--accent);font-weight:500}
+.narrow{max-width:720px;margin:0 auto}
+.checkout{display:grid;grid-template-columns:1.2fr 1fr;gap:48px;align-items:start}
+.checkout h1{font-size:clamp(30px,3.6vw,42px)}
+form{display:grid;gap:16px;margin-top:32px}
+label{display:grid;gap:6px;font-size:14px;color:var(--muted)}
+input{font:inherit;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 16px;width:100%}
+input:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:transparent}
+.pay{min-height:150px}
+form .btn{width:100%;font-size:15px;cursor:pointer;font-family:inherit}
+.fine{font-size:13px;color:var(--muted);text-align:center}
+.summary{background:var(--soft);border-radius:12px;padding:32px}
+.summary ul{list-style:none;margin:20px 0;padding:0;font-size:15px}
+.summary li{padding:10px 0;border-top:1px solid rgba(0,0,0,.08)}
+.total{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--ink);padding-top:16px;font-size:18px}
+.total b{font-size:32px;font-weight:500;letter-spacing:-.02em}
+.summary a{font-size:14px;color:var(--muted);display:inline-block;margin-top:20px}
+.offer{text-align:center}
+.offer h1{margin:0 auto}
+.offer .lead{color:var(--muted);max-width:600px;margin:20px auto 0}
+.offer .card{background:var(--soft);border-radius:12px;padding:32px;margin:40px auto 0;max-width:520px;text-align:left}
+.offer .card ul{list-style:none;margin:0 0 24px;padding:0}
+.offer .card li{padding:10px 0;border-top:1px solid rgba(0,0,0,.08)}
+.offer .card li:first-child{border-top:0}
+.offer .card .total{margin-bottom:24px}
+.offer .card .btn{display:block;text-align:center}
+.no-thanks{display:block;text-align:center;margin-top:18px;font-size:14px;color:var(--muted)}
+.next{list-style:none;counter-reset:n;margin:48px 0 0;padding:0;border-top:1px solid var(--line)}
+.next li{counter-increment:n;display:grid;grid-template-columns:48px 1fr;padding:22px 0;border-bottom:1px solid var(--line)}
+.next li::before{content:counter(n,decimal-leading-zero);color:var(--accent);font-size:13px;font-weight:500;padding-top:3px}
+.next h3{margin-bottom:4px}
+.next p{color:var(--muted)}
+@media (max-width:760px){
+  .checkout{grid-template-columns:1fr;gap:32px}
+  .summary{order:-1;padding:24px}
+}
