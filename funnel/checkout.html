@@ -22,12 +22,17 @@
       <div>
         <p class="label">Curso de Confianza</p>
         <h1>Completa tu inscripción.</h1>
-        <!-- Payment placeholder: replace this form with the Stripe / Hotmart / ThriveCart checkout embed.
-             Until then, submitting just moves on to the next step. -->
+        <!-- Payment placeholder: the card fields are disabled and never collect anything.
+             Replace them with the payment tool's embed, or set LINKS.checkout in funnel.js. -->
         <form id="pay">
           <label>Nombre<input name="nombre" autocomplete="name" required></label>
           <label>Email<input name="email" type="email" autocomplete="email" required></label>
-          <div class="ph pay">Pago · pasarela por definir</div>
+          <fieldset class="card-mock" disabled>
+            <legend>Tarjeta</legend>
+            <input placeholder="1234 1234 1234 1234" aria-label="Número de tarjeta">
+            <div class="two"><input placeholder="MM / AA" aria-label="Caducidad"><input placeholder="CVC" aria-label="CVC"></div>
+            <p class="test">Modo de prueba · no se realiza ningún cobro</p>
+          </fieldset>
           <button type="submit" class="btn">Pagar <span data-plan-price></span></button>
           <p class="fine"><span class="todo">[garantía: definir condiciones]</span></p>
         </form>
@@ -54,7 +59,8 @@
 <script>
 document.getElementById('pay').addEventListener('submit', e => {
   e.preventDefault();
-  // Con Judith already includes everything, so it skips the upsell.
+  if (LINKS.checkout[planId]) { location.href = LINKS.checkout[planId]; return; }
+  // Test mode. Con Judith already includes everything, so it skips the upsell.
   location.href = (planId === 'con-judith' ? 'gracias.html' : 'mejora.html') + '?plan=' + planId;
 });
 </script>

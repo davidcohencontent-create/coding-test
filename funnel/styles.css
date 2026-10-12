@@ -124,7 +124,11 @@ form{display:grid;gap:16px;margin-top:32px}
 label{display:grid;gap:6px;font-size:14px;color:var(--muted)}
 input{font:inherit;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 16px;width:100%}
 input:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:transparent}
-.pay{min-height:150px}
+.card-mock{border:1px solid var(--line);border-radius:12px;padding:16px;margin:0;display:grid;gap:10px;background:var(--soft)}
+.card-mock legend{font-size:14px;color:var(--muted);padding:0 6px}
+.card-mock input{background:#fff;opacity:.7;cursor:not-allowed}
+.card-mock .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.test{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-top:4px}
 form .btn{width:100%;font-size:15px;cursor:pointer;font-family:inherit}
 .fine{font-size:13px;color:var(--muted);text-align:center}
 .summary{background:var(--soft);border-radius:12px;padding:32px}
