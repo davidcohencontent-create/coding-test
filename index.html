@@ -625,7 +625,7 @@ function renderTrack(){
     const bookBtn = `<button class="sm${d.status === 'replied' ? ' primary' : ''}" data-act="bookopen" data-h="${h}">${d.status === 'booked' ? 'Change call time' : 'Book call'}</button>`;
     const pad = n => String(n).padStart(2,'0');
     const local = iso => { const x = new Date(iso); return `${x.getFullYear()}-${pad(x.getMonth()+1)}-${pad(x.getDate())}T${pad(x.getHours())}:${pad(x.getMinutes())}`; };
-    const form = booking === d.handle ? `<div class="book"><input type="datetime-local" value="${d.bookedFor ? local(d.bookedFor) : ''}"><button class="sm primary" data-act="booksave" data-h="${h}">Save</button><button class="sm" data-act="bookcancel">Cancel</button></div>` : '';
+    const form = booking === d.handle ? `<div class="book"><input type="datetime-local" min="${local(new Date().toISOString()).slice(0,10)}T00:00" value="${d.bookedFor ? local(d.bookedFor) : ''}"><button class="sm primary" data-act="booksave" data-h="${h}">Save</button><button class="sm" data-act="bookcancel">Cancel</button></div>` : '';
     return `<div class="dm"${d.status === 'sent' && canImages ? ` data-drop="${h}"` : ''}>
       <div class="top">
         <a href="${esc(d.url)}" target="_blank" rel="noopener">@${esc(d.handle)}</a>
@@ -713,9 +713,11 @@ document.addEventListener('click', async e => {
     case 'booksave': {
       const v = b.closest('.book')?.querySelector('input')?.value, h = b.dataset.h, d = dms.find(x => x.handle === h);
       if(!v){ toast('Pick a date and time for the call'); return; }
+      const when = new Date(v);
+      if(isNaN(when) || when < Date.now() - 3600e3 || when > Date.now() + 365*864e5){ toast('That date looks wrong. Check the year and day.'); return; }
       b.disabled = true;
       try{
-        await store.collection('dms').doc(h).update({ status:'booked', bookedFor:new Date(v).toISOString(), repliedAt:d?.repliedAt || new Date().toISOString() });
+        await store.collection('dms').doc(h).update({ status:'booked', bookedFor:when.toISOString(), repliedAt:d?.repliedAt || new Date().toISOString() });
         booking = null; toast(`Call booked with @${h}`);
       }catch(err){ b.disabled = false; toast("Couldn't save. Try again."); }
       break;
