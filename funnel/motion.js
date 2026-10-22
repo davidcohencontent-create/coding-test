@@ -3,7 +3,7 @@
 (() => {
   if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const groups = ['.intro > *', '.video', '.cta', 'section > .wrap > .label', 'section > .wrap > h2',
-    '.steps > *', '.aside', '.about > *', '.row4 > *', '.list > *', '.cols > *', '.plans > *',
+    '.method-head > *', '.about > *', '.row4 > *', '.days > *', '.cols > *', '.plans > *',
     '.faq > *', '.final .wrap > *', '.checkout > *', '.offer .wrap > *', '.next > *'];
   const io = new IntersectionObserver(entries => entries.forEach(e => {
     if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
