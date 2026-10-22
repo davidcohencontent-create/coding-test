@@ -30,8 +30,7 @@
         <p>Un programa de 10 días creado por una directora general que también dudó de sí misma. Sin promesas mágicas: un método diario que puedes aplicar desde mañana.</p>
       </div>
       <div class="video">
-        <div class="ph">Vídeo · 10–15 min</div>
-        <span class="play" aria-hidden="true"></span>
+        <iframe src="https://player.vimeo.com/video/1211423165?title=0&amp;byline=0&amp;portrait=0&amp;dnt=1&amp;color=5d0018" title="Vídeo de Judith Calzada" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
       </div>
       <div class="cta"><a href="#precios" class="btn light">Quiero empezar</a></div>
     </div>
@@ -76,7 +75,7 @@
   <section class="white">
     <div class="wrap">
       <div class="about">
-        <div class="ph">Foto de Judith</div>
+        <img class="ph" src="img/judith.jpg" alt="Judith Calzada" width="1179" height="1447" loading="lazy">
         <div>
           <p class="label">Sobre mí</p>
           <h2>Me dijeron que <em>no servía</em> para la universidad.</h2>
@@ -104,12 +103,9 @@
         <details class="day" open>
           <summary><span class="d">Día 1</span><span class="t">La confianza es un hábito</span><span class="free">Tráiler gratis</span></summary>
           <div class="body">
-            <!-- To add the trailer, replace the .ph with:
-                 <video src="trailer-dia-1.mp4" playsinline preload="metadata"></video>
-                 The preview stops after data-preview seconds and shows the paywall. -->
+            <!-- Trailer: a Vimeo embed (or a <video>). The preview stops after data-preview seconds and shows the paywall. -->
             <div class="trailer" data-preview="60">
-              <div class="ph">Tráiler del Día 1</div>
-              <button class="play" type="button" aria-label="Ver el tráiler"></button>
+              <iframe src="https://player.vimeo.com/video/1211423165?title=0&amp;byline=0&amp;portrait=0&amp;dnt=1&amp;color=5d0018" title="Tráiler del Día 1" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
               <span class="timer">Vista previa · 1:00</span>
               <div class="paywall" hidden>
                 <h3>¿Quieres ver el resto?</h3>
@@ -288,6 +284,7 @@
 </footer>
 
 <script src="motion.js" defer></script>
+<script src="https://player.vimeo.com/api/player.js" defer></script>
 <script src="page.js" defer></script>
 </body>
 </html>
