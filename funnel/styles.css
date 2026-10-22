@@ -1,8 +1,8 @@
-/* Minimal, warm neutrals with a wine accent. PP Neue Montreal if installed or self-hosted (add an @font-face), Helvetica otherwise.
+/* Minimal. Colours from Judith's site: navy, burgundy, warm off-white. PP Neue Montreal if installed or self-hosted (add an @font-face), Helvetica otherwise.
    Image placeholders are <div class="ph">: swap each one for an <img class="ph"> or <video class="ph">. */
 :root{
-  --bg:#fbfaf8; --soft:#f1efec; --ph:#e7e3de; --line:#e4e0da; --ink:#2b2826; --muted:#77716b;
-  --accent:#6b1d24; --blush:#f6dfe8;
+  --bg:#f3f1ef; --soft:#e9e6e2; --ph:#dcd8d4; --line:#dcd8d3; --ink:#1a1828; --muted:#67646f;
+  --accent:#5d0018; --blush:#eadcdf; --navy:#18172a;
   --font:'PP Neue Montreal','PP Montreal','Helvetica Neue',Helvetica,Arial,sans-serif;
 }
 *{box-sizing:border-box}
@@ -14,6 +14,7 @@ a{color:inherit}
 section{padding:96px 0;border-top:1px solid var(--line)}
 section:first-of-type{border-top:0;padding-top:24px}
 
+header{background:var(--navy);color:#fff}
 header .wrap{display:flex;justify-content:space-between;align-items:center;height:72px}
 .name{font-weight:500;font-size:16px;text-decoration:none;letter-spacing:-.01em}
 
@@ -94,11 +95,13 @@ p{margin:0}
 .faq details p{color:var(--muted);padding:0 0 24px;max-width:720px}
 
 /* Final */
-.final{text-align:center;background:var(--soft)}
+.final{text-align:center;background:var(--accent);color:#fff;border-top:0}
+.final h2{color:#fff}
+.final .btn{background:#fff;color:var(--accent);border-color:#fff}
 .final h2{margin:0 auto}
-.final p{color:var(--muted);margin:20px 0 36px}
+.final p{color:rgba(255,255,255,.75);margin:20px 0 36px}
 
-footer{padding:32px 0 48px;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}
+footer{padding:32px 0 48px;color:rgba(255,255,255,.55);font-size:13px;background:var(--navy)}
 
 @media (max-width:760px){
   body{font-size:16px}
@@ -115,8 +118,8 @@ footer{padding:32px 0 48px;color:var(--muted);font-size:13px;border-top:1px soli
 }
 
 /* Funnel steps: checkout, upsell, thank you */
-.steps-bar{font-size:13px;color:var(--muted)}
-.steps-bar b{color:var(--accent);font-weight:500}
+.steps-bar{font-size:13px;color:rgba(255,255,255,.6)}
+.steps-bar b{color:#fff;font-weight:500}
 .narrow{max-width:720px;margin:0 auto}
 .checkout{display:grid;grid-template-columns:1.2fr 1fr;gap:48px;align-items:start}
 .checkout h1{font-size:clamp(30px,3.6vw,42px)}
