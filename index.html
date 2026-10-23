@@ -84,6 +84,18 @@ h2{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--mute
 .btnlike{display:inline-block;font-size:12px;padding:4px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);cursor:pointer}
 .btnlike:hover{border-color:var(--muted)}
 .fu-h{color:var(--fu)}
+nav .lc{display:inline-block;min-width:18px;padding:0 5px;margin-left:4px;border-radius:999px;background:var(--soft);color:var(--ink);font-size:11px;font-weight:700;line-height:18px;text-align:center}
+nav button.on .lc{background:var(--bg);color:var(--ink)}
+.lead{display:flex;gap:10px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line)}
+.lead:last-child{border-bottom:0}
+.lead .who{flex:1;min-width:0}
+.lead .who a{color:var(--ink);font-weight:600;text-decoration:none}
+.lead .who a:hover{text-decoration:underline}
+.lead .who div{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lead .x{border:0;background:none;color:var(--muted);padding:6px 8px}
+.lead .x:hover{color:var(--bad)}
+.next-up{font-size:13px;color:var(--muted);text-align:center}
+@media (max-width:480px){ header h1{display:none} header .in{justify-content:center} nav button{padding:6px 11px} }
 .fu-card{border-color:var(--fu)}
 .fu-card .steps{grid-template-columns:repeat(2,1fr)}
 .fu-card .steps div.on,.fu-card .steps div.past{border-color:var(--fu)}
@@ -144,6 +156,7 @@ tr:last-child td{border-bottom:0}
   <h1>Outreach CRM</h1>
   <nav>
     <button data-tab="start">Start</button>
+    <button data-tab="leads">To contact<span id="leadCount"></span></button>
     <button data-tab="track">Tracking<span id="fuCount"></span></button>
   </nav>
 </div></header>
@@ -154,6 +167,7 @@ tr:last-child td{border-bottom:0}
     <div id="flow"></div>
     <div class="card cons" id="cons"></div>
   </section>
+  <section id="leads" hidden></section>
   <section id="track" hidden></section>
 </main>
 <div class="toast" id="toast"></div>
@@ -226,6 +240,7 @@ const fmtCall = iso => new Date(iso).toLocaleString(undefined, { weekday:'short'
 const upcomingCalls = () => dms.filter(d => d.status === 'booked' && d.bookedFor && new Date(d.bookedFor) > Date.now() - 2*3600e3)
   .sort((a,b) => a.bookedFor.localeCompare(b.bookedFor));
 let booking = null; // handle whose booking form is open
+let leads = [];      // profiles waiting for a first DM (collection "leads", keyed by handle)
 let fuFlow = null;  // follow-up being logged: { handle, step, shot, shotUrl, loom, saving }
 // Every logged follow-up, oldest first. Older DMs only have followedUpAt, so count that as one.
 const followUpsOf = d => d.followUps?.length ? d.followUps : d.followedUpAt ? [{ at:d.followedUpAt, text:'', legacy:true }] : [];
@@ -315,7 +330,9 @@ function renderFlow(){
   const el = $('#flow');
   if(!store){ el.innerHTML = `<div class="notice">${loaded ? 'Open this page in Claude to log DMs.' : 'Connecting…'}</div>`; return; }
   if(!flow){
-    el.innerHTML = `<button class="primary big" data-act="start">Start outreach</button>`;
+    const next = pendingLeads()[0];
+    el.innerHTML = `<div style="display:grid;gap:8px"><button class="primary big" data-act="start">Start outreach</button>
+      <div class="next-up">${next ? `Next up: <b style="color:var(--ink)">@${esc(next.handle)}</b> · ${pendingLeads().length} pending to contact` : 'No profiles waiting. Add some in <b>To contact</b>, or enter a link yourself.'}</div></div>`;
     return;
   }
   if(flow.result) return renderResult();
@@ -456,7 +473,10 @@ async function save(){
     try{ const a = await assets.upload(shot); doc.shotId = a.id; doc.shotUrl = a.url; }
     catch(e){ toast("Screenshot couldn't be stored. Saving the rest."); }
   }
-  try{ await store.collection('dms').doc(handle).set(doc); }
+  try{
+    await store.collection('dms').doc(handle).set(doc);
+    if(leads.some(l => l.handle === handle)) store.collection('leads').doc(handle).delete().catch(() => {});
+  }
   catch(e){ flow.saving = false; renderFlow(); toast("Couldn't save. Check your connection and try again."); return; }
   try{ localStorage.removeItem('outreach-draft'); }catch(e){}
   flow = { result:{ handle }, scoring:!!(sample && canImages) };
@@ -518,6 +538,76 @@ function openerRanking(){
       </div>
       <span class="pill ${o.cls}">${o.label}</span>
     </div>`).join('')}</div>`;
+}
+
+/* ---------- To contact ---------- */
+const contacted = () => new Set(dms.map(d => d.handle));
+// Pending = saved leads you haven't DMed yet, oldest first so nobody sits forever.
+const pendingLeads = () => { const c = contacted(); return leads.filter(l => !c.has(l.handle)).sort((a,b) => (a.addedAt||'').localeCompare(b.addedAt||'') || a.handle.localeCompare(b.handle)); };
+
+function renderLeads(){
+  const pend = pendingLeads();
+  $('#leadCount').innerHTML = pend.length ? `<span class="lc">${pend.length}</span>` : '';
+  if(tab !== 'leads') return;
+  const el = $('#leads');
+  if(!store){ el.innerHTML = `<div class="notice">${loaded ? 'Open this page in Claude to see your list.' : 'Connecting…'}</div>`; return; }
+  const draft = $('#leadPaste')?.value || '';
+  el.innerHTML = `
+  <div class="card" style="display:grid;gap:10px">
+    <label class="f" for="leadPaste">Paste Instagram profile links, one per line</label>
+    <textarea id="leadPaste" rows="4" placeholder="https://instagram.com/someone&#10;@another.account">${esc(draft)}</textarea>
+    <div class="row" style="justify-content:space-between">
+      <span class="small muted">Profiles you've already DMed are skipped.</span>
+      <button class="primary" data-act="leadadd">Add to list</button>
+    </div>
+  </div>
+  <div class="row" style="justify-content:space-between">
+    <h2 style="margin:0">Pending to contact · ${pend.length}</h2>
+    ${pend.length ? `<button class="primary" data-act="leadnext">DM the next one</button>` : ''}
+  </div>
+  ${pend.length ? `<div class="card list">${pend.map(l => `<div class="lead">
+      <div class="who">
+        <a href="https://instagram.com/${encodeURIComponent(l.handle)}" target="_blank" rel="noopener">@${esc(l.handle)}</a>
+        <div>Added ${new Date(l.addedAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})}${l.note ? ' · ' + esc(l.note) : ''}</div>
+      </div>
+      <button class="sm" data-act="leaddm" data-h="${esc(l.handle)}">DM now</button>
+      <button class="x" data-act="leaddel" data-h="${esc(l.handle)}" aria-label="Remove @${esc(l.handle)}">✕</button>
+    </div>`).join('')}</div>`
+  : `<div class="card empty small">Nobody waiting. Paste the profiles you've collected above, or send them to Claude in chat.</div>`}`;
+}
+
+async function addLeads(text){
+  const c = contacted(), have = new Set(leads.map(l => l.handle)), seen = new Set();
+  let added = 0, skipped = 0, bad = 0;
+  const now = new Date().toISOString();
+  // Each line: any instagram.com links or @handles in it, or a lone username.
+  const found = [];
+  for(const line of text.split(/[\n,;]+/)){
+    const t = line.trim(); if(!t) continue;
+    const hits = [...t.matchAll(/instagram\.com\/[A-Za-z0-9._]+|@[A-Za-z0-9._]+/gi)].map(m => m[0]);
+    const cands = hits.length ? hits : (/\s/.test(t) ? [] : [t]);
+    if(!cands.length){ bad++; continue; }
+    found.push(...cands);
+  }
+  for(const raw of found){
+    const h = parseHandle(raw);
+    if(!h){ bad++; continue; }
+    if(c.has(h) || have.has(h) || seen.has(h)){ skipped++; continue; }
+    seen.add(h);
+    try{ await store.collection('leads').doc(h).set({ handle:h, url:`https://instagram.com/${h}`, addedAt:now }); added++; }
+    catch(e){ toast("Couldn't save. Try again."); return; }
+  }
+  const box = $('#leadPaste'); if(box) box.value = '';
+  renderLeads();
+  toast(`Added ${added}` + (skipped ? ` · ${skipped} already in your list or DMed` : '') + (bad ? ` · ${bad} not a profile link` : ''));
+}
+
+// Open the DM steps on Start with this profile filled in.
+function startWith(handle){
+  const lastCh = dms.slice().sort((a,b) => b.sentAt.localeCompare(a.sentAt))[0]?.channel;
+  const d = { url: handle ? `https://instagram.com/${handle}` : '', followers:'', avgLikes:'', avgComments:'', opener:'', loom:'', channel: lastCh || 'Instagram', shot:null, shotUrl:'' };
+  flow = { step:0, d, lead: handle || null };
+  tab = 'start'; showTab(); renderFlow();
 }
 
 function fuCardHTML(){
@@ -682,10 +772,14 @@ document.addEventListener('click', async e => {
   const b = e.target.closest('[data-act]'); if(!b) return;
   switch(b.dataset.act){
     case 'start': {
-      const lastCh = dms.slice().sort((a,b) => b.sentAt.localeCompare(a.sentAt))[0]?.channel;
-      let d = { url:'', followers:'', avgLikes:'', avgComments:'', opener:'', loom:'', channel: lastCh || 'Instagram', shot:null, shotUrl:'' };
-      flow = { step:0, d }; renderFlow(); break;
+      // Next DM after one is saved should skip the profile just logged (the snapshot may lag a moment).
+      const done = flow?.result?.handle;
+      startWith(pendingLeads().find(l => l.handle !== done)?.handle); break;
     }
+    case 'leadadd': addLeads($('#leadPaste')?.value || ''); break;
+    case 'leadnext': startWith(pendingLeads()[0]?.handle); break;
+    case 'leaddm': startWith(b.dataset.h); break;
+    case 'leaddel': try{ await store.collection('leads').doc(b.dataset.h).delete(); toast(`Removed @${b.dataset.h}`); }catch(err){ toast("Couldn't remove. Try again."); } break;
     case 'cancel': flow = null; renderFlow(); break;
     case 'done': flow = null; renderFlow(); break;
     case 'back': readStep(); flow.step--; renderFlow(); break;
@@ -775,7 +869,8 @@ function showTab(){
   document.querySelectorAll('[data-tab]').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
   $('#start').hidden = tab !== 'start';
   $('#track').hidden = tab !== 'track';
-  renderTrack();
+  $('#leads').hidden = tab !== 'leads';
+  renderTrack(); renderLeads();
 }
 
 /* ---------- Boot ---------- */
@@ -785,10 +880,14 @@ showTab(); renderGoal(); renderFlow();
   [store, sample, assets] = c?.use ? await Promise.all([c.use('db'), c.use('sample'), c.use('assets')]) : [null, null, null];
   if(sample) canImages = !!(await sample.limits().catch(() => null))?.images;
   loaded = true;
-  renderFlow(); renderTrack();
+  renderFlow(); renderTrack(); renderLeads();
   if(!store) return;
+  store.collection('leads').onSnapshot(
+    snap => { leads = snap.docs.map(d => d.data()); renderLeads(); if(!flow) renderFlow(); },
+    () => {}
+  );
   store.collection('dms').onSnapshot(
-    snap => { dms = snap.docs.map(d => d.data()); renderGoal(); renderTrack(); },
+    snap => { dms = snap.docs.map(d => d.data()); renderGoal(); renderTrack(); renderLeads(); if(!flow) renderFlow(); },
     () => toast("Lost connection to your data. Reload the page.")
   );
 })();
