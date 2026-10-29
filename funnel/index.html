@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap">
-<link rel="stylesheet" href="styles.css?v=20261029b">
+<link rel="stylesheet" href="styles.css?v=20261029c">
 </head>
 <body>
 
@@ -188,6 +188,7 @@
   </section>
 
   <!-- Reviews: one testimonial at a time; arrows and dots in page.js, swipe on touch -->
+  <!-- Reviewer photos: replace each <div class="avatar" ...> with <img class="avatar" src="img/..." alt="..."> (square photo works best) -->
   <section class="grey">
     <div class="wrap">
       <h2 class="center">Lo que dicen <em>mis clientes</em></h2>
@@ -196,19 +197,31 @@
         <button class="arrow prev" type="button" aria-label="Anterior"></button>
         <div class="track" tabindex="0">
           <figure class="slide">
-            <figcaption>Mediolanum | Programa de Liderazgo</figcaption>
+            <div class="who">
+              <div class="avatar" role="img" aria-label="Foto de Mediolanum"></div>
+              <figcaption>Mediolanum | Programa de Liderazgo</figcaption>
+            </div>
             <blockquote>“Trabajar con Judith ha supuesto un punto de inflexión en mi forma de liderar. No solo me ha ayudado a desarrollar herramientas para gestionar mejor a mi equipo, sino también a comunicar con más claridad, tomar decisiones con mayor seguridad y confiar más en mi criterio. Su capacidad para hacer las preguntas adecuadas y ofrecer una visión estratégica hace que cada sesión aporte un valor enorme.”</blockquote>
           </figure>
           <figure class="slide">
-            <figcaption>Profesional de Bodegas Torres</figcaption>
+            <div class="who">
+              <div class="avatar" role="img" aria-label="Foto de Profesional de Bodegas Torres"></div>
+              <figcaption>Profesional de Bodegas Torres</figcaption>
+            </div>
             <blockquote>“Llegué a las sesiones con la sensación de estar estancado profesionalmente y con muchas dudas sobre cuál debía ser mi siguiente paso. Judith me ayudó a conectar con mi propósito, identificar qué era realmente importante para mí y definir un plan claro para llegar donde quería estar. Hoy tengo mucha más claridad, confianza y una hoja de ruta que me motiva a seguir avanzando.”</blockquote>
           </figure>
           <figure class="slide">
-            <figcaption>Directiva Digital | Inditex</figcaption>
+            <div class="who">
+              <div class="avatar" role="img" aria-label="Foto de Directiva Digital"></div>
+              <figcaption>Directiva Digital | Inditex</figcaption>
+            </div>
             <blockquote>“Judith me ha dado una visión mucho más clara de mi futuro y, gracias a ello, he tomado las decisiones que llevaba tiempo posponiendo para empezar a pasar a la acción. Estoy muy contenta con todo el proceso, pero lo que más me ha sorprendido ha sido el cambio en mi confianza. En muy pocas sesiones he notado una transformación radical en la forma en la que me enfrento a los retos y tomo decisiones. Ha sido un antes y un después.”</blockquote>
           </figure>
           <figure class="slide">
-            <figcaption>Equipo de liderazgo | Equifax</figcaption>
+            <div class="who">
+              <div class="avatar" role="img" aria-label="Foto de Equipo de liderazgo"></div>
+              <figcaption>Equipo de liderazgo | Equifax</figcaption>
+            </div>
             <blockquote>“La preparación con Judith fue clave para reforzar las habilidades de liderazgo de nuestro equipo. Su enfoque práctico y estratégico nos dio herramientas aplicables desde el primer día para liderar con más confianza, claridad e impacto.”</blockquote>
           </figure>
         </div>
@@ -338,8 +351,8 @@
   <div class="wrap">© 2026 Judith Calzada</div>
 </footer>
 
-<script src="motion.js?v=20261029b" defer></script>
+<script src="motion.js?v=20261029c" defer></script>
 <script src="https://player.vimeo.com/api/player.js" defer></script>
-<script src="page.js?v=20261029b" defer></script>
+<script src="page.js?v=20261029c" defer></script>
 </body>
 </html>
