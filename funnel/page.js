@@ -63,3 +63,31 @@
     if (tick) { clearInterval(tick); tick = null; play.hidden = false; }
   });
 })();
+
+// Reviews slider: arrows and dots move one testimonial at a time; swipe and keyboard scroll natively.
+(() => {
+  const track = document.querySelector('.slider .track');
+  if (!track) return;
+  const slides = [...track.children];
+  const prev = document.querySelector('.slider .prev');
+  const next = document.querySelector('.slider .next');
+  const dots = document.querySelector('.dots');
+  const go = i => track.scrollTo({ left: i * track.clientWidth });
+  const current = () => Math.round(track.scrollLeft / track.clientWidth);
+  slides.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.setAttribute('aria-label', 'Testimonio ' + (i + 1));
+    b.addEventListener('click', () => go(i));
+    dots.appendChild(b);
+  });
+  const update = () => {
+    const i = current();
+    [...dots.children].forEach((d, j) => d.classList.toggle('on', j === i));
+    prev.disabled = i === 0;
+    next.disabled = i === slides.length - 1;
+  };
+  prev.addEventListener('click', () => go(current() - 1));
+  next.addEventListener('click', () => go(current() + 1));
+  track.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
+  update();
+})();

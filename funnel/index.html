@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap">
-<link rel="stylesheet" href="styles.css?v=20261029a">
+<link rel="stylesheet" href="styles.css?v=20261029b">
 </head>
 <body>
 
@@ -21,20 +21,19 @@
 
 <main id="top">
 
-  <!-- Hero: headline, then video -->
+  <!-- Hero: heading, subheading, CTA, then the video -->
   <section class="hero">
     <div class="wrap">
       <div class="intro">
-        <p class="label">Curso de Confianza · 10 días</p>
         <h1>Te ayudo a dejar de esperar a <em>sentirte preparada</em> para ocupar el lugar que ya te has ganado.</h1>
         <p>Así es como dejé de esperar a sentirme preparada y empecé a actuar con miedo, un miedo que en cuestión de 10 días convertí en confianza.</p>
       </div>
-      <div class="video">
-        <iframe src="https://player.vimeo.com/video/1211423165?title=0&amp;byline=0&amp;portrait=0&amp;dnt=1&amp;color=5d0018" title="Vídeo de Judith Calzada" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
-      </div>
-      <div class="cta">
+      <div class="cta hero-cta">
         <a href="#precios" class="btn light">Quiero más confianza</a>
         <p class="proof">+500 profesionales acompañados · <span class="stars" aria-hidden="true">★★★★★</span> 4,8/5</p>
+      </div>
+      <div class="video">
+        <iframe src="https://player.vimeo.com/video/1211423165?title=0&amp;byline=0&amp;portrait=0&amp;dnt=1&amp;color=5d0018" title="Vídeo de Judith Calzada" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
       </div>
     </div>
   </section>
@@ -43,8 +42,7 @@
   <!-- Identification -->
   <section>
     <div class="wrap narrow-left">
-      <p class="label">¿Te reconoces?</p>
-      <h2>Esto es para ti <em>si…</em></h2>
+            <h2>Esto es para ti <em>si…</em></h2>
       <ul class="checks">
             <li>Sientes que constantemente estás jugando un papel de saberlo todo, y eso te hace sentir agotada.</li>
             <li>Te imaginas los peores escenarios posibles en tu cabeza antes de entrar a cualquier interacción profesional.</li>
@@ -60,8 +58,7 @@
   <section class="white">
     <div class="wrap method">
       <div class="method-head">
-        <p class="label">Yo también</p>
-        <h2>Si te sientes así, no te preocupes: <em>yo me sentía igual.</em></h2>
+                <h2>Si te sientes así, no te preocupes: <em>yo me sentía igual.</em></h2>
         <div class="progress" aria-hidden="true"><b data-step>01</b><span>/ 06</span><span class="bar"><i></i></span></div>
         <div class="cta left"><a href="#precios" class="btn">Empezar ya</a></div>
       </div>
@@ -103,8 +100,7 @@
   <!-- Course teaser: each day unfolds; Day 1 has a free trailer with a timed preview (page.js) -->
   <section>
     <div class="wrap">
-      <p class="label">El programa</p>
-      <h2>Lo que trabajamos en <em>10 días</em></h2>
+            <h2>Lo que trabajamos en <em>10 días</em></h2>
       <p class="sub">11 lecciones grabadas + ejercicios prácticos. Para que vayas a tu ritmo y sin caducidad.</p>
       <div class="days">
         <details class="day" open>
@@ -191,28 +187,34 @@
     </div>
   </section>
 
-  <!-- Reviews: waiting for real student testimonials -->
-  <section class="white">
+  <!-- Reviews: one testimonial at a time; arrows and dots in page.js, swipe on touch -->
+  <section class="grey">
     <div class="wrap">
-      <p class="label">Reseñas · 4,8/5</p>
-      <h2>Lo que dicen <em>mis alumnas</em></h2>
-      <div class="reviews">
-        <figure class="review">
-          <p class="stars" aria-label="5 de 5">★★★★★</p>
-          <blockquote class="todo">[Testimonio de alumna pendiente]</blockquote>
-          <figcaption class="todo">[Nombre, cargo]</figcaption>
-        </figure>
-        <figure class="review">
-          <p class="stars" aria-label="5 de 5">★★★★★</p>
-          <blockquote class="todo">[Testimonio de alumna pendiente]</blockquote>
-          <figcaption class="todo">[Nombre, cargo]</figcaption>
-        </figure>
-        <figure class="review">
-          <p class="stars" aria-label="5 de 5">★★★★★</p>
-          <blockquote class="todo">[Testimonio de alumna pendiente]</blockquote>
-          <figcaption class="todo">[Nombre, cargo]</figcaption>
-        </figure>
+      <h2 class="center">Lo que dicen <em>mis clientes</em></h2>
+      <p class="sub center">+ de 500 profesionales acompañados</p>
+      <div class="slider" aria-roledescription="carrusel">
+        <button class="arrow prev" type="button" aria-label="Anterior"></button>
+        <div class="track" tabindex="0">
+          <figure class="slide">
+            <figcaption>Mediolanum | Programa de Liderazgo</figcaption>
+            <blockquote>“Trabajar con Judith ha supuesto un punto de inflexión en mi forma de liderar. No solo me ha ayudado a desarrollar herramientas para gestionar mejor a mi equipo, sino también a comunicar con más claridad, tomar decisiones con mayor seguridad y confiar más en mi criterio. Su capacidad para hacer las preguntas adecuadas y ofrecer una visión estratégica hace que cada sesión aporte un valor enorme.”</blockquote>
+          </figure>
+          <figure class="slide">
+            <figcaption>Profesional de Bodegas Torres</figcaption>
+            <blockquote>“Llegué a las sesiones con la sensación de estar estancado profesionalmente y con muchas dudas sobre cuál debía ser mi siguiente paso. Judith me ayudó a conectar con mi propósito, identificar qué era realmente importante para mí y definir un plan claro para llegar donde quería estar. Hoy tengo mucha más claridad, confianza y una hoja de ruta que me motiva a seguir avanzando.”</blockquote>
+          </figure>
+          <figure class="slide">
+            <figcaption>Directiva Digital | Inditex</figcaption>
+            <blockquote>“Judith me ha dado una visión mucho más clara de mi futuro y, gracias a ello, he tomado las decisiones que llevaba tiempo posponiendo para empezar a pasar a la acción. Estoy muy contenta con todo el proceso, pero lo que más me ha sorprendido ha sido el cambio en mi confianza. En muy pocas sesiones he notado una transformación radical en la forma en la que me enfrento a los retos y tomo decisiones. Ha sido un antes y un después.”</blockquote>
+          </figure>
+          <figure class="slide">
+            <figcaption>Equipo de liderazgo | Equifax</figcaption>
+            <blockquote>“La preparación con Judith fue clave para reforzar las habilidades de liderazgo de nuestro equipo. Su enfoque práctico y estratégico nos dio herramientas aplicables desde el primer día para liderar con más confianza, claridad e impacto.”</blockquote>
+          </figure>
+        </div>
+        <button class="arrow next" type="button" aria-label="Siguiente"></button>
       </div>
+      <div class="dots" aria-hidden="true"></div>
     </div>
   </section>
 
@@ -220,29 +222,14 @@
   <section>
     <div class="wrap">
       <h2 class="center">Puedes seguir esperando. <em>O puedes empezar hoy.</em></h2>
-      <div class="paths">
-        <div class="path wait">
-          <p class="label">Camino 1 · Seguir esperando</p>
-          <ul>
-            <li>Tolerar tu situación actual.</li>
-            <li>Vivir por debajo de tu potencial.</li>
-            <li>Ver a gente con la mitad de tu experiencia conseguir más que tú.</li>
-            <li>Cobrar menos de lo que vales porque nunca te atreves a pedirlo.</li>
-            <li>Mantener el papel de “la fuerte” aunque estés agotada.</li>
-          </ul>
-          <a href="seguir-igual.html" class="btn ghost">Seguir 1 año más estando igual</a>
-        </div>
-        <div class="path go">
-          <p class="label">Camino 2 · Empezar a entrenar tu confianza</p>
-          <ul>
-            <li>Dejar de tolerar lo que ya no quieres.</li>
-            <li>Usar todo lo que sabes, en lugar de guardártelo.</li>
-            <li>Ocupar el lugar que ya te has ganado.</li>
-            <li>Atreverte a pedir lo que mereces.</li>
-            <li>Liderar siendo tú, sin tener que fingir.</li>
-          </ul>
-          <a href="#precios" class="btn light">Empezar mi cambio hoy</a>
-        </div>
+      <div class="compare">
+        <div class="w head">Camino 1 · Seguir esperando</div><div class="g head">Camino 2 · Empezar a entrenar tu confianza</div>
+        <div class="w">Tolerar tu situación actual.</div><div class="g">Dejar de tolerar lo que ya no quieres.</div>
+        <div class="w">Vivir por debajo de tu potencial.</div><div class="g">Usar todo lo que sabes, en lugar de guardártelo.</div>
+        <div class="w">Ver a gente con la mitad de tu experiencia conseguir más que tú.</div><div class="g">Ocupar el lugar que ya te has ganado.</div>
+        <div class="w">Cobrar menos de lo que vales porque nunca te atreves a pedirlo.</div><div class="g">Atreverte a pedir lo que mereces.</div>
+        <div class="w">Mantener el papel de “la fuerte” aunque estés agotada.</div><div class="g">Liderar siendo tú, sin tener que fingir.</div>
+        <div class="w foot"><a href="seguir-igual.html" class="btn ghost">Seguir 1 año más estando igual</a></div><div class="g foot"><a href="#precios" class="btn light">Empezar mi cambio hoy</a></div>
       </div>
       <p class="coda">Los dos caminos tienen un precio. Solo uno te lleva a donde quieres estar.</p>
     </div>
@@ -279,11 +266,35 @@
     </div>
   </section>
 
-  <!-- Pricing -->
-  <section id="precios">
+  <!-- FAQ -->
+  <section>
     <div class="wrap">
-      <p class="label">Precios</p>
-      <h2>Elige <em>tu plan.</em></h2>
+            <h2>Preguntas frecuentes</h2>
+      <div class="faq">
+        <details>
+          <summary>¿Esto funciona?</summary>
+          <p>No te voy a prometer que tendrás confianza de un día para otro, porque eso no le pasa a nadie. Lo que sí te digo: si haces el trabajo cada día, vas a notar cambios en cómo actúas.</p>
+        </details>
+        <details>
+          <summary>¿Cuánto tiempo tengo que dedicarle al día?</summary>
+          <p class="todo">[X minutos al día: lección + ejercicio]</p>
+        </details>
+        <details>
+          <summary>¿Es en directo o grabado?</summary>
+          <p>Grabado: 11 lecciones grabadas + ejercicios prácticos, para que vayas a tu ritmo y sin caducidad.</p>
+        </details>
+        <details>
+          <summary>¿Voy a tener más confianza en 10 días?</summary>
+          <p class="todo">[respuesta pendiente]</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA: question, payment (plans), diagnóstico -->
+  <section class="final" id="precios">
+    <div class="wrap">
+      <h2>¿Vas a seguir esperando a <em>sentirte preparada?</em></h2>
       <div class="plans">
         <div class="plan">
           <div class="top"><h3>Esencial</h3></div>
@@ -316,41 +327,6 @@
           <a href="checkout.html?plan=con-judith" class="btn ghost">Elegir</a>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- FAQ -->
-  <section class="white">
-    <div class="wrap">
-      <p class="label">Dudas</p>
-      <h2>Preguntas frecuentes</h2>
-      <div class="faq">
-        <details>
-          <summary>¿Esto funciona?</summary>
-          <p>No te voy a prometer que tendrás confianza de un día para otro, porque eso no le pasa a nadie. Lo que sí te digo: si haces el trabajo cada día, vas a notar cambios en cómo actúas.</p>
-        </details>
-        <details>
-          <summary>¿Cuánto tiempo tengo que dedicarle al día?</summary>
-          <p class="todo">[X minutos al día: lección + ejercicio]</p>
-        </details>
-        <details>
-          <summary>¿Es en directo o grabado?</summary>
-          <p>Grabado: 11 lecciones grabadas + ejercicios prácticos, para que vayas a tu ritmo y sin caducidad.</p>
-        </details>
-        <details>
-          <summary>¿Voy a tener más confianza en 10 días?</summary>
-          <p class="todo">[respuesta pendiente]</p>
-        </details>
-      </div>
-    </div>
-  </section>
-
-  <!-- Final CTA -->
-  <section class="final">
-    <div class="wrap">
-      <p class="label">Curso de Confianza</p>
-      <h2>¿Vas a seguir esperando a <em>sentirte preparada?</em></h2>
-      <a href="#precios" class="btn light">Quiero más confianza</a>
       <!-- Diagnóstico: link to the questionnaire once it exists -->
       <p class="diag">¿No estás segura de si esto es para ti? Resuelve tus dudas mediante mi <a href="#" data-diagnostico>diagnóstico gratuito</a>: tardas 2 minutos y tendrás el resultado por email.</p>
     </div>
@@ -362,8 +338,8 @@
   <div class="wrap">© 2026 Judith Calzada</div>
 </footer>
 
-<script src="motion.js?v=20261029a" defer></script>
+<script src="motion.js?v=20261029b" defer></script>
 <script src="https://player.vimeo.com/api/player.js" defer></script>
-<script src="page.js?v=20261029a" defer></script>
+<script src="page.js?v=20261029b" defer></script>
 </body>
 </html>
