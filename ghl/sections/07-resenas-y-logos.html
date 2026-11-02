@@ -1,0 +1,56 @@
+<div class="jc">
+  <!-- Reviews: one testimonial at a time; arrows and dots in page.js, swipe on touch -->
+  <!-- Reviewer images are company logos; any that fails to load falls back to the grey placeholder (page.js) -->
+  <section class="grey">
+    <div class="wrap">
+      <h2 class="center">Lo que dicen <em>mis clientes</em></h2>
+      <p class="sub center">+ de 500 profesionales acompañados</p>
+      <div class="slider" aria-roledescription="carrusel">
+        <button class="arrow prev" type="button" aria-label="Anterior"></button>
+        <div class="track" tabindex="0">
+          <figure class="slide">
+            <div class="who">
+              <img class="avatar" src="https://davidcohencontent-create.github.io/coding-test/funnel/img/logo-mediolanum-sq.png" alt="Mediolanum" loading="lazy" data-fallback>
+              <figcaption>Mediolanum | Programa de Liderazgo</figcaption>
+            </div>
+            <blockquote>“Trabajar con Judith ha supuesto un punto de inflexión en mi forma de liderar. No solo me ha ayudado a desarrollar herramientas para gestionar mejor a mi equipo, sino también a comunicar con más claridad, tomar decisiones con mayor seguridad y confiar más en mi criterio. Su capacidad para hacer las preguntas adecuadas y ofrecer una visión estratégica hace que cada sesión aporte un valor enorme.”</blockquote>
+          </figure>
+          <figure class="slide">
+            <div class="who">
+              <img class="avatar" src="https://todowine.com/wp-content/uploads/2022/02/Familia-torres-logo.jpg" alt="Bodegas Torres" loading="lazy" data-fallback>
+              <figcaption>Profesional de Bodegas Torres</figcaption>
+            </div>
+            <blockquote>“Llegué a las sesiones con la sensación de estar estancado profesionalmente y con muchas dudas sobre cuál debía ser mi siguiente paso. Judith me ayudó a conectar con mi propósito, identificar qué era realmente importante para mí y definir un plan claro para llegar donde quería estar. Hoy tengo mucha más claridad, confianza y una hoja de ruta que me motiva a seguir avanzando.”</blockquote>
+          </figure>
+          <figure class="slide">
+            <div class="who">
+              <img class="avatar" src="https://static.inditex.com/assets/public/4f74/4f61/0ee5435bacfa/4adf4c7979d9/inditex/inditex.jpg?ts=1772041970262" alt="Inditex" loading="lazy" data-fallback>
+              <figcaption>Directiva Digital | Inditex</figcaption>
+            </div>
+            <blockquote>“Judith me ha dado una visión mucho más clara de mi futuro y, gracias a ello, he tomado las decisiones que llevaba tiempo posponiendo para empezar a pasar a la acción. Estoy muy contenta con todo el proceso, pero lo que más me ha sorprendido ha sido el cambio en mi confianza. En muy pocas sesiones he notado una transformación radical en la forma en la que me enfrento a los retos y tomo decisiones. Ha sido un antes y un después.”</blockquote>
+          </figure>
+          <figure class="slide">
+            <div class="who">
+              <img class="avatar" src="https://play-lh.googleusercontent.com/3k1zgd-IWbkhELHuTwPdCQT2iH2T-ajj74XSwINeVytRhSHD4fj4WC1cf3R1jPzsk2E" alt="Equifax" loading="lazy" data-fallback>
+              <figcaption>Equipo de liderazgo | Equifax</figcaption>
+            </div>
+            <blockquote>“La preparación con Judith fue clave para reforzar las habilidades de liderazgo de nuestro equipo. Su enfoque práctico y estratégico nos dio herramientas aplicables desde el primer día para liderar con más confianza, claridad e impacto.”</blockquote>
+          </figure>
+        </div>
+        <button class="arrow next" type="button" aria-label="Siguiente"></button>
+      </div>
+      <div class="dots" aria-hidden="true"></div>
+      <!-- Logo strip: scrolls slowly; page.js duplicates the row for a seamless loop.
+           Every logo sits in the same slot and is turned the same pale grey; "crop" = square image with the wordmark across the middle (cropped to it), "heavy" = bold logo given a smaller slot. -->
+      <div class="logos" aria-label="Empresas con las que he trabajado">
+        <div class="logo-row">
+          <img src="https://davidcohencontent-create.github.io/coding-test/funnel/img/logo-mediolanum.png" alt="Banco Mediolanum" loading="lazy" data-fallback>
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmtJHMfExBdV6-79NojMStbe1Uw5UtMfiI5g-xSN_ZWisca_TSrJSdLQI&amp;s=10" alt="Bodegas Torres" loading="lazy" data-fallback>
+          <img class="crop" src="https://static.inditex.com/assets/public/4f74/4f61/0ee5435bacfa/4adf4c7979d9/inditex/inditex.jpg?ts=1772041970262" alt="Inditex" loading="lazy" data-fallback>
+          <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/24/Equifax.svg/3840px-Equifax.svg.png" alt="Equifax" class="heavy" loading="lazy" data-fallback>
+          <img class="crop" src="https://images.seeklogo.com/logo-png/31/1/porsche-logo-png_seeklogo-314112.png" alt="Porsche" loading="lazy" data-fallback>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

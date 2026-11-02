@@ -1,0 +1,159 @@
+<!-- Curso de Confianza: paste into GHL page Settings → Tracking Code → Footer -->
+<script src="https://player.vimeo.com/api/player.js"></script>
+<script>
+(function () {
+  function start() {
+    if (window.__jcStarted || !document.querySelector('.jc')) return false;
+    window.__jcStarted = true;
+    // Fade-up entrance as blocks scroll into view, staggered within each group.
+    // Skipped entirely for reduced motion or old browsers, so content is always visible without it.
+    (() => {
+      if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const groups = ['.intro > *', '.video', '.cta', 'section > .wrap > .label', 'section > .wrap > h2',
+        '.method-head > *', '.about > *', '.gallery > *', '.days > *', '.cols > *', '.plans > *',
+        '.faq > *', '.checks > *', '.tools > *', '.tiers > *', '.slider', '.logos', '.compare', '.coda', '.final .wrap > *', '.checkout > *', '.offer .wrap > *', '.next > *'];
+      const io = new IntersectionObserver(entries => entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      }), { rootMargin: '0px 0px -8% 0px' });
+      document.querySelectorAll(groups.join(',')).forEach(el => {
+        const i = [...el.parentElement.children].indexOf(el);
+        el.style.setProperty('--d', Math.min(i, 6) * 70 + 'ms');
+        el.classList.add('reveal');
+        io.observe(el);
+      });
+    })();
+
+    // TODO client: paste the Whop checkout URL of each format (https://whop.com/...).
+    // Until a value is a real https URL, its "Elegir" button keeps the fallback (stays on the prices), so nothing links to a dead page.
+    const WHOP_CHECKOUT_URL_CURSO = 'TODO client';      // 74 €
+    const WHOP_CHECKOUT_URL_CON_JUDITH = 'TODO client'; // 457 €
+    const WHOP_URLS = { 'curso': WHOP_CHECKOUT_URL_CURSO, 'con-judith': WHOP_CHECKOUT_URL_CON_JUDITH };
+    document.querySelectorAll('[data-buy]').forEach(a => {
+      const url = WHOP_URLS[a.dataset.buy];
+      if (/^https:\/\//.test(url || '')) a.href = url;
+    });
+
+    // Sales page behaviour: method steps unlock as you scroll, and the Day 1 trailer's timed preview.
+
+    // Method: each step lights up when it reaches the middle of the screen and stays unlocked.
+    // Without JS, or with reduced motion, every step is simply shown.
+    (() => {
+      const steps = [...document.querySelectorAll('.unlock li')];
+      const count = document.querySelector('[data-step]');
+      const bar = document.querySelector('.progress .bar i');
+      if (!steps.length || !('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      document.documentElement.classList.add('js-unlock');
+      const show = i => {
+        steps.forEach((s, j) => { if (j <= i) s.classList.add('on'); });
+        count.textContent = String(i + 1).padStart(2, '0');
+        bar.style.setProperty('--p', (i + 1) / steps.length);
+      };
+      steps[0].classList.add('on');
+      const io = new IntersectionObserver(entries => entries.forEach(e => {
+        if (e.isIntersecting) show(steps.indexOf(e.target));
+      }), { rootMargin: '-45% 0px -45% 0px' });
+      steps.forEach(s => io.observe(s));
+    })();
+
+    // Trailer: plays for data-preview seconds, then pauses and shows the paywall.
+    // Works with a Vimeo embed (via Vimeo's player API), a <video>, or the placeholder (the play button runs the countdown).
+    (() => {
+      const box = document.querySelector('.trailer[data-preview]');
+      if (!box) return;
+      const limit = Number(box.dataset.preview) || 60;
+      const iframe = box.querySelector('iframe');
+      const video = box.querySelector('video');
+      const play = box.querySelector('.play');
+      const timer = box.querySelector('.timer');
+      const paywall = box.querySelector('.paywall');
+      const fmt = s => { const t = Math.ceil(s); return Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0'); };
+      const render = left => { timer.textContent = 'Vista previa · ' + fmt(Math.max(0, left)); };
+      const locked = () => !paywall.hidden;
+      let pause = () => {};
+      const lock = () => { pause(); if (play) play.hidden = true; paywall.hidden = false; render(0); };
+
+      if (iframe) {
+        if (!window.Vimeo) return; // player script blocked: the video still plays, just without the preview limit
+        const player = new Vimeo.Player(iframe);
+        pause = () => player.pause();
+        player.on('timeupdate', d => { render(limit - d.seconds); if (d.seconds >= limit && !locked()) lock(); });
+        player.on('seeked', d => { if (d.seconds > limit) player.setCurrentTime(limit); });
+        player.on('play', () => { if (locked()) player.pause(); });
+        player.on('ended', () => { if (!locked()) lock(); }); // the last timeupdate can land just short of the limit
+      } else if (video) {
+        pause = () => video.pause();
+        video.addEventListener('timeupdate', () => { render(limit - video.currentTime); if (video.currentTime >= limit) lock(); });
+        video.addEventListener('seeking', () => { if (video.currentTime > limit) video.currentTime = limit; });
+        video.addEventListener('pause', () => { if (!locked() && play) play.hidden = false; });
+        video.addEventListener('ended', () => { if (!locked()) lock(); });
+      }
+      let elapsed = 0, tick = null;
+      play?.addEventListener('click', () => {
+        play.hidden = true;
+        if (video) { video.play(); return; }
+        tick = setInterval(() => { elapsed++; render(limit - elapsed); if (elapsed >= limit) { clearInterval(tick); lock(); } }, 1000);
+      });
+      // Closing Day 1 pauses the preview
+      box.closest('details')?.addEventListener('toggle', e => {
+        if (e.target.open || locked()) return;
+        pause();
+        if (tick) { clearInterval(tick); tick = null; play.hidden = false; }
+      });
+    })();
+
+    // Reviews slider: arrows and dots move one testimonial at a time; swipe and keyboard scroll natively.
+    (() => {
+      const track = document.querySelector('.slider .track');
+      if (!track) return;
+      const slides = [...track.children];
+      const prev = document.querySelector('.slider .prev');
+      const next = document.querySelector('.slider .next');
+      const dots = document.querySelector('.dots');
+      const go = i => track.scrollTo({ left: i * track.clientWidth });
+      const current = () => Math.round(track.scrollLeft / track.clientWidth);
+      slides.forEach((_, i) => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.setAttribute('aria-label', 'Testimonio ' + (i + 1));
+        b.addEventListener('click', () => go(i));
+        dots.appendChild(b);
+      });
+      const update = () => {
+        const i = current();
+        [...dots.children].forEach((d, j) => d.classList.toggle('on', j === i));
+        prev.disabled = i === 0;
+        next.disabled = i === slides.length - 1;
+      };
+      prev.addEventListener('click', () => go(current() - 1));
+      next.addEventListener('click', () => go(current() + 1));
+      track.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
+      update();
+    })();
+
+    // Logo strip: duplicate the row so the loop is seamless (skipped for reduced motion: logos stay still, centred)
+    (() => {
+      const row = document.querySelector('.logo-row');
+      if (!row || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      [...row.children].forEach(img => { const c = img.cloneNode(); c.alt = ''; row.appendChild(c); });
+      row.classList.add('run');
+    })();
+
+    // External images (logos) that fail to load: reviewer logos fall back to the grey placeholder, strip logos are removed
+    document.querySelectorAll('img[data-fallback]').forEach(img => {
+      const fail = () => {
+        if (img.classList.contains('avatar')) {
+          const d = document.createElement('div');
+          d.className = 'avatar'; d.setAttribute('role', 'img'); d.setAttribute('aria-label', img.alt);
+          img.replaceWith(d);
+        } else img.remove();
+      };
+      if (img.complete && img.naturalWidth === 0) fail(); else img.addEventListener('error', fail);
+    });
+    return true;
+  }
+  // GHL renders the page in stages: try on load, then retry briefly until the sections exist.
+  var tries = 0;
+  function tick() { if (!start() && !window.__jcStarted && tries++ < 40) setTimeout(tick, 250); }
+  if (document.readyState === 'complete') setTimeout(tick, 300);
+  else window.addEventListener('load', function () { setTimeout(tick, 300); });
+})();
+</script>
