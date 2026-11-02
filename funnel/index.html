@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap">
-<link rel="stylesheet" href="styles.css?v=20261102a">
+<link rel="stylesheet" href="styles.css?v=20261102b">
 </head>
 <body>
 
@@ -29,7 +29,7 @@
         <p>Así es como dejé de esperar a sentirme preparada y empecé a actuar con miedo, un miedo que en cuestión de 10 días convertí en confianza.</p>
       </div>
       <div class="video">
-        <iframe src="https://player.vimeo.com/video/1211423165?title=0&amp;byline=0&amp;portrait=0&amp;dnt=1&amp;color=5d0018" title="Vídeo de Judith Calzada" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+        <iframe src="https://player.vimeo.com/video/1211423165?title=0&amp;byline=0&amp;portrait=0&amp;dnt=1&amp;color=5d0018" title="Vídeo de Judith Calzada" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
       </div>
       <div class="cta">
         <a href="#precios" class="btn light">Quiero más confianza</a>
@@ -114,7 +114,7 @@
           <div class="body">
             <!-- Trailer: a Vimeo embed (or a <video>). The preview stops after data-preview seconds and shows the paywall. -->
             <div class="trailer" data-preview="60">
-              <iframe src="https://player.vimeo.com/video/1242310240?title=0&amp;byline=0&amp;portrait=0&amp;dnt=1&amp;color=5d0018" title="Tráiler del Día 1" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+              <iframe src="https://player.vimeo.com/video/1242310240?h=f1e7c23715&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="La confianza es un hábito y así se entrena"></iframe>
               <span class="timer">Vista previa · 1:00</span>
               <div class="paywall" hidden>
                 <h3>¿Quieres ver el resto?</h3>
@@ -243,14 +243,15 @@
         <button class="arrow next" type="button" aria-label="Siguiente"></button>
       </div>
       <div class="dots" aria-hidden="true"></div>
-      <!-- Logo strip: scrolls slowly; page.js duplicates the row for a seamless loop -->
+      <!-- Logo strip: scrolls slowly; page.js duplicates the row for a seamless loop.
+           Every logo sits in the same slot and is turned the same pale grey; "crop" = square image with the wordmark across the middle (cropped to it), "heavy" = bold logo given a smaller slot. -->
       <div class="logos" aria-label="Empresas con las que he trabajado">
         <div class="logo-row">
           <img src="img/logo-mediolanum.png" alt="Banco Mediolanum" loading="lazy" data-fallback>
           <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmtJHMfExBdV6-79NojMStbe1Uw5UtMfiI5g-xSN_ZWisca_TSrJSdLQI&amp;s=10" alt="Bodegas Torres" loading="lazy" data-fallback>
-          <img src="https://static.inditex.com/assets/public/4f74/4f61/0ee5435bacfa/4adf4c7979d9/inditex/inditex.jpg?ts=1772041970262" alt="Inditex" loading="lazy" data-fallback>
-          <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/24/Equifax.svg/3840px-Equifax.svg.png" alt="Equifax" loading="lazy" data-fallback>
-          <img src="https://images.seeklogo.com/logo-png/31/1/porsche-logo-png_seeklogo-314112.png" alt="Porsche" loading="lazy" data-fallback>
+          <img class="crop" src="https://static.inditex.com/assets/public/4f74/4f61/0ee5435bacfa/4adf4c7979d9/inditex/inditex.jpg?ts=1772041970262" alt="Inditex" loading="lazy" data-fallback>
+          <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/24/Equifax.svg/3840px-Equifax.svg.png" alt="Equifax" class="heavy" loading="lazy" data-fallback>
+          <img class="crop" src="https://images.seeklogo.com/logo-png/31/1/porsche-logo-png_seeklogo-314112.png" alt="Porsche" loading="lazy" data-fallback>
         </div>
       </div>
     </div>
@@ -376,8 +377,8 @@
   <div class="wrap">© 2026 Judith Calzada</div>
 </footer>
 
-<script src="motion.js?v=20261102a" defer></script>
+<script src="motion.js?v=20261102b" defer></script>
 <script src="https://player.vimeo.com/api/player.js" defer></script>
-<script src="page.js?v=20261102a" defer></script>
+<script src="page.js?v=20261102b" defer></script>
 </body>
 </html>

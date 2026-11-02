@@ -115,11 +115,13 @@ section.grey{background:#e4e1dd}
 img.avatar{background:#fff;padding:9px;object-fit:contain}
 
 /* Logo strip under the reviews: pale, no text, slow loop */
-.logos{margin-top:64px;overflow:hidden;-webkit-mask:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+.logos{margin-top:64px;overflow:hidden;background:#e4e1dd;-webkit-mask:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
 .logo-row{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:40px 72px}
 .logo-row.run{flex-wrap:nowrap;justify-content:flex-start;width:max-content;animation:marquee 36s linear infinite}
 .logos:hover .logo-row{animation-play-state:paused}
-.logo-row img{height:34px;width:auto;max-width:150px;object-fit:contain;filter:grayscale(1);opacity:.42;mix-blend-mode:multiply}
+.logo-row img{flex:none;width:140px;height:44px;object-fit:contain;filter:grayscale(1) brightness(1.12) contrast(1.35);opacity:.5;mix-blend-mode:multiply}
+.logo-row img.crop{object-fit:cover}
+.logo-row img.heavy{width:112px}
 @keyframes marquee{to{transform:translateX(-50%)}}
 
 /* Two paths: comparison table, pairs side by side */
@@ -302,7 +304,8 @@ footer{padding:32px 0 48px;color:rgba(255,255,255,.55);font-size:13px;background
   .who{gap:12px}
   .compare>div{padding:14px;font-size:14px;line-height:1.45}
   .compare .head{padding:16px 14px}
-  .logo-row img{height:26px;max-width:110px}
+  .logo-row img{width:104px;height:34px}
+  .logo-row img.heavy{width:84px}
   .logo-row{gap:28px 44px}
   .step-img{max-width:none}
   .compare .foot{padding:16px 12px}
