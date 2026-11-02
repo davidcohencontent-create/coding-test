@@ -31,7 +31,7 @@
   const play = box.querySelector('.play');
   const timer = box.querySelector('.timer');
   const paywall = box.querySelector('.paywall');
-  const fmt = s => Math.floor(s / 60) + ':' + String(Math.ceil(s) % 60).padStart(2, '0');
+  const fmt = s => { const t = Math.ceil(s); return Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0'); };
   const render = left => { timer.textContent = 'Vista previa · ' + fmt(Math.max(0, left)); };
   const locked = () => !paywall.hidden;
   let pause = () => {};
@@ -44,11 +44,13 @@
     player.on('timeupdate', d => { render(limit - d.seconds); if (d.seconds >= limit && !locked()) lock(); });
     player.on('seeked', d => { if (d.seconds > limit) player.setCurrentTime(limit); });
     player.on('play', () => { if (locked()) player.pause(); });
+    player.on('ended', () => { if (!locked()) lock(); }); // the last timeupdate can land just short of the limit
   } else if (video) {
     pause = () => video.pause();
     video.addEventListener('timeupdate', () => { render(limit - video.currentTime); if (video.currentTime >= limit) lock(); });
     video.addEventListener('seeking', () => { if (video.currentTime > limit) video.currentTime = limit; });
     video.addEventListener('pause', () => { if (!locked() && play) play.hidden = false; });
+    video.addEventListener('ended', () => { if (!locked()) lock(); });
   }
   let elapsed = 0, tick = null;
   play?.addEventListener('click', () => {
