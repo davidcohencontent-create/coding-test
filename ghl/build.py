@@ -57,6 +57,13 @@ anchor = '.jc a{color:inherit}'
 assert anchor in scoped
 scoped = scoped.replace(anchor, reset + anchor, 1)
 scoped += '''
+/* GHL: neutralise GHL's section/row/column/element boxes around our sections, so every section runs edge to edge
+   with no white strips or gaps, whatever padding, width or background those boxes were given in the builder */
+html:has(.jc),body:has(.jc){background:#f3f1ef!important}
+body :has(> .jc),body :has(.jc){padding:0!important;margin:0!important;max-width:none!important;gap:0!important;border:0!important;box-shadow:none!important;background:transparent!important;min-height:0!important}
+.jc{display:block;width:100%}
+'''
+scoped += '''
 /* GHL: the header is not sticky inside a code element; make its GHL section sticky instead (section settings) */
 .jc header{position:relative}
 '''
