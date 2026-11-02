@@ -8,14 +8,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap">
-<link rel="stylesheet" href="styles.css?v=20261102e">
+<link rel="stylesheet" href="styles.css?v=20261102f">
 </head>
 <body>
 
 <header>
   <div class="wrap">
     <a href="#top" class="name">Judith Calzada</a>
-    <a href="#precios" class="btn sm" data-buy>Empezar ya</a>
+    <a href="#precios" class="btn sm">Empezar ya</a>
   </div>
 </header>
 
@@ -26,7 +26,6 @@
     <div class="wrap">
       <div class="intro">
         <h1>Te ayudo a dejar de esperar a <em>sentirte preparada</em> para ocupar el lugar que ya te has ganado.</h1>
-        <p class="meta">Curso de Confianza · 10 días · 11 lecciones grabadas · 97 €</p>
         <p>Así es como dejé de esperar a sentirme preparada y empecé a actuar con miedo, un miedo que en cuestión de 10 días convertí en confianza.</p>
       </div>
       <!-- TODO client: the hero video thumbnail looks blurred on the live page. If it is not just Vimeo's loading state,
@@ -35,7 +34,7 @@
         <iframe src="https://player.vimeo.com/video/1211423165?title=0&amp;byline=0&amp;portrait=0&amp;dnt=1&amp;color=5d0018" title="Vídeo de Judith Calzada" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
       </div>
       <div class="cta">
-        <a href="#precios" class="btn light" data-buy>Quiero más confianza</a>
+        <a href="#precios" class="btn light">Quiero más confianza</a>
         <p class="proof">+500 profesionales acompañados · <span class="stars" aria-hidden="true">★★★★★</span> 4,8/5</p>
       </div>
     </div>
@@ -53,7 +52,7 @@
             <li>Necesitas que otros te confirmen que vas bien para fiarte de tu criterio.</li>
             <li>Vives agotada con la ansiedad, pero en el fondo sientes que, si lo arreglas, puedes volar.</li>
       </ul>
-      <div class="cta left"><a href="#precios" class="btn" data-buy>Quiero más confianza</a></div>
+      <div class="cta left"><a href="#precios" class="btn">Quiero más confianza</a></div>
     </div>
   </section>
 
@@ -63,7 +62,7 @@
       <div class="method-head">
                 <h2>Si te sientes así, no te preocupes: <em>yo me sentía igual.</em></h2>
         <div class="progress" aria-hidden="true"><b data-step>01</b><span>/ 06</span><span class="bar"><i></i></span></div>
-        <div class="cta left"><a href="#precios" class="btn" data-buy>Empezar ya</a></div>
+        <div class="cta left"><a href="#precios" class="btn">Empezar ya</a></div>
       </div>
       <ol class="unlock">
           <li>
@@ -203,7 +202,7 @@
           </div>
         </details>
       </div>
-      <div class="cta left"><a href="#precios" class="btn" data-buy>Empezar ya</a></div>
+      <div class="cta left"><a href="#precios" class="btn">Empezar ya</a></div>
     </div>
   </section>
 
@@ -287,7 +286,7 @@
         <div class="w">Ver a gente con la mitad de tu experiencia conseguir más que tú.</div><div class="g">Ocupar el lugar que ya te has ganado.</div>
         <div class="w">Cobrar menos de lo que vales porque nunca te atreves a pedirlo.</div><div class="g">Atreverte a pedir lo que mereces.</div>
         <div class="w">Mantener el papel de “la fuerte” aunque estés agotada.</div><div class="g">Liderar siendo tú, sin tener que fingir.</div>
-        <div class="w foot"><span class="btn ghost is-disabled" aria-disabled="true">Seguir 1 año más estando igual</span></div><div class="g foot"><a href="#precios" class="btn light" data-buy>Empezar mi cambio hoy</a></div>
+        <div class="w foot"><span class="btn ghost is-disabled" aria-disabled="true">Seguir 1 año más estando igual</span></div><div class="g foot"><a href="#precios" class="btn light">Empezar mi cambio hoy</a></div>
       </div>
       <p class="coda">Los dos caminos tienen un precio. Solo uno te lleva a donde quieres estar.</p>
     </div>
@@ -324,6 +323,39 @@
     </div>
   </section>
 
+  <!-- Final CTA: question and the two formats (each "Elegir" → its own Whop checkout URL in page.js) -->
+  <section class="final" id="precios">
+    <div class="wrap">
+      <h2>¿Vas a seguir esperando a <em>sentirte preparada?</em></h2>
+      <!-- TODO client: confirm what each format includes (downloadable material? live group session?) and the length/number of the weekly calls -->
+      <div class="tiers">
+        <div class="tier">
+          <h3>Curso de Confianza</h3>
+          <p class="price">74 €</p>
+          <ul>
+            <li class="yes"><span class="sr">Incluido: </span>10 días de vídeos · 11 lecciones grabadas</li>
+            <li class="yes"><span class="sr">Incluido: </span>Meditaciones guiadas</li>
+            <li class="no"><span class="sr">No incluido: </span>Acceso directo a Judith</li>
+            <li class="no"><span class="sr">No incluido: </span>Llamadas semanales con Judith</li>
+          </ul>
+          <a href="#precios" class="btn ghost" data-buy="curso">Elegir</a>
+        </div>
+        <div class="tier pick">
+          <h3>Con Judith</h3>
+          <p class="price">457 €</p>
+          <ul>
+            <li class="yes"><span class="sr">Incluido: </span>10 días de vídeos · 11 lecciones grabadas</li>
+            <li class="yes"><span class="sr">Incluido: </span>Meditaciones guiadas</li>
+            <li class="yes"><span class="sr">Incluido: </span>Acceso directo a Judith</li>
+            <li class="yes"><span class="sr">Incluido: </span>Llamadas semanales con Judith</li>
+          </ul>
+          <a href="#precios" class="btn" data-buy="con-judith">Elegir</a>
+        </div>
+      </div>
+      <!-- TODO client: diagnóstico gratuito. The line was removed until the quiz URL exists; restore it here linking to that URL. -->
+    </div>
+  </section>
+
   <!-- FAQ -->
   <section>
     <div class="wrap">
@@ -350,32 +382,14 @@
     </div>
   </section>
 
-  <!-- Final CTA: question and the single price (buy button → WHOP_CHECKOUT_URL) -->
-  <section class="final" id="precios">
-    <div class="wrap">
-      <h2>¿Vas a seguir esperando a <em>sentirte preparada?</em></h2>
-      <div class="offer-card">
-        <h3>Curso de Confianza</h3>
-        <p class="price">97 €</p>
-        <ul>
-          <li>10 días de vídeos + meditaciones</li>
-          <li>Material accionable descargable</li>
-          <li>Sesión grupal en directo con Judith</li>
-        </ul>
-        <a href="#precios" class="btn" data-buy>Empezar ya</a>
-      </div>
-      <!-- TODO client: diagnóstico gratuito. The line was removed until the quiz URL exists; restore it here linking to that URL. -->
-    </div>
-  </section>
-
 </main>
 
 <footer>
   <div class="wrap">© 2026 Judith Calzada</div>
 </footer>
 
-<script src="motion.js?v=20261102e" defer></script>
+<script src="motion.js?v=20261102f" defer></script>
 <script src="https://player.vimeo.com/api/player.js" defer></script>
-<script src="page.js?v=20261102e" defer></script>
+<script src="page.js?v=20261102f" defer></script>
 </body>
 </html>

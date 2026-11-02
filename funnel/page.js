@@ -1,9 +1,12 @@
-// TODO client: paste the Whop checkout URL here (https://whop.com/...). Every buy button on the page uses it.
-// While it is not a real https URL, buy buttons keep their fallback (scroll to the price block), so nothing links to a dead page.
-const WHOP_CHECKOUT_URL = 'TODO client';
-if (/^https:\/\//.test(WHOP_CHECKOUT_URL)) {
-  document.querySelectorAll('[data-buy]').forEach(a => { a.href = WHOP_CHECKOUT_URL; });
-}
+// TODO client: paste the Whop checkout URL of each format (https://whop.com/...).
+// Until a value is a real https URL, its "Elegir" button keeps the fallback (stays on the prices), so nothing links to a dead page.
+const WHOP_CHECKOUT_URL_CURSO = 'TODO client';      // 74 €
+const WHOP_CHECKOUT_URL_CON_JUDITH = 'TODO client'; // 457 €
+const WHOP_URLS = { 'curso': WHOP_CHECKOUT_URL_CURSO, 'con-judith': WHOP_CHECKOUT_URL_CON_JUDITH };
+document.querySelectorAll('[data-buy]').forEach(a => {
+  const url = WHOP_URLS[a.dataset.buy];
+  if (/^https:\/\//.test(url || '')) a.href = url;
+});
 
 // Sales page behaviour: method steps unlock as you scroll, and the Day 1 trailer's timed preview.
 
