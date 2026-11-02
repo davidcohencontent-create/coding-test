@@ -1,3 +1,10 @@
+// TODO client: paste the Whop checkout URL here (https://whop.com/...). Every buy button on the page uses it.
+// While it is not a real https URL, buy buttons keep their fallback (scroll to the price block), so nothing links to a dead page.
+const WHOP_CHECKOUT_URL = 'TODO client';
+if (/^https:\/\//.test(WHOP_CHECKOUT_URL)) {
+  document.querySelectorAll('[data-buy]').forEach(a => { a.href = WHOP_CHECKOUT_URL; });
+}
+
 // Sales page behaviour: method steps unlock as you scroll, and the Day 1 trailer's timed preview.
 
 // Method: each step lights up when it reaches the middle of the screen and stays unlocked.

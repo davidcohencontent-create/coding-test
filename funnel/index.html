@@ -8,14 +8,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap">
-<link rel="stylesheet" href="styles.css?v=20261102d">
+<link rel="stylesheet" href="styles.css?v=20261102e">
 </head>
 <body>
 
 <header>
   <div class="wrap">
     <a href="#top" class="name">Judith Calzada</a>
-    <a href="#precios" class="btn sm">Empezar ya</a>
+    <a href="#precios" class="btn sm" data-buy>Empezar ya</a>
   </div>
 </header>
 
@@ -26,13 +26,16 @@
     <div class="wrap">
       <div class="intro">
         <h1>Te ayudo a dejar de esperar a <em>sentirte preparada</em> para ocupar el lugar que ya te has ganado.</h1>
+        <p class="meta">Curso de Confianza · 10 días · 11 lecciones grabadas · 97 €</p>
         <p>Así es como dejé de esperar a sentirme preparada y empecé a actuar con miedo, un miedo que en cuestión de 10 días convertí en confianza.</p>
       </div>
+      <!-- TODO client: the hero video thumbnail looks blurred on the live page. If it is not just Vimeo's loading state,
+           set a sharp custom thumbnail in Vimeo (Settings → General → Thumbnail) or send a key frame to use as a poster. -->
       <div class="video">
         <iframe src="https://player.vimeo.com/video/1211423165?title=0&amp;byline=0&amp;portrait=0&amp;dnt=1&amp;color=5d0018" title="Vídeo de Judith Calzada" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
       </div>
       <div class="cta">
-        <a href="#precios" class="btn light">Quiero más confianza</a>
+        <a href="#precios" class="btn light" data-buy>Quiero más confianza</a>
         <p class="proof">+500 profesionales acompañados · <span class="stars" aria-hidden="true">★★★★★</span> 4,8/5</p>
       </div>
     </div>
@@ -47,10 +50,10 @@
             <li>Sientes que constantemente estás jugando un papel de saberlo todo, y eso te hace sentir agotada.</li>
             <li>Te imaginas los peores escenarios posibles en tu cabeza antes de entrar a cualquier interacción profesional.</li>
             <li>Cada emoción que tienes la interpretas como una prueba de que “no estás preparada”.</li>
-            <li>Validas tu forma de pensar con validación externa.</li>
+            <li>Necesitas que otros te confirmen que vas bien para fiarte de tu criterio.</li>
             <li>Vives agotada con la ansiedad, pero en el fondo sientes que, si lo arreglas, puedes volar.</li>
       </ul>
-      <div class="cta left"><a href="#precios" class="btn">Quiero más confianza</a></div>
+      <div class="cta left"><a href="#precios" class="btn" data-buy>Quiero más confianza</a></div>
     </div>
   </section>
 
@@ -60,7 +63,7 @@
       <div class="method-head">
                 <h2>Si te sientes así, no te preocupes: <em>yo me sentía igual.</em></h2>
         <div class="progress" aria-hidden="true"><b data-step>01</b><span>/ 06</span><span class="bar"><i></i></span></div>
-        <div class="cta left"><a href="#precios" class="btn">Empezar ya</a></div>
+        <div class="cta left"><a href="#precios" class="btn" data-buy>Empezar ya</a></div>
       </div>
       <ol class="unlock">
           <li>
@@ -107,7 +110,8 @@
   <section>
     <div class="wrap">
             <h2>Lo que trabajamos en <em>10 días</em></h2>
-      <p class="sub">11 lecciones grabadas + ejercicios prácticos. Para que vayas a tu ritmo y sin caducidad.</p>
+      <!-- TODO client: exact breakdown of the 11 lessons across the 10 days (e.g. which day has two, or an intro lesson) -->
+      <p class="sub">11 lecciones grabadas + ejercicios prácticos, repartidas en 10 días de trabajo. Para que vayas a tu ritmo y sin caducidad.</p>
       <div class="days">
         <details class="day" open>
           <summary><span class="d">Día 1</span><span class="t">La confianza es un hábito y así se entrena</span><span class="free">Tráiler gratis</span></summary>
@@ -134,10 +138,10 @@
           </div>
         </details>
         <details class="day">
-          <summary><span class="d">Día 3</span><span class="t">Apaga la voz que te hace imaginar escenarios negativos</span><span></span></summary>
+          <summary><span class="d">Día 3</span><span class="t">Dirige la película de tu mente</span><span></span></summary>
           <div class="body">
             <a class="locked-video" href="#precios" aria-label="Día 3: disponible al inscribirte"><img src="img/dia-bloqueado.jpg" alt="" loading="lazy"></a>
-            <p>Aprendemos a quitar esa pequeña voz que constantemente te hace imaginar escenarios negativos. Por fin vas a entender cómo apagarla, estar presente y dominar cualquier sala estando tranquila.</p>
+            <p>Aprende a cambiar las imágenes que proyectas antes de una situación importante, para entrar en ella con calma.</p>
             <p><span class="locked">Disponible al inscribirte</span></p>
           </div>
         </details>
@@ -150,7 +154,8 @@
           </div>
         </details>
         <details class="day">
-          <summary><span class="d">Día 5</span><span class="t">Deja de pedir permiso y empieza a actuar</span><span></span></summary>
+          <!-- TODO client: confirm the Día 5 title matches the recorded lesson -->
+          <summary><span class="d">Día 5</span><span class="t">Calma tu cuerpo en segundos: el hilo plateado</span><span></span></summary>
           <div class="body">
             <a class="locked-video" href="#precios" aria-label="Día 5: disponible al inscribirte"><img src="img/dia-bloqueado.jpg" alt="" loading="lazy"></a>
             <p>Deja de sentirte tensa, encogida e insegura. Aprende a utilizar la herramienta del hilo plateado para calmar tu cuerpo en cuestión de segundos.</p>
@@ -198,7 +203,21 @@
           </div>
         </details>
       </div>
-      <div class="cta left"><a href="#precios" class="btn">Empezar ya</a></div>
+      <div class="cta left"><a href="#precios" class="btn" data-buy>Empezar ya</a></div>
+    </div>
+  </section>
+
+  <!-- Tools -->
+  <section class="white">
+    <div class="wrap">
+      <h2>Las herramientas que <em>vas a entrenar</em></h2>
+      <ul class="tools">
+        <li><span class="tool">La película</span><span>Cambia las imágenes que proyectas antes de una situación importante.</span></li>
+        <li><span class="tool">De juez a entrenador</span><span>Pasa de una voz interna que te juzga a una que te entrena.</span></li>
+        <li><span class="tool">El hilo plateado</span><span>Calma tu cuerpo en segundos cuando notas la tensión.</span></li>
+        <li><span class="tool">El semáforo emocional</span><span>Lee tus emociones como información, no como órdenes.</span></li>
+        <li><span class="tool">Los dos círculos</span><span>Deja de buscar validación fuera y decide desde tu criterio.</span></li>
+      </ul>
     </div>
   </section>
 
@@ -268,7 +287,7 @@
         <div class="w">Ver a gente con la mitad de tu experiencia conseguir más que tú.</div><div class="g">Ocupar el lugar que ya te has ganado.</div>
         <div class="w">Cobrar menos de lo que vales porque nunca te atreves a pedirlo.</div><div class="g">Atreverte a pedir lo que mereces.</div>
         <div class="w">Mantener el papel de “la fuerte” aunque estés agotada.</div><div class="g">Liderar siendo tú, sin tener que fingir.</div>
-        <div class="w foot"><span class="btn ghost is-disabled" aria-disabled="true">Seguir 1 año más estando igual</span></div><div class="g foot"><a href="#precios" class="btn light">Empezar mi cambio hoy</a></div>
+        <div class="w foot"><span class="btn ghost is-disabled" aria-disabled="true">Seguir 1 año más estando igual</span></div><div class="g foot"><a href="#precios" class="btn light" data-buy>Empezar mi cambio hoy</a></div>
       </div>
       <p class="coda">Los dos caminos tienen un precio. Solo uno te lleva a donde quieres estar.</p>
     </div>
@@ -308,66 +327,44 @@
   <!-- FAQ -->
   <section>
     <div class="wrap">
-            <h2>Preguntas frecuentes</h2>
+      <h2>Preguntas frecuentes</h2>
       <div class="faq">
         <details>
           <summary>¿Esto funciona?</summary>
           <p>No te voy a prometer que tendrás confianza de un día para otro, porque eso no le pasa a nadie. Lo que sí te digo: si haces el trabajo cada día, vas a notar cambios en cómo actúas.</p>
         </details>
+        <!-- TODO client: daily time needed. Hidden until supplied; restore as:
         <details>
           <summary>¿Cuánto tiempo tengo que dedicarle al día?</summary>
-          <p class="todo">[X minutos al día: lección + ejercicio]</p>
-        </details>
+          <p>X minutos al día: lección + ejercicio.</p>
+        </details> -->
         <details>
           <summary>¿Es en directo o grabado?</summary>
           <p>Grabado: 11 lecciones grabadas + ejercicios prácticos, para que vayas a tu ritmo y sin caducidad.</p>
         </details>
         <details>
           <summary>¿Voy a tener más confianza en 10 días?</summary>
-          <p class="todo">[respuesta pendiente]</p>
+          <p>Notarás cambios en cómo actúas si haces el trabajo cada día. No se trata de dejar de sentir miedo, sino de que deje de decidir por ti.</p>
         </details>
       </div>
     </div>
   </section>
 
-  <!-- Final CTA: question, payment (plans), diagnóstico -->
+  <!-- Final CTA: question and the single price (buy button → WHOP_CHECKOUT_URL) -->
   <section class="final" id="precios">
     <div class="wrap">
       <h2>¿Vas a seguir esperando a <em>sentirte preparada?</em></h2>
-      <div class="plans">
-        <div class="plan">
-          <div class="top"><h3>Esencial</h3></div>
-          <p class="price">50 €</p>
-          <ul>
-            <li>10 días de vídeos + meditaciones</li>
-            <li class="off">Material accionable descargable</li>
-            <li class="off">Sesión grupal en directo con Judith</li>
-          </ul>
-          <a href="checkout.html?plan=esencial" class="btn ghost">Elegir</a>
-        </div>
-        <div class="plan pick">
-          <div class="top"><h3>Completo</h3><span class="tag">Más elegido</span></div>
-          <p class="price">97 €</p>
-          <ul>
-            <li>10 días de vídeos + meditaciones</li>
-            <li>Material accionable descargable</li>
-            <li class="off">Sesión grupal en directo con Judith</li>
-          </ul>
-          <a href="checkout.html?plan=completo" class="btn">Elegir</a>
-        </div>
-        <div class="plan">
-          <div class="top"><h3>Con Judith</h3></div>
-          <p class="price">225 €</p>
-          <ul>
-            <li>10 días de vídeos + meditaciones</li>
-            <li>Material accionable descargable</li>
-            <li>Sesión grupal en directo con Judith</li>
-          </ul>
-          <a href="checkout.html?plan=con-judith" class="btn ghost">Elegir</a>
-        </div>
+      <div class="offer-card">
+        <h3>Curso de Confianza</h3>
+        <p class="price">97 €</p>
+        <ul>
+          <li>10 días de vídeos + meditaciones</li>
+          <li>Material accionable descargable</li>
+          <li>Sesión grupal en directo con Judith</li>
+        </ul>
+        <a href="#precios" class="btn" data-buy>Empezar ya</a>
       </div>
-      <!-- Diagnóstico: link to the questionnaire once it exists -->
-      <p class="diag">¿No estás segura de si esto es para ti? Resuelve tus dudas mediante mi <a href="#" data-diagnostico>diagnóstico gratuito</a>: tardas 2 minutos y tendrás el resultado por email.</p>
+      <!-- TODO client: diagnóstico gratuito. The line was removed until the quiz URL exists; restore it here linking to that URL. -->
     </div>
   </section>
 
@@ -377,8 +374,8 @@
   <div class="wrap">© 2026 Judith Calzada</div>
 </footer>
 
-<script src="motion.js?v=20261102d" defer></script>
+<script src="motion.js?v=20261102e" defer></script>
 <script src="https://player.vimeo.com/api/player.js" defer></script>
-<script src="page.js?v=20261102d" defer></script>
+<script src="page.js?v=20261102e" defer></script>
 </body>
 </html>
