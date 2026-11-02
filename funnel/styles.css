@@ -119,7 +119,7 @@ img.avatar{background:#fff;padding:9px;object-fit:contain}
 .logo-row{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:40px 72px}
 .logo-row.run{flex-wrap:nowrap;justify-content:flex-start;width:max-content;animation:marquee 36s linear infinite}
 .logos:hover .logo-row{animation-play-state:paused}
-.logo-row img{flex:none;width:140px;height:44px;object-fit:contain;filter:grayscale(1) brightness(1.12) contrast(1.35);opacity:.5;mix-blend-mode:multiply}
+.logo-row img{flex:none;width:140px;height:44px;object-fit:contain;filter:grayscale(1) brightness(.92) contrast(14);opacity:.34;mix-blend-mode:multiply}
 .logo-row img.crop{object-fit:cover}
 .logo-row img.heavy{width:112px}
 @keyframes marquee{to{transform:translateX(-50%)}}
