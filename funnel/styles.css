@@ -90,7 +90,6 @@ h2.center{margin:0 auto;text-align:center}
 .checks li{position:relative;padding:24px 0 24px 46px;border-bottom:1px solid var(--line);font-size:21px;line-height:1.5}
 .checks li::before{content:"";position:absolute;left:4px;top:33px;width:16px;height:9px;border-left:2px solid var(--accent);border-bottom:2px solid var(--accent);transform:rotate(-45deg)}
 
-.hero-cta{margin:40px 0 56px}
 section.grey{background:#e4e1dd}
 .sub.center{margin:14px auto 0;text-align:center;color:var(--accent);font-size:16px;letter-spacing:.04em}
 
@@ -113,19 +112,30 @@ section.grey{background:#e4e1dd}
 .dots{display:flex;justify-content:center;gap:10px;margin-top:36px}
 .dots button{width:8px;height:8px;padding:0;border:0;border-radius:50%;background:rgba(29,27,38,.22);cursor:pointer;transition:background .2s,transform .2s}
 .dots button.on{background:var(--accent);transform:scale(1.25)}
+img.avatar{background:#fff;padding:9px;object-fit:contain}
+
+/* Logo strip under the reviews: pale, no text, slow loop */
+.logos{margin-top:64px;overflow:hidden;-webkit-mask:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+.logo-row{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:40px 72px}
+.logo-row.run{flex-wrap:nowrap;justify-content:flex-start;width:max-content;animation:marquee 36s linear infinite}
+.logos:hover .logo-row{animation-play-state:paused}
+.logo-row img{height:34px;width:auto;max-width:150px;object-fit:contain;filter:grayscale(1);opacity:.42;mix-blend-mode:multiply}
+@keyframes marquee{to{transform:translateX(-50%)}}
 
 /* Two paths: comparison table, pairs side by side */
 .compare{display:grid;grid-template-columns:1fr 1fr;margin-top:56px;border-radius:2px;overflow:hidden;box-shadow:0 24px 50px -34px rgba(24,23,42,.5)}
-.compare>div{padding:18px 32px;display:flex;align-items:center}
+.compare>div{padding:18px 32px;display:flex;align-items:center;font-size:17px;line-height:1.5}
 .compare .w{background:var(--white);color:var(--muted);border-top:1px solid var(--line)}
 .compare .g{background:var(--navy);color:#fff;border-top:1px solid rgba(255,255,255,.12)}
-.compare .head{font-family:var(--serif);font-style:italic;font-size:23px;line-height:1.25;padding:26px 32px;border-top:0}
+.compare .head{font-weight:600;padding:22px 32px;border-top:0}
 .compare .w.head{color:var(--ink)}
 .compare .g.head{color:var(--blush-on-dark)}
 .compare .foot{padding:28px 32px}
 .compare .foot .btn{width:100%}
 .compare .w.foot .btn{color:var(--muted);border-color:var(--line)}
-.compare .w.foot .btn:hover{background:var(--bg);color:var(--ink)}
+.compare .btn.is-disabled{cursor:not-allowed;opacity:.55;transform:none;background:transparent}
+.compare .btn.is-disabled::after{display:none}
+.compare .btn.is-disabled:hover{background:transparent;color:var(--muted)}
 
 /* Plans inside the final CTA */
 .final .plans{margin-top:8px;text-align:left;color:var(--ink)}
@@ -153,6 +163,7 @@ section.grey{background:#e4e1dd}
 .unlock li:first-child{border-top:0;padding-top:0}
 .unlock .n{font-family:var(--serif);font-style:italic;font-size:64px;line-height:1;color:var(--accent);margin-bottom:20px}
 .unlock h3{font-size:32px;text-transform:uppercase;letter-spacing:.01em;margin-bottom:16px}
+.step-img{display:block;width:100%;max-width:460px;aspect-ratio:4/3;object-fit:cover;object-position:50% 30%;border-radius:2px;margin-top:24px}
 .unlock .was{font-size:19px;color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(93,0,24,.45);margin-bottom:12px}
 .method-head .cta{margin-top:40px}
 .unlock p{font-size:19px;color:var(--muted);max-width:480px}
@@ -188,6 +199,10 @@ section.grey{background:#e4e1dd}
 .day .body p+p{margin-top:8px}
 .locked{display:inline-flex;align-items:center;gap:8px;font-size:15px;color:var(--muted)}
 .locked::before{content:"";width:12px;height:12px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 10V7a5 5 0 0 1 10 0v3h1a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V11a1 1 0 0 1 1-1zm2 0h6V7a3 3 0 0 0-6 0z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 10V7a5 5 0 0 1 10 0v3h1a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V11a1 1 0 0 1 1-1zm2 0h6V7a3 3 0 0 0-6 0z'/%3E%3C/svg%3E") center/contain no-repeat}
+/* Locked days: thumbnail that leads to the plans */
+.locked-video{display:block;max-width:560px;aspect-ratio:16/9;overflow:hidden;border-radius:2px;margin-bottom:16px}
+.locked-video img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .5s var(--ease)}
+.locked-video:hover img{transform:scale(1.02)}
 /* Day 1 trailer: plays for the preview length, then the paywall covers it */
 .trailer{position:relative;aspect-ratio:16/9;max-width:720px;margin-bottom:20px;background:var(--navy);border-radius:2px;overflow:hidden}
 .trailer .ph,.trailer video{position:absolute;inset:0;width:100%;height:100%;border-radius:0}
@@ -286,7 +301,10 @@ footer{padding:32px 0 48px;color:rgba(255,255,255,.55);font-size:13px;background
   .avatar{width:52px;height:52px}
   .who{gap:12px}
   .compare>div{padding:14px;font-size:14px;line-height:1.45}
-  .compare .head{font-size:17px;padding:18px 14px}
+  .compare .head{padding:16px 14px}
+  .logo-row img{height:26px;max-width:110px}
+  .logo-row{gap:28px 44px}
+  .step-img{max-width:none}
   .compare .foot{padding:16px 12px}
   .compare .foot .btn{padding:14px 8px;font-size:10px;letter-spacing:.08em;gap:6px}
   .sub{font-size:18px}

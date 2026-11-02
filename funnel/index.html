@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap">
-<link rel="stylesheet" href="styles.css?v=20261029c">
+<link rel="stylesheet" href="styles.css?v=20261102a">
 </head>
 <body>
 
@@ -21,19 +21,19 @@
 
 <main id="top">
 
-  <!-- Hero: heading, subheading, CTA, then the video -->
+  <!-- Hero: heading, subheading, video, then the CTA -->
   <section class="hero">
     <div class="wrap">
       <div class="intro">
         <h1>Te ayudo a dejar de esperar a <em>sentirte preparada</em> para ocupar el lugar que ya te has ganado.</h1>
         <p>Así es como dejé de esperar a sentirme preparada y empecé a actuar con miedo, un miedo que en cuestión de 10 días convertí en confianza.</p>
       </div>
-      <div class="cta hero-cta">
-        <a href="#precios" class="btn light">Quiero más confianza</a>
-        <p class="proof">+500 profesionales acompañados · <span class="stars" aria-hidden="true">★★★★★</span> 4,8/5</p>
-      </div>
       <div class="video">
         <iframe src="https://player.vimeo.com/video/1211423165?title=0&amp;byline=0&amp;portrait=0&amp;dnt=1&amp;color=5d0018" title="Vídeo de Judith Calzada" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+      </div>
+      <div class="cta">
+        <a href="#precios" class="btn light">Quiero más confianza</a>
+        <p class="proof">+500 profesionales acompañados · <span class="stars" aria-hidden="true">★★★★★</span> 4,8/5</p>
       </div>
     </div>
   </section>
@@ -67,31 +67,37 @@
             <p class="n">01</p>
             <p class="was">No servía para la universidad.</p>
             <h3>Hoy soy profesora en ESADE.</h3>
+            <img class="step-img" src="img/paso-1.jpg" alt="Judith con su equipo de ESADE" loading="lazy">
           </li>
           <li>
             <p class="n">02</p>
             <p class="was">Mi inglés no era bueno.</p>
             <h3>Tengo un máster en inglés y he dado ponencias en inglés.</h3>
+            <img class="step-img" src="img/paso-2.jpg" alt="Judith dando una ponencia" loading="lazy">
           </li>
           <li>
             <p class="n">03</p>
             <p class="was">Entré en Revlon cubriendo una baja de maternidad.</p>
             <h3>Hoy soy la directora general.</h3>
+            <img class="step-img" src="img/paso-3.jpg" alt="Judith, directora general" loading="lazy">
           </li>
           <li>
             <p class="n">04</p>
             <p class="was">Interpretaba a “la fuerte”, la que lo sabe todo.</p>
             <h3>Hoy lidero siendo yo.</h3>
+            <img class="step-img" src="img/paso-4.jpg" alt="Judith con su equipo" loading="lazy">
           </li>
           <li>
             <p class="n">05</p>
             <p class="was">Me temblaban las manos delante de 300 personas.</p>
             <h3>Hoy doy conferencias y he dado una charla TED.</h3>
+            <img class="step-img" src="img/paso-5.jpg" alt="Judith en su charla TEDx" loading="lazy">
           </li>
           <li>
             <p class="n">06</p>
             <p class="was">Mi confianza dependía de que alguien me felicitara.</p>
             <h3>Hoy depende de mí.</h3>
+            <img class="step-img" src="img/paso-6.jpg" alt="Judith en una entrevista" loading="lazy">
           </li>
       </ol>
     </div>
@@ -108,7 +114,7 @@
           <div class="body">
             <!-- Trailer: a Vimeo embed (or a <video>). The preview stops after data-preview seconds and shows the paywall. -->
             <div class="trailer" data-preview="60">
-              <iframe src="https://player.vimeo.com/video/1211423165?title=0&amp;byline=0&amp;portrait=0&amp;dnt=1&amp;color=5d0018" title="Tráiler del Día 1" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+              <iframe src="https://player.vimeo.com/video/1242310240?title=0&amp;byline=0&amp;portrait=0&amp;dnt=1&amp;color=5d0018" title="Tráiler del Día 1" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
               <span class="timer">Vista previa · 1:00</span>
               <div class="paywall" hidden>
                 <h3>¿Quieres ver el resto?</h3>
@@ -122,6 +128,7 @@
         <details class="day">
           <summary><span class="d">Día 2</span><span class="t">Deja de interpretar un personaje</span><span></span></summary>
           <div class="body">
+            <a class="locked-video" href="#precios" aria-label="Día 2: disponible al inscribirte"><img src="img/dia-bloqueado.jpg" alt="" loading="lazy"></a>
             <p>En el trabajo eres “la fuerte”, la que nunca duda, pero en el fondo sabes que mantener ese papel te agota. Necesitas aprender a actuar siendo la versión más auténtica de ti, y aquí te explico cómo hacerlo.</p>
             <p><span class="locked">Disponible al inscribirte</span></p>
           </div>
@@ -129,6 +136,7 @@
         <details class="day">
           <summary><span class="d">Día 3</span><span class="t">Apaga la voz que te hace imaginar escenarios negativos</span><span></span></summary>
           <div class="body">
+            <a class="locked-video" href="#precios" aria-label="Día 3: disponible al inscribirte"><img src="img/dia-bloqueado.jpg" alt="" loading="lazy"></a>
             <p>Aprendemos a quitar esa pequeña voz que constantemente te hace imaginar escenarios negativos. Por fin vas a entender cómo apagarla, estar presente y dominar cualquier sala estando tranquila.</p>
             <p><span class="locked">Disponible al inscribirte</span></p>
           </div>
@@ -136,6 +144,7 @@
         <details class="day">
           <summary><span class="d">Día 4</span><span class="t">Pasa de juzgarte a ti misma a entrenarte para sentirte mejor</span><span></span></summary>
           <div class="body">
+            <a class="locked-video" href="#precios" aria-label="Día 4: disponible al inscribirte"><img src="img/dia-bloqueado.jpg" alt="" loading="lazy"></a>
             <p>Esa misma voz interior siempre actúa como un juez que te dice que no eres suficiente, que lo haces todo mal. Aquí aprendes por qué tienes que dejar de juzgarte para sentirte mejor.</p>
             <p><span class="locked">Disponible al inscribirte</span></p>
           </div>
@@ -143,6 +152,7 @@
         <details class="day">
           <summary><span class="d">Día 5</span><span class="t">Deja de pedir permiso y empieza a actuar</span><span></span></summary>
           <div class="body">
+            <a class="locked-video" href="#precios" aria-label="Día 5: disponible al inscribirte"><img src="img/dia-bloqueado.jpg" alt="" loading="lazy"></a>
             <p>Deja de sentirte tensa, encogida e insegura. Aprende a utilizar la herramienta del hilo plateado para calmar tu cuerpo en cuestión de segundos.</p>
             <p><span class="locked">Disponible al inscribirte</span></p>
           </div>
@@ -150,6 +160,7 @@
         <details class="day">
           <summary><span class="d">Día 6</span><span class="t">Aprende a gestionar tus emociones para que no te saboteen</span><span></span></summary>
           <div class="body">
+            <a class="locked-video" href="#precios" aria-label="Día 6: disponible al inscribirte"><img src="img/dia-bloqueado.jpg" alt="" loading="lazy"></a>
             <p>Aprende a observar tus emociones como un feed de reels y a quedarte con las que te gustan y te hacen sentir mejor.</p>
             <p><span class="locked">Disponible al inscribirte</span></p>
           </div>
@@ -157,6 +168,7 @@
         <details class="day">
           <summary><span class="d">Día 7</span><span class="t">Cómo dejar de buscar la validación externa y construirla desde dentro</span><span></span></summary>
           <div class="body">
+            <a class="locked-video" href="#precios" aria-label="Día 7: disponible al inscribirte"><img src="img/dia-bloqueado.jpg" alt="" loading="lazy"></a>
             <p>Nunca vas a encontrar tu validación en los demás. Tienes que construir tu confianza desde dentro para sentirte mejor, segura y confiada en ti misma.</p>
             <p><span class="locked">Disponible al inscribirte</span></p>
           </div>
@@ -164,6 +176,7 @@
         <details class="day">
           <summary><span class="d">Día 8</span><span class="t">Entiende cómo tus creencias condicionan tu realidad</span><span></span></summary>
           <div class="body">
+            <a class="locked-video" href="#precios" aria-label="Día 8: disponible al inscribirte"><img src="img/dia-bloqueado.jpg" alt="" loading="lazy"></a>
             <p>Tus pensamientos controlan tu realidad y crean el mundo en el que vives. Aprende a gestionarlos para conseguir lo que quieres.</p>
             <p><span class="locked">Disponible al inscribirte</span></p>
           </div>
@@ -171,6 +184,7 @@
         <details class="day">
           <summary><span class="d">Día 9</span><span class="t">Cómo construir la confianza actuando</span><span></span></summary>
           <div class="body">
+            <a class="locked-video" href="#precios" aria-label="Día 9: disponible al inscribirte"><img src="img/dia-bloqueado.jpg" alt="" loading="lazy"></a>
             <p>La acción es lo que te va a acercar a resultados tangibles. Aquí aprenderás a actuar independientemente de las emociones que sientes o de los pensamientos que pasan por tu cabeza.</p>
             <p><span class="locked">Disponible al inscribirte</span></p>
           </div>
@@ -178,6 +192,7 @@
         <details class="day">
           <summary><span class="d">Día 10</span><span class="t">Confía en ti, deja de esperar el momento perfecto</span><span></span></summary>
           <div class="body">
+            <a class="locked-video" href="#precios" aria-label="Día 10: disponible al inscribirte"><img src="img/dia-bloqueado.jpg" alt="" loading="lazy"></a>
             <p>Aprendes a lanzarte a probar cosas sin esperar el momento perfecto, para atraer el futuro que quieres.</p>
             <p><span class="locked">Disponible al inscribirte</span></p>
           </div>
@@ -188,7 +203,7 @@
   </section>
 
   <!-- Reviews: one testimonial at a time; arrows and dots in page.js, swipe on touch -->
-  <!-- Reviewer photos: replace each <div class="avatar" ...> with <img class="avatar" src="img/..." alt="..."> (square photo works best) -->
+  <!-- Reviewer images are company logos; any that fails to load falls back to the grey placeholder (page.js) -->
   <section class="grey">
     <div class="wrap">
       <h2 class="center">Lo que dicen <em>mis clientes</em></h2>
@@ -198,28 +213,28 @@
         <div class="track" tabindex="0">
           <figure class="slide">
             <div class="who">
-              <div class="avatar" role="img" aria-label="Foto de Mediolanum"></div>
+              <img class="avatar" src="img/logo-mediolanum-sq.png" alt="Mediolanum" loading="lazy" data-fallback>
               <figcaption>Mediolanum | Programa de Liderazgo</figcaption>
             </div>
             <blockquote>“Trabajar con Judith ha supuesto un punto de inflexión en mi forma de liderar. No solo me ha ayudado a desarrollar herramientas para gestionar mejor a mi equipo, sino también a comunicar con más claridad, tomar decisiones con mayor seguridad y confiar más en mi criterio. Su capacidad para hacer las preguntas adecuadas y ofrecer una visión estratégica hace que cada sesión aporte un valor enorme.”</blockquote>
           </figure>
           <figure class="slide">
             <div class="who">
-              <div class="avatar" role="img" aria-label="Foto de Profesional de Bodegas Torres"></div>
+              <img class="avatar" src="https://todowine.com/wp-content/uploads/2022/02/Familia-torres-logo.jpg" alt="Bodegas Torres" loading="lazy" data-fallback>
               <figcaption>Profesional de Bodegas Torres</figcaption>
             </div>
             <blockquote>“Llegué a las sesiones con la sensación de estar estancado profesionalmente y con muchas dudas sobre cuál debía ser mi siguiente paso. Judith me ayudó a conectar con mi propósito, identificar qué era realmente importante para mí y definir un plan claro para llegar donde quería estar. Hoy tengo mucha más claridad, confianza y una hoja de ruta que me motiva a seguir avanzando.”</blockquote>
           </figure>
           <figure class="slide">
             <div class="who">
-              <div class="avatar" role="img" aria-label="Foto de Directiva Digital"></div>
+              <img class="avatar" src="https://static.inditex.com/assets/public/4f74/4f61/0ee5435bacfa/4adf4c7979d9/inditex/inditex.jpg?ts=1772041970262" alt="Inditex" loading="lazy" data-fallback>
               <figcaption>Directiva Digital | Inditex</figcaption>
             </div>
             <blockquote>“Judith me ha dado una visión mucho más clara de mi futuro y, gracias a ello, he tomado las decisiones que llevaba tiempo posponiendo para empezar a pasar a la acción. Estoy muy contenta con todo el proceso, pero lo que más me ha sorprendido ha sido el cambio en mi confianza. En muy pocas sesiones he notado una transformación radical en la forma en la que me enfrento a los retos y tomo decisiones. Ha sido un antes y un después.”</blockquote>
           </figure>
           <figure class="slide">
             <div class="who">
-              <div class="avatar" role="img" aria-label="Foto de Equipo de liderazgo"></div>
+              <img class="avatar" src="https://play-lh.googleusercontent.com/3k1zgd-IWbkhELHuTwPdCQT2iH2T-ajj74XSwINeVytRhSHD4fj4WC1cf3R1jPzsk2E" alt="Equifax" loading="lazy" data-fallback>
               <figcaption>Equipo de liderazgo | Equifax</figcaption>
             </div>
             <blockquote>“La preparación con Judith fue clave para reforzar las habilidades de liderazgo de nuestro equipo. Su enfoque práctico y estratégico nos dio herramientas aplicables desde el primer día para liderar con más confianza, claridad e impacto.”</blockquote>
@@ -228,6 +243,16 @@
         <button class="arrow next" type="button" aria-label="Siguiente"></button>
       </div>
       <div class="dots" aria-hidden="true"></div>
+      <!-- Logo strip: scrolls slowly; page.js duplicates the row for a seamless loop -->
+      <div class="logos" aria-label="Empresas con las que he trabajado">
+        <div class="logo-row">
+          <img src="img/logo-mediolanum.png" alt="Banco Mediolanum" loading="lazy" data-fallback>
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmtJHMfExBdV6-79NojMStbe1Uw5UtMfiI5g-xSN_ZWisca_TSrJSdLQI&amp;s=10" alt="Bodegas Torres" loading="lazy" data-fallback>
+          <img src="https://static.inditex.com/assets/public/4f74/4f61/0ee5435bacfa/4adf4c7979d9/inditex/inditex.jpg?ts=1772041970262" alt="Inditex" loading="lazy" data-fallback>
+          <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/24/Equifax.svg/3840px-Equifax.svg.png" alt="Equifax" loading="lazy" data-fallback>
+          <img src="https://images.seeklogo.com/logo-png/31/1/porsche-logo-png_seeklogo-314112.png" alt="Porsche" loading="lazy" data-fallback>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -242,7 +267,7 @@
         <div class="w">Ver a gente con la mitad de tu experiencia conseguir más que tú.</div><div class="g">Ocupar el lugar que ya te has ganado.</div>
         <div class="w">Cobrar menos de lo que vales porque nunca te atreves a pedirlo.</div><div class="g">Atreverte a pedir lo que mereces.</div>
         <div class="w">Mantener el papel de “la fuerte” aunque estés agotada.</div><div class="g">Liderar siendo tú, sin tener que fingir.</div>
-        <div class="w foot"><a href="seguir-igual.html" class="btn ghost">Seguir 1 año más estando igual</a></div><div class="g foot"><a href="#precios" class="btn light">Empezar mi cambio hoy</a></div>
+        <div class="w foot"><span class="btn ghost is-disabled" aria-disabled="true">Seguir 1 año más estando igual</span></div><div class="g foot"><a href="#precios" class="btn light">Empezar mi cambio hoy</a></div>
       </div>
       <p class="coda">Los dos caminos tienen un precio. Solo uno te lleva a donde quieres estar.</p>
     </div>
@@ -351,8 +376,8 @@
   <div class="wrap">© 2026 Judith Calzada</div>
 </footer>
 
-<script src="motion.js?v=20261029c" defer></script>
+<script src="motion.js?v=20261102a" defer></script>
 <script src="https://player.vimeo.com/api/player.js" defer></script>
-<script src="page.js?v=20261029c" defer></script>
+<script src="page.js?v=20261102a" defer></script>
 </body>
 </html>

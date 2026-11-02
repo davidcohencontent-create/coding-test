@@ -91,3 +91,23 @@
   track.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
   update();
 })();
+
+// Logo strip: duplicate the row so the loop is seamless (skipped for reduced motion: logos stay still, centred)
+(() => {
+  const row = document.querySelector('.logo-row');
+  if (!row || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  [...row.children].forEach(img => { const c = img.cloneNode(); c.alt = ''; row.appendChild(c); });
+  row.classList.add('run');
+})();
+
+// External images (logos) that fail to load: reviewer logos fall back to the grey placeholder, strip logos are removed
+document.querySelectorAll('img[data-fallback]').forEach(img => {
+  const fail = () => {
+    if (img.classList.contains('avatar')) {
+      const d = document.createElement('div');
+      d.className = 'avatar'; d.setAttribute('role', 'img'); d.setAttribute('aria-label', img.alt);
+      img.replaceWith(d);
+    } else img.remove();
+  };
+  if (img.complete && img.naturalWidth === 0) fail(); else img.addEventListener('error', fail);
+});
