@@ -114,6 +114,15 @@ def ghl_links(s):
     for slug in LEGAL: s = s.replace(f"'{slug}.html'", f"'/{slug}'").replace(f'"{slug}.html"', f'"/{slug}"')
     return s.replace('href="index.html"', 'href="/"')
 footer = ghl_links(footer)
+# The footer points at the legal pages as published in GHL. Once the domain is live these can go back to
+# '/aviso-legal', '/privacidad' and '/cookies' (just delete this block).
+GHL_LEGAL_URLS = {
+    'aviso-legal': 'https://sites.leadconnectorhq.com/preview/6lP5PHsxGXzSwwL30aFo',
+    'privacidad': 'https://sites.leadconnectorhq.com/preview/ZfjXAtHTgjp0tmcPc56W',
+    'cookies': 'https://sites.leadconnectorhq.com/preview/tI6Yp7prPVe6shtS6gGP',
+}
+for slug, url in GHL_LEGAL_URLS.items():
+    assert f"'/{slug}'" in footer; footer = footer.replace(f"'/{slug}'", f"'{url}'")
 
 # Split main into its top-level <section>s; the comment lines right above a section belong to it
 lines = main.split('\n'); starts = []
