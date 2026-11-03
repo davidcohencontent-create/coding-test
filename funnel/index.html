@@ -111,7 +111,7 @@
           <div class="body">
             <!-- Trailer: a Vimeo embed (or a <video>). The preview stops after data-preview seconds and shows the paywall. -->
             <div class="trailer" data-preview="200">
-              <iframe src="https://player.vimeo.com/video/1242310240?h=f1e7c23715&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="La confianza es un hábito y así se entrena"></iframe>
+              <iframe src="https://player.vimeo.com/video/1242310240?h=f1e7c23715&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;dnt=1" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="La confianza es un hábito y así se entrena"></iframe>
               <span class="timer">Vista previa · 3:20</span>
               <div class="paywall" hidden>
                 <h3>¿Quieres ver el resto?</h3>
@@ -418,9 +418,9 @@
   };
   // Judith's details as titular of the site, shown in the legal pages. TODO client: fill in; an empty field is not shown.
   var TITULAR = {
-    nombre: 'Judith Calzada Duaigues',  // full legal name, as on her NIF
-    nif: '',                            // e.g. 12345678A
-    domicilio: '',                      // street, number, postcode, city
+    nombre: 'Judith Calzada Duaigües',  // full legal name, as on her NIF
+    nif: '47902314F',
+    domicilio: 'Via Augusta 201, Barcelona',  // TODO client: add floor/door and postcode
     email: ''                           // email for customers and data-protection requests
   };
   document.querySelectorAll('.site-footer [data-link]').forEach(function (a) {
