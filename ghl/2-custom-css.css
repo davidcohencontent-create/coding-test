@@ -158,6 +158,26 @@ html{scroll-behavior:smooth}
 .jc .tier li.no::after{transform:rotate(-45deg)}
 .jc .tier .btn{width:100%}
 
+/* Pago step (GHL): course summary + embedded Whop checkout */
+.jc .pay{padding:88px 0}
+.jc .pay-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:64px;align-items:start}
+.jc .pay-summary h1{font-size:clamp(34px,4vw,52px)}
+.jc .pay-summary .price{margin:22px 0 26px}
+.jc .pay-list{list-style:none;margin:0 0 24px;padding:0;border-top:1px solid var(--line)}
+.jc .pay-list li{position:relative;padding:12px 0 12px 30px;border-bottom:1px solid var(--line);font-size:16px}
+.jc .pay-list li::before{content:"";position:absolute;left:3px;top:20px;width:12px;height:7px;border-left:1.5px solid var(--accent);border-bottom:1.5px solid var(--accent);transform:rotate(-45deg)}
+.jc .pay-note{font-size:14px;color:var(--muted)}
+.jc .pay-box{background:var(--white);border-radius:2px;padding:20px;min-height:460px;box-shadow:0 30px 60px -32px rgba(24,23,42,.35)}
+.jc .pay-missing{padding:28px;font-size:15px;color:var(--muted);border:1px dashed var(--line)}
+/* Gracias step (GHL) */
+.jc .thanks{text-align:center}
+.jc .thanks .intro{margin-bottom:48px}
+.jc .thanks-list{list-style:none;counter-reset:n;max-width:720px;margin:0 auto;padding:0;text-align:left;border-top:1px solid var(--line)}
+.jc .thanks-list li{counter-increment:n;display:grid;grid-template-columns:56px 1fr;padding:24px 0;border-bottom:1px solid var(--line)}
+.jc .thanks-list li::before{content:counter(n,decimal-leading-zero);font-family:var(--serif);font-style:italic;color:var(--accent);font-size:24px;line-height:1.1}
+.jc .thanks-list h3{margin-bottom:4px}
+.jc .thanks-list p{color:var(--muted)}
+
 /* Plans inside the final CTA */
 .jc .final .plans{margin-top:8px;text-align:left;color:var(--ink)}
 .jc .final .plan.pick{border-color:#fff;box-shadow:0 30px 60px -24px rgba(0,0,0,.55)}
@@ -318,6 +338,9 @@ html{scroll-behavior:smooth}
   .jc .tools li{grid-template-columns:1fr;gap:4px;padding:18px 0}
   .jc .tools .tool{font-size:21px}
   .jc .tiers{grid-template-columns:1fr}
+  .jc .pay{padding:56px 0}
+  .jc .pay-grid{grid-template-columns:1fr;gap:36px}
+  .jc .pay-box{padding:12px}
   .jc .tier{padding:28px}
   .jc .slider{grid-template-columns:1fr}
   .jc .slider .arrow{display:none}

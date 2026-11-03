@@ -1,0 +1,41 @@
+<div class="jc">
+<section class="pay">
+  <div class="wrap pay-grid">
+    <div class="pay-summary">
+      <h1>Curso de <em>Confianza</em></h1>
+      <p class="price">74 €</p>
+      <ul class="pay-list">
+        <li>10 días de vídeos · 11 lecciones grabadas</li>
+        <li>Meditaciones guiadas</li>
+        <li>A tu ritmo y sin caducidad</li>
+      </ul>
+      <p class="pay-note">Pago seguro procesado por Whop.</p>
+    </div>
+    <div class="pay-box">
+      <div id="whop-checkout" data-whop-checkout-theme="light"></div>
+    </div>
+  </div>
+</section>
+</div>
+<script>
+(function () {
+  // Whop plan ID of the 74 € plan (Whop → Checkout links → ⋯ → Details)
+  var WHOP_PLAN_ID = 'plan_IJNoDfl4ZUsMy';
+  // After paying, Whop sends the buyer to this funnel's Gracias step (path /gracias)
+  var GRACIAS_URL = location.origin + '/gracias';
+
+  if (window.__jcWhopLoaded) return;
+  var box = document.getElementById('whop-checkout');
+  if (!box) return;
+  if (!/^plan_\w+$/.test(WHOP_PLAN_ID)) {
+    box.outerHTML = '<p class="pay-missing">Falta el ID del plan de Whop: pégalo en el código de esta sección (WHOP_PLAN_ID).</p>';
+    return;
+  }
+  window.__jcWhopLoaded = true;
+  box.setAttribute('data-whop-checkout-plan-id', WHOP_PLAN_ID);
+  box.setAttribute('data-whop-checkout-return-url', GRACIAS_URL);
+  var s = document.createElement('script');
+  s.src = 'https://js.whop.com/static/checkout/loader.js'; s.async = true; s.defer = true;
+  document.head.appendChild(s);
+})();
+</script>

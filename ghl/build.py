@@ -78,6 +78,10 @@ scoped += '''
 
 # ---------- Footer code: Vimeo API + all page behaviour, started once GHL has rendered the sections ----------
 js = (SRC / 'motion.js').read_text() + '\n' + (SRC / 'page.js').read_text()
+# In GHL the 74 € "Elegir" goes to the funnel's Pago step (path /pago); the 457 € card stays as it is for now
+_cur = "const WHOP_CHECKOUT_URL_CURSO = 'TODO client';"
+assert _cur + '      // 74 €' in js
+js = js.replace(_cur + '      // 74 €', "const WHOP_CHECKOUT_URL_CURSO = '/pago';      // 74 € · GHL funnel step with the embedded Whop checkout")
 (OUT / '3-footer-code.html').write_text('''<!-- Curso de Confianza: paste into GHL page Settings → Tracking Code → Footer -->
 <script src="https://player.vimeo.com/api/player.js"></script>
 <script>
@@ -127,3 +131,80 @@ for n, (slug, b) in enumerate(zip(SLUGS, blocks), start=2): write(n, slug, b)
 n = len(SLUGS) + 2
 write(n, 'pie', footer)
 print('css', len(scoped), 'chars; sections:', *names, sep='\n  ')
+
+# ---------- Extra funnel steps: Pago (embedded Whop checkout, 74 €) and Gracias ----------
+simple_header = '''<div class="jc">
+<header>
+  <div class="wrap">
+    <span class="name">Judith Calzada</span>
+  </div>
+</header>
+</div>
+'''
+pago = '''<div class="jc">
+<section class="pay">
+  <div class="wrap pay-grid">
+    <div class="pay-summary">
+      <h1>Curso de <em>Confianza</em></h1>
+      <p class="price">74 €</p>
+      <ul class="pay-list">
+        <li>10 días de vídeos · 11 lecciones grabadas</li>
+        <li>Meditaciones guiadas</li>
+        <li>A tu ritmo y sin caducidad</li>
+      </ul>
+      <p class="pay-note">Pago seguro procesado por Whop.</p>
+    </div>
+    <div class="pay-box">
+      <div id="whop-checkout" data-whop-checkout-theme="light"></div>
+    </div>
+  </div>
+</section>
+</div>
+<script>
+(function () {
+  // Whop plan ID of the 74 € plan (Whop → Checkout links → ⋯ → Details)
+  var WHOP_PLAN_ID = 'plan_IJNoDfl4ZUsMy';
+  // After paying, Whop sends the buyer to this funnel's Gracias step (path /gracias)
+  var GRACIAS_URL = location.origin + '/gracias';
+
+  if (window.__jcWhopLoaded) return;
+  var box = document.getElementById('whop-checkout');
+  if (!box) return;
+  if (!/^plan_\\w+$/.test(WHOP_PLAN_ID)) {
+    box.outerHTML = '<p class="pay-missing">Falta el ID del plan de Whop: pégalo en el código de esta sección (WHOP_PLAN_ID).</p>';
+    return;
+  }
+  window.__jcWhopLoaded = true;
+  box.setAttribute('data-whop-checkout-plan-id', WHOP_PLAN_ID);
+  box.setAttribute('data-whop-checkout-return-url', GRACIAS_URL);
+  var s = document.createElement('script');
+  s.src = 'https://js.whop.com/static/checkout/loader.js'; s.async = true; s.defer = true;
+  document.head.appendChild(s);
+})();
+</script>
+'''
+gracias = '''<div class="jc">
+<section class="thanks">
+  <div class="wrap">
+    <div class="intro">
+      <h1>Ya estás <em>dentro.</em></h1>
+      <p>Gracias por tu confianza. Tu acceso al Curso de Confianza está en camino.</p>
+    </div>
+    <ol class="thanks-list">
+      <li><div><h3>Revisa tu email</h3><p>Whop te envía la confirmación del pago y el acceso al curso. Si no lo ves, mira en spam o promociones.</p></div></li>
+      <li><div><h3>Empieza por el Día 1</h3><p>La confianza es un hábito y así se entrena.</p></div></li>
+      <li><div><h3>Reserva un rato cada día</h3><p>Lección, ejercicio y meditación, a tu ritmo y sin caducidad.</p></div></li>
+    </ol>
+  </div>
+</section>
+</div>
+'''
+pie = (sec_dir / f'{len(SLUGS) + 2:02d}-pie.html').read_text()
+for step, middle in (('pago', pago), ('gracias', gracias)):
+    d = OUT / step; d.mkdir(exist_ok=True)
+    for f in d.glob('*.html'): f.unlink()
+    (d / '01-cabecera.html').write_text(simple_header)
+    (d / f'02-{step}.html').write_text(middle)
+    (d / '03-pie.html').write_text(pie)
+print('pago + gracias steps written')
+
