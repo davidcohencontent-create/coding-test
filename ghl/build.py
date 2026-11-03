@@ -78,9 +78,9 @@ scoped += '''
 
 # ---------- Footer code: Vimeo API + all page behaviour, started once GHL has rendered the sections ----------
 js = (SRC / 'motion.js').read_text() + '\n' + (SRC / 'page.js').read_text()
-_ws = "const WHOP_CHECKOUT_SCRIPT = 'whop-checkout.js?v=1';"
+_ws = "const WHOP_CHECKOUT_SCRIPT = 'whop-checkout.js?v=2';"
 assert _ws in js
-js = js.replace(_ws, "const WHOP_CHECKOUT_SCRIPT = 'https://davidcohencontent-create.github.io/coding-test/funnel/whop-checkout.js?v=1';")
+js = js.replace(_ws, "const WHOP_CHECKOUT_SCRIPT = 'https://davidcohencontent-create.github.io/coding-test/funnel/whop-checkout.js?v=2';")
 (OUT / '3-footer-code.html').write_text('''<!-- Curso de Confianza: paste into GHL page Settings → Tracking Code → Footer -->
 <script src="https://player.vimeo.com/api/player.js"></script>
 <script>
@@ -162,6 +162,7 @@ gracias = '''<div class="jc">
     <div class="intro">
       <h1>Ya estás <em>dentro.</em></h1>
       <p>Gracias por tu confianza. Tu acceso al Curso de Confianza está en camino.</p>
+      <p class="cta" data-course hidden><a class="btn" href="#">Entrar al curso</a></p>
     </div>
     <ol class="thanks-list">
       <li><div><h3>Revisa tu email</h3><p>Whop te envía la confirmación del pago y el acceso al curso. Si no lo ves, mira en spam o promociones.</p></div></li>
@@ -173,6 +174,10 @@ gracias = '''<div class="jc">
 </div>
 <script>
 (function () {
+  // TODO client: the course's link in Whop (Whop dashboard → the product → copy its link). Empty = no button.
+  var COURSE_URL = '';
+  var go = document.querySelector('[data-course]');
+  if (go && COURSE_URL) { go.querySelector('a').href = COURSE_URL; go.hidden = false; }
   // Whop returns here with ?status=failed|canceled when an off-site payment step did not go through
   var status = new URLSearchParams(location.search).get('status');
   if (status !== 'failed' && status !== 'canceled') return;

@@ -1,7 +1,7 @@
 // Whop checkout embedded in the price section (74 €): Whop's EmbeddedCheckout component (whop-checkout/), bundled in
 // whop-checkout.js and loaded only when the visitor nears the prices.
 const WHOP_PLAN_ID_CURSO = 'plan_IJNoDfl4ZUsMy';
-const WHOP_CHECKOUT_SCRIPT = 'whop-checkout.js?v=1';
+const WHOP_CHECKOUT_SCRIPT = 'whop-checkout.js?v=2';
 // After paying, the buyer goes to the Gracias page: the /gracias funnel step in GHL, gracias.html on the GitHub preview
 const ON_PREVIEW = /github\.io$/.test(location.hostname) || location.protocol === 'file:';
 const GRACIAS_URL = ON_PREVIEW ? new URL('gracias.html', location.href).href : location.origin + '/gracias';
@@ -13,7 +13,10 @@ const GRACIAS_URL = ON_PREVIEW ? new URL('gracias.html', location.href).href : l
     // used by Whop after an off-site step (Klarna, bank transfer…); Whop adds ?status=succeeded|failed|canceled
     returnUrl: /^https:/.test(GRACIAS_URL) ? GRACIAS_URL : undefined,
     // card payments finish on the page: send the buyer to Gracias once the payment stands
-    onComplete: r => { if (r && r.result === 'payment') location.href = GRACIAS_URL + '?status=succeeded'; },
+    // A link with ?promo=CODE opens the checkout with that Whop promo code already applied (buyers can also type one in)
+    promoCode: new URLSearchParams(location.search).get('promo') || undefined,
+    // Paid, or a 100 % promo code that made it free: either way the order stands
+    onComplete: r => { if (r && r.result !== 'waitlist_entry') location.href = GRACIAS_URL + '?status=succeeded'; },
   });
   const load = () => {
     if (window.__jcWhopLoaded) return;

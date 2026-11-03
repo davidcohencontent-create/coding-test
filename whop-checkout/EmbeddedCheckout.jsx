@@ -6,14 +6,14 @@ import { loadWhop } from "@whop/elements";
 import { Checkout, CheckoutElement, WhopElements } from "@whop/elements-react";
 
 // The component from Whop, with the page's language, colours and redirects added
-export function EmbeddedCheckout({ plan, returnUrl, onComplete }) {
+export function EmbeddedCheckout({ plan, promoCode, returnUrl, onComplete }) {
   return (
     <WhopElements
       elements={loadWhop()}
       locale="es"
       appearance={{ theme: { appearance: "light", accentColor: "crimson", grayColor: "mauve" } }}
     >
-      <Checkout plan={plan} returnUrl={returnUrl} onComplete={onComplete}>
+      <Checkout plan={plan} promoCode={promoCode} returnUrl={returnUrl} onComplete={onComplete}>
         <CheckoutElement />
       </Checkout>
     </WhopElements>
