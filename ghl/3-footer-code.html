@@ -27,24 +27,19 @@
     // whop-checkout.js and loaded only when the visitor nears the prices.
     const WHOP_PLAN_ID_CURSO = 'plan_IJNoDfl4ZUsMy';
     const WHOP_CHECKOUT_SCRIPT = 'https://davidcohencontent-create.github.io/coding-test/funnel/whop-checkout.js?v=2';
-    // After paying, the buyer goes to the Gracias page: the /gracias funnel step in GHL, gracias.html on the GitHub preview
-    const ON_PREVIEW = /github\.io$/.test(location.hostname) || location.protocol === 'file:';
-    // Where buyers land after checkout. Leave empty to use /gracias on the live domain; while testing on a GHL preview link,
-    // paste the Gracias step's full preview URL here (e.g. 'https://sites.leadconnectorhq.com/preview/…').
-    const GRACIAS_PAGE = 'https://sites.leadconnectorhq.com/preview/IebnBM1Q2iW4yiHnuqFi';
-    const GRACIAS_URL = GRACIAS_PAGE || (ON_PREVIEW ? new URL('gracias.html', location.href).href : location.origin + '/gracias');
+    // After a completed checkout (paid, or free with a promo code or a free plan) the buyer goes straight into the course in Whop.
+    // Same after an off-site payment step (Klarna, bank transfer…): Whop sends the buyer back to this URL.
+    const COURSE_URL = 'https://whop.com/judithcalzadaduaigues-1bce/confianza-sin-permiso-66/';
     (() => {
       const box = document.getElementById('whop-checkout');
       if (!box || window.__jcWhopLoaded) return;
       const mount = () => window.JCWhopCheckout.mount(box, {
         plan: WHOP_PLAN_ID_CURSO,
-        // used by Whop after an off-site step (Klarna, bank transfer…); Whop adds ?status=succeeded|failed|canceled
-        returnUrl: /^https:/.test(GRACIAS_URL) ? GRACIAS_URL : undefined,
-        // card payments finish on the page: send the buyer to Gracias once the payment stands
+        returnUrl: COURSE_URL,
         // A link with ?promo=CODE opens the checkout with that Whop promo code already applied (buyers can also type one in)
         promoCode: new URLSearchParams(location.search).get('promo') || undefined,
-        // Paid, or a 100 % promo code that made it free: either way the order stands
-        onComplete: r => { if (r && r.result !== 'waitlist_entry') location.href = GRACIAS_URL + (GRACIAS_URL.includes('?') ? '&' : '?') + 'status=succeeded'; },
+        // Paid or free: the order stands, so go to the course
+        onComplete: r => { if (r && r.result !== 'waitlist_entry') location.href = COURSE_URL; },
       });
       const load = () => {
         if (window.__jcWhopLoaded) return;
