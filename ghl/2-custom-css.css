@@ -346,6 +346,28 @@ html{scroll-behavior:smooth}
 .jc .foot-legal{display:flex;flex-wrap:wrap;gap:8px 24px}
 .jc .foot-legal a{color:rgba(255,255,255,.7);text-decoration:none}
 .jc .foot-legal a:hover{color:#fff;text-decoration:underline}
+.jc .foot-note{margin:20px 0 0;max-width:760px;font-size:12px;line-height:1.6;color:rgba(255,255,255,.45)}
+
+/* Legal pages: aviso legal, privacidad, cookies */
+.jc .legal{padding:96px 0 120px}
+.jc .legal .wrap{max-width:760px}
+.jc .legal h1{margin-bottom:12px}
+.jc .legal .updated{color:var(--muted);font-size:15px;margin-bottom:40px}
+.jc .legal h2{font-size:clamp(23px,2.4vw,28px);text-transform:none;letter-spacing:0;line-height:1.2;margin:56px 0 16px}
+.jc .legal h3{font-size:20px;margin:32px 0 8px}
+.jc .legal p,.jc .legal li{font-size:17px}
+.jc .legal p+p{margin-top:14px}
+.jc .legal ul{margin:14px 0;padding-left:20px}
+.jc .legal li{margin-bottom:10px}
+.jc .legal a{color:var(--accent)}
+.jc .legal-id{margin:20px 0;padding:0;border-top:1px solid var(--line)}
+.jc .legal-id>div{display:grid;grid-template-columns:140px 1fr;gap:16px;padding:12px 0;border-bottom:1px solid var(--line);font-size:17px}
+.jc .legal-id dt{color:var(--muted)}
+.jc .legal-id dd{margin:0}
+.jc .table-scroll{overflow-x:auto;margin:20px 0}
+.jc .legal table{width:100%;min-width:560px;border-collapse:collapse;font-size:15px;line-height:1.5}
+.jc .legal th,.jc .legal td{text-align:left;vertical-align:top;padding:12px 12px 12px 0;border-bottom:1px solid var(--line)}
+.jc .legal th{font-weight:500;color:var(--muted)}
 
 /* Entrance: elements fade up once as they scroll in (motion.js adds .reveal; off for reduced motion) */
 .jc .reveal{opacity:0;transform:translateY(18px);transition:opacity .9s var(--ease),transform .9s var(--ease);transition-delay:var(--d,0ms)}
@@ -368,6 +390,8 @@ html{scroll-behavior:smooth}
   .jc .hero{padding:48px 0 72px}
   .jc .intro{margin-bottom:36px}
   .jc .intro p:not(.label){font-size:17px}
+  .jc .legal{padding:56px 0 80px}
+  .jc .legal-id>div{grid-template-columns:1fr;gap:2px}
   .jc .about,.jc .cols,.jc .plans{grid-template-columns:1fr}
   .jc .about img.ph{position:static}
   .jc .checks li{font-size:18px;padding:20px 0 20px 40px}

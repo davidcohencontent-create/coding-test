@@ -41,3 +41,12 @@ The 457 € "Con Judith" option is shown as fully booked ("Plazas completas", bu
 
 To change the checkout (plan, colours, language): edit `whop-checkout/EmbeddedCheckout.jsx` or `funnel/page.js`,
 run `cd whop-checkout && npm install && npm run build`, then `python3 ghl/build.py`, and bump `?v=` in `WHOP_CHECKOUT_SCRIPT`.
+
+## 4. Legal pages: Aviso legal, Privacidad, Cookies
+Add three steps with these paths (the footer links point to them): **`aviso-legal`**, **`privacidad`**, **`cookies`**.
+Each one: same **Header Code** and **Custom CSS** as the sales page (no Footer Code), then the three files in its folder
+under `legal/` (`01-cabecera`, `02-…`, `03-pie`), each in its own section as above.
+
+Judith's details as titular (name, NIF, address, email) live in **one place**: the `TITULAR` block in the footer script
+(`funnel/index.html`, rebuilt into every `*-pie.html`). An empty field is simply not shown. After filling it in, rebuild and
+re-paste every `pie` file. The footer also carries the Facebook disclaimer.

@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap">
-<link rel="stylesheet" href="styles.css?v=20261103d">
+<link rel="stylesheet" href="styles.css?v=20261103e">
 </head>
 <body>
 
@@ -398,20 +398,30 @@
     </div>
     <div class="foot-bottom">
       <nav class="foot-legal" aria-label="Legal">
+        <a data-link="terms" href="#" hidden>Aviso legal y condiciones</a>
         <a data-link="privacy" href="#" hidden>Política de privacidad</a>
-        <a data-link="terms" href="#" hidden>Términos del servicio</a>
+        <a data-link="cookies" href="#" hidden>Política de cookies</a>
       </nav>
       <span>© 2026 Judith Calzada</span>
     </div>
+    <p class="foot-note" lang="en">This site is not a part of the Facebook website or Facebook Inc. Additionally, This site is NOT endorsed by Facebook in any way. FACEBOOK is a trademark of FACEBOOK, Inc.</p>
   </div>
 </footer>
 <script>
 (function () {
-  // TODO client: Judith's legal pages and contact. Anything left empty stays hidden, so no link ever goes nowhere.
+  // Footer links. Anything left empty stays hidden, so no link ever goes nowhere.
   var LINKS = {
-    privacy: '',  // Política de privacidad, e.g. https://judithcalzadaduaigues.com/politica-de-privacidad/
-    terms: '',    // Términos del servicio
-    contact: ''   // Contact: 'mailto:hola@…', 'https://wa.me/34…' or a contact page URL
+    terms: 'aviso-legal.html',
+    privacy: 'privacidad.html',
+    cookies: 'cookies.html',
+    contact: ''   // TODO client: 'mailto:hola@…', 'https://wa.me/34…' or a contact page URL
+  };
+  // Judith's details as titular of the site, shown in the legal pages. TODO client: fill in; an empty field is not shown.
+  var TITULAR = {
+    nombre: 'Judith Calzada Duaigues',  // full legal name, as on her NIF
+    nif: '',                            // e.g. 12345678A
+    domicilio: '',                      // street, number, postcode, city
+    email: ''                           // email for customers and data-protection requests
   };
   document.querySelectorAll('.site-footer [data-link]').forEach(function (a) {
     var url = LINKS[a.getAttribute('data-link')];
@@ -419,6 +429,14 @@
     a.href = url; a.hidden = false;
     if (/^https?:/.test(url)) { a.target = '_blank'; a.rel = 'noopener'; }
     var block = a.closest('[data-needs]'); if (block) block.hidden = false;
+  });
+  document.querySelectorAll('[data-t]').forEach(function (el) {
+    var v = TITULAR[el.getAttribute('data-t')];
+    var row = el.closest('[data-t-row]');
+    if (!v) { if (row) row.hidden = true; return; }
+    if (el.tagName === 'A') { el.href = 'mailto:' + v; }
+    el.textContent = v;
+    if (row) row.hidden = false;
   });
 })();
 </script>

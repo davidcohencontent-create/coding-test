@@ -347,6 +347,28 @@ footer{padding:32px 0 48px;color:rgba(255,255,255,.55);font-size:13px;background
 .foot-legal{display:flex;flex-wrap:wrap;gap:8px 24px}
 .foot-legal a{color:rgba(255,255,255,.7);text-decoration:none}
 .foot-legal a:hover{color:#fff;text-decoration:underline}
+.foot-note{margin:20px 0 0;max-width:760px;font-size:12px;line-height:1.6;color:rgba(255,255,255,.45)}
+
+/* Legal pages: aviso legal, privacidad, cookies */
+.legal{padding:96px 0 120px}
+.legal .wrap{max-width:760px}
+.legal h1{margin-bottom:12px}
+.legal .updated{color:var(--muted);font-size:15px;margin-bottom:40px}
+.legal h2{font-size:clamp(23px,2.4vw,28px);text-transform:none;letter-spacing:0;line-height:1.2;margin:56px 0 16px}
+.legal h3{font-size:20px;margin:32px 0 8px}
+.legal p,.legal li{font-size:17px}
+.legal p+p{margin-top:14px}
+.legal ul{margin:14px 0;padding-left:20px}
+.legal li{margin-bottom:10px}
+.legal a{color:var(--accent)}
+.legal-id{margin:20px 0;padding:0;border-top:1px solid var(--line)}
+.legal-id>div{display:grid;grid-template-columns:140px 1fr;gap:16px;padding:12px 0;border-bottom:1px solid var(--line);font-size:17px}
+.legal-id dt{color:var(--muted)}
+.legal-id dd{margin:0}
+.table-scroll{overflow-x:auto;margin:20px 0}
+.legal table{width:100%;min-width:560px;border-collapse:collapse;font-size:15px;line-height:1.5}
+.legal th,.legal td{text-align:left;vertical-align:top;padding:12px 12px 12px 0;border-bottom:1px solid var(--line)}
+.legal th{font-weight:500;color:var(--muted)}
 
 /* Entrance: elements fade up once as they scroll in (motion.js adds .reveal; off for reduced motion) */
 .reveal{opacity:0;transform:translateY(18px);transition:opacity .9s var(--ease),transform .9s var(--ease);transition-delay:var(--d,0ms)}
@@ -369,6 +391,8 @@ footer{padding:32px 0 48px;color:rgba(255,255,255,.55);font-size:13px;background
   .hero{padding:48px 0 72px}
   .intro{margin-bottom:36px}
   .intro p:not(.label){font-size:17px}
+  .legal{padding:56px 0 80px}
+  .legal-id>div{grid-template-columns:1fr;gap:2px}
   .about,.cols,.plans{grid-template-columns:1fr}
   .about img.ph{position:static}
   .checks li{font-size:18px;padding:20px 0 20px 40px}

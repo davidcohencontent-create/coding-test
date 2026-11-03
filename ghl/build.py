@@ -108,6 +108,12 @@ header = body[:body.index('</header>') + 9]
 main = body[body.index('<main id="top">') + len('<main id="top">'):body.index('</main>')]
 footer = body[body.index('<footer'):]  # footer + its small links script
 footer = footer[:footer.index('</script>') + 9]
+# Legal pages are their own GHL steps: point links at the step paths instead of the preview's .html files
+LEGAL = {'aviso-legal': 'Aviso legal y condiciones', 'privacidad': 'Política de privacidad', 'cookies': 'Política de cookies'}
+def ghl_links(s):
+    for slug in LEGAL: s = s.replace(f"'{slug}.html'", f"'/{slug}'").replace(f'"{slug}.html"', f'"/{slug}"')
+    return s.replace('href="index.html"', 'href="/"')
+footer = ghl_links(footer)
 
 # Split main into its top-level <section>s; the comment lines right above a section belong to it
 lines = main.split('\n'); starts = []
@@ -183,3 +189,15 @@ for step, middle in (('gracias', gracias),):
     (d / '03-pie.html').write_text(pie)
 print('gracias step written')
 
+
+# ---------- Legal steps: aviso-legal, privacidad, cookies ----------
+legal_header = simple_header.replace('<span class="name">Judith Calzada</span>', '<a class="name" href="/">Judith Calzada</a>')
+for slug in LEGAL:
+    page = (SRC / f'{slug}.html').read_text()
+    sec = page[page.index('<section class="legal">'):page.index('</main>')].rstrip()
+    d = OUT / 'legal' / slug; d.mkdir(parents=True, exist_ok=True)
+    for f in d.glob('*.html'): f.unlink()
+    (d / '01-cabecera.html').write_text(legal_header)
+    (d / f'02-{slug}.html').write_text(f'<div class="jc">\n{ghl_links(sec)}\n</div>\n')
+    (d / '03-pie.html').write_text(pie)
+print('legal steps written:', *LEGAL)
