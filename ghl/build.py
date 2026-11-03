@@ -174,8 +174,8 @@ gracias = '''<div class="jc">
 </div>
 <script>
 (function () {
-  // TODO client: the course's link in Whop (Whop dashboard → the product → copy its link). Empty = no button.
-  var COURSE_URL = '';
+  // The course in Whop
+  var COURSE_URL = 'https://whop.com/judithcalzadaduaigues-1bce/confianza-sin-permiso-66/';
   var go = document.querySelector('[data-course]');
   if (go && COURSE_URL) { go.querySelector('a').href = COURSE_URL; go.hidden = false; }
   // Whop returns here with ?status=failed|canceled when an off-site payment step did not go through
