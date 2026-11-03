@@ -31,7 +31,7 @@
     const ON_PREVIEW = /github\.io$/.test(location.hostname) || location.protocol === 'file:';
     // Where buyers land after checkout. Leave empty to use /gracias on the live domain; while testing on a GHL preview link,
     // paste the Gracias step's full preview URL here (e.g. 'https://sites.leadconnectorhq.com/preview/…').
-    const GRACIAS_PAGE = '';
+    const GRACIAS_PAGE = 'https://sites.leadconnectorhq.com/preview/IebnBM1Q2iW4yiHnuqFi';
     const GRACIAS_URL = GRACIAS_PAGE || (ON_PREVIEW ? new URL('gracias.html', location.href).href : location.origin + '/gracias');
     (() => {
       const box = document.getElementById('whop-checkout');

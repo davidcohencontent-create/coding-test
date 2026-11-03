@@ -80,6 +80,11 @@ scoped += '''
 js = (SRC / 'motion.js').read_text() + '\n' + (SRC / 'page.js').read_text()
 _ws = "const WHOP_CHECKOUT_SCRIPT = 'whop-checkout.js?v=2';"
 assert _ws in js
+# While testing on GHL preview links, buyers go to the Gracias step's preview URL. Set to '' once the domain is live (/gracias).
+GHL_GRACIAS_PREVIEW = 'https://sites.leadconnectorhq.com/preview/IebnBM1Q2iW4yiHnuqFi'
+_gp = "const GRACIAS_PAGE = '';"
+assert _gp in js
+js = js.replace(_gp, f"const GRACIAS_PAGE = '{GHL_GRACIAS_PREVIEW}';")
 js = js.replace(_ws, "const WHOP_CHECKOUT_SCRIPT = 'https://davidcohencontent-create.github.io/coding-test/funnel/whop-checkout.js?v=2';")
 (OUT / '3-footer-code.html').write_text('''<!-- Curso de Confianza: paste into GHL page Settings → Tracking Code → Footer -->
 <script src="https://player.vimeo.com/api/player.js"></script>
