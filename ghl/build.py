@@ -78,6 +78,9 @@ scoped += '''
 
 # ---------- Footer code: Vimeo API + all page behaviour, started once GHL has rendered the sections ----------
 js = (SRC / 'motion.js').read_text() + '\n' + (SRC / 'page.js').read_text()
+_ws = "const WHOP_CHECKOUT_SCRIPT = 'whop-checkout.js?v=1';"
+assert _ws in js
+js = js.replace(_ws, "const WHOP_CHECKOUT_SCRIPT = 'https://davidcohencontent-create.github.io/coding-test/funnel/whop-checkout.js?v=1';")
 (OUT / '3-footer-code.html').write_text('''<!-- Curso de Confianza: paste into GHL page Settings → Tracking Code → Footer -->
 <script src="https://player.vimeo.com/api/player.js"></script>
 <script>
@@ -152,6 +155,21 @@ gracias = '''<div class="jc">
   </div>
 </section>
 </div>
+<script>
+(function () {
+  // Whop returns here with ?status=failed|canceled when an off-site payment step did not go through
+  var status = new URLSearchParams(location.search).get('status');
+  if (status !== 'failed' && status !== 'canceled') return;
+  var SALES_URL = '/#checkout'; // the sales page, at its checkout (change '/' if the sales page has its own path)
+  var box = document.querySelector('.thanks');
+  if (!box) return;
+  box.querySelector('.intro').innerHTML = '<h1>El pago no se ha <em>completado.</em></h1>' +
+    '<p>Puedes volver e intentarlo de nuevo con el mismo u otro método de pago.</p>' +
+    '<p class="cta"><a class="btn" href="' + SALES_URL + '">Volver al pago</a></p>';
+  var list = box.querySelector('.thanks-list');
+  if (list) list.remove();
+})();
+</script>
 '''
 pie = (sec_dir / f'{len(SLUGS) + 2:02d}-pie.html').read_text()
 import shutil

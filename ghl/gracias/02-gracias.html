@@ -13,3 +13,18 @@
   </div>
 </section>
 </div>
+<script>
+(function () {
+  // Whop returns here with ?status=failed|canceled when an off-site payment step did not go through
+  var status = new URLSearchParams(location.search).get('status');
+  if (status !== 'failed' && status !== 'canceled') return;
+  var SALES_URL = '/#checkout'; // the sales page, at its checkout (change '/' if the sales page has its own path)
+  var box = document.querySelector('.thanks');
+  if (!box) return;
+  box.querySelector('.intro').innerHTML = '<h1>El pago no se ha <em>completado.</em></h1>' +
+    '<p>Puedes volver e intentarlo de nuevo con el mismo u otro método de pago.</p>' +
+    '<p class="cta"><a class="btn" href="' + SALES_URL + '">Volver al pago</a></p>';
+  var list = box.querySelector('.thanks-list');
+  if (list) list.remove();
+})();
+</script>

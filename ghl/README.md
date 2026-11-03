@@ -25,11 +25,19 @@ For each file in `sections/`:
 - The scripts start once GHL has finished rendering; animations and the Day 1 trailer timer may not run inside the editor, only in Preview / the live page.
 
 ## 3. Checkout (74 € via Whop) and the Gracias step
-The Whop checkout for the 74 € plan (`plan_IJNoDfl4ZUsMy`) is embedded **in the price section of the sales page** (`10-precios.html`),
-next to the offer card. Nothing to paste for it: the footer code sets the plan and loads Whop when the visitor nears the prices.
-After paying, Whop sends the buyer to the funnel step with path **`/gracias`**.
+The checkout is Whop's `EmbeddedCheckout` React component (`whop-checkout/EmbeddedCheckout.jsx`, plan `plan_IJNoDfl4ZUsMy`),
+bundled with React into `funnel/whop-checkout.js`. The footer code loads that file from the GitHub Pages copy when the visitor
+nears the prices and mounts it in the price section (`10-precios.html`). Nothing to paste for it.
 
-Add that step: same **Header Code** and **Custom CSS** as the sales page (no Footer Code), then the sections in order:
+- Card payments: once the payment stands, the buyer is sent to **`/gracias`**.
+- Off-site methods (Klarna, bank transfer…): Whop returns to `/gracias?status=…`; a failed or cancelled payment shows
+  "El pago no se ha completado" with a button back to the checkout (`/#checkout`; edit `SALES_URL` in `gracias/02-gracias.html`
+  if the sales page has its own path).
+
+Add the Gracias step (path `gracias`): same **Header Code** and **Custom CSS** as the sales page (no Footer Code), then
 [`gracias/01-cabecera.html`](gracias/01-cabecera.html), [`gracias/02-gracias.html`](gracias/02-gracias.html), [`gracias/03-pie.html`](gracias/03-pie.html).
 
-The 457 € option is a slim line under the checkout; its "Elegir" stays on the prices until it is decided (`WHOP_CHECKOUT_URL_CON_JUDITH` in the footer code).
+The 457 € "Con Judith" option is shown as fully booked ("Plazas completas", button disabled).
+
+To change the checkout (plan, colours, language): edit `whop-checkout/EmbeddedCheckout.jsx` or `funnel/page.js`,
+run `cd whop-checkout && npm install && npm run build`, then `python3 ghl/build.py`, and bump `?v=` in `WHOP_CHECKOUT_SCRIPT`.

@@ -202,6 +202,11 @@ html{scroll-behavior:smooth}
 .jc .final .wrap .also p{color:rgba(255,255,255,.85);font-size:16px;margin:0}
 .jc .also strong{color:#fff;font-weight:600;margin-right:6px}
 .jc .also .btn{flex:none}
+.jc .also.full{border-style:dashed}
+.jc .final .wrap .also.full p{color:rgba(255,255,255,.6)}
+.jc .also.full strong{color:rgba(255,255,255,.7)}
+.jc .badge-full{display:inline-block;margin-left:8px;padding:3px 10px;border:1px solid rgba(255,255,255,.45);border-radius:999px;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#fff;white-space:nowrap}
+.jc .also .btn.is-disabled{background:transparent;color:rgba(255,255,255,.55);border-color:rgba(255,255,255,.3);cursor:not-allowed;transform:none}
 
 /* Plans inside the final CTA */
 .jc .final .plans{margin-top:8px;text-align:left;color:var(--ink)}

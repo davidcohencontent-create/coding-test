@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap">
-<link rel="stylesheet" href="styles.css?v=20261103b">
+<link rel="stylesheet" href="styles.css?v=20261103c">
 </head>
 <body>
 
@@ -348,13 +348,14 @@
             <li class="t-bolt">Acceso inmediato</li>
             <!-- TODO client: add <li class="t-shield">14 días de garantía</li> once the guarantee is confirmed -->
           </ul>
-          <!-- Whop checkout (74 €): page.js sets the plan ID and return URL, then loads Whop's embed -->
-          <div id="whop-checkout" data-whop-checkout-theme="light"></div>
+          <!-- Whop checkout (74 €): page.js loads whop-checkout.js and mounts Whop's EmbeddedCheckout here -->
+          <div id="whop-checkout"></div>
         </div>
       </div>
-      <div class="also">
-        <p><strong>Con Judith · 457 €</strong> Todo el curso, más acceso directo a Judith y llamadas semanales.</p>
-        <a href="#precios" class="btn light sm" data-buy="con-judith">Elegir</a>
+      <!-- Con Judith: shown as fully booked (not for sale for now) -->
+      <div class="also full">
+        <p><strong>Con Judith · 457 €</strong> Todo el curso, más acceso directo a Judith y llamadas semanales. <span class="badge-full">Plazas completas</span></p>
+        <span class="btn sm is-disabled" aria-disabled="true">Completo</span>
       </div>
       <!-- TODO client: diagnóstico gratuito. The line was removed until the quiz URL exists; restore it here linking to that URL. -->
     </div>
@@ -392,8 +393,8 @@
   <div class="wrap">© 2026 Judith Calzada</div>
 </footer>
 
-<script src="motion.js?v=20261103b" defer></script>
+<script src="motion.js?v=20261103c" defer></script>
 <script src="https://player.vimeo.com/api/player.js" defer></script>
-<script src="page.js?v=20261103b" defer></script>
+<script src="page.js?v=20261103c" defer></script>
 </body>
 </html>

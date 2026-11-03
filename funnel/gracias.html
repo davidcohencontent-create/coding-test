@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap">
-<link rel="stylesheet" href="styles.css?v=20261103b">
+<link rel="stylesheet" href="styles.css?v=20261103c">
 </head>
 <body>
 
@@ -33,6 +33,22 @@
     </div>
   </section>
 </main>
+<script>
+(function () {
+  // Whop returns here with ?status=failed|canceled when an off-site payment step did not go through
+  var status = new URLSearchParams(location.search).get('status');
+  if (status !== 'failed' && status !== 'canceled') return;
+  var SALES_URL = 'index.html#checkout'; // the sales page, at its checkout
+  var box = document.querySelector('.thanks');
+  if (!box) return;
+  box.querySelector('.intro').innerHTML = '<h1>El pago no se ha <em>completado.</em></h1>' +
+    '<p>Puedes volver e intentarlo de nuevo con el mismo u otro método de pago.</p>' +
+    '<p class="cta"><a class="btn" href="' + SALES_URL + '">Volver al pago</a></p>';
+  var list = box.querySelector('.thanks-list');
+  if (list) list.remove();
+})();
+</script>
+
 
 <footer><div class="wrap">© 2026 Judith Calzada</div></footer>
 

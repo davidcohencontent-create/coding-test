@@ -1,32 +1,31 @@
-// Whop checkout embedded in the price section (74 €). Whop's script loads only when the visitor nears the prices.
+// Whop checkout embedded in the price section (74 €): Whop's EmbeddedCheckout component (whop-checkout/), bundled in
+// whop-checkout.js and loaded only when the visitor nears the prices.
 const WHOP_PLAN_ID_CURSO = 'plan_IJNoDfl4ZUsMy';
-// After paying, Whop sends the buyer to the Gracias page: the /gracias funnel step in GHL, gracias.html on the GitHub preview
-const GRACIAS_URL = (/github\.io$/.test(location.hostname) || location.protocol === 'file:')
-  ? new URL('gracias.html', location.href).href
-  : location.origin + '/gracias';
+const WHOP_CHECKOUT_SCRIPT = 'whop-checkout.js?v=1';
+// After paying, the buyer goes to the Gracias page: the /gracias funnel step in GHL, gracias.html on the GitHub preview
+const ON_PREVIEW = /github\.io$/.test(location.hostname) || location.protocol === 'file:';
+const GRACIAS_URL = ON_PREVIEW ? new URL('gracias.html', location.href).href : location.origin + '/gracias';
 (() => {
   const box = document.getElementById('whop-checkout');
   if (!box || window.__jcWhopLoaded) return;
+  const mount = () => window.JCWhopCheckout.mount(box, {
+    plan: WHOP_PLAN_ID_CURSO,
+    // used by Whop after an off-site step (Klarna, bank transfer…); Whop adds ?status=succeeded|failed|canceled
+    returnUrl: /^https:/.test(GRACIAS_URL) ? GRACIAS_URL : undefined,
+    // card payments finish on the page: send the buyer to Gracias once the payment stands
+    onComplete: r => { if (r && r.result === 'payment') location.href = GRACIAS_URL + '?status=succeeded'; },
+  });
   const load = () => {
     if (window.__jcWhopLoaded) return;
     window.__jcWhopLoaded = true;
-    box.setAttribute('data-whop-checkout-plan-id', WHOP_PLAN_ID_CURSO);
-    box.setAttribute('data-whop-checkout-return-url', GRACIAS_URL);
     const s = document.createElement('script');
-    s.src = 'https://js.whop.com/static/checkout/loader.js'; s.async = true;
+    s.src = WHOP_CHECKOUT_SCRIPT; s.async = true; s.onload = mount;
     document.head.appendChild(s);
   };
   if (!('IntersectionObserver' in window)) return load();
   const io = new IntersectionObserver(e => { if (e.some(x => x.isIntersecting)) { io.disconnect(); load(); } }, { rootMargin: '900px 0px' });
   io.observe(box);
 })();
-
-// TODO client: the 457 € "Con Judith" option is still to be decided; paste its link here (https://... or a funnel step path like /con-judith).
-// Until then its "Elegir" stays on the prices, so nothing links to a dead page.
-const WHOP_CHECKOUT_URL_CON_JUDITH = 'TODO client';
-document.querySelectorAll('[data-buy="con-judith"]').forEach(a => {
-  if (/^(https:\/\/|\/)/.test(WHOP_CHECKOUT_URL_CON_JUDITH)) a.href = WHOP_CHECKOUT_URL_CON_JUDITH;
-});
 
 // Sales page behaviour: method steps unlock as you scroll, and the Day 1 trailer's timed preview.
 
