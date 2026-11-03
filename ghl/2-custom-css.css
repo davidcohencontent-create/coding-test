@@ -99,6 +99,7 @@ html{scroll-behavior:smooth}
 .jc .slide{flex:0 0 100%;scroll-snap-align:center;margin:0;display:flex;flex-direction:column;align-items:center;padding:8px 12px}
 .jc .slide>*{width:100%;max-width:760px}
 .jc .slide figcaption{font-size:15px;letter-spacing:.04em;color:var(--accent)}
+.jc .slide .stars{margin-top:2px;font-size:15px;letter-spacing:.14em;color:var(--accent);line-height:1}
 .jc .who{display:flex;align-items:center;gap:16px}
 .jc .avatar{flex:none;width:64px;height:64px;border-radius:50%;object-fit:cover;background:#cfcac4 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='25' r='11' fill='%23f3f1ef'/%3E%3Cpath d='M12 56c2-11 10-17 20-17s18 6 20 17' fill='%23f3f1ef'/%3E%3C/svg%3E") center/100% no-repeat;border:3px solid #fff}
 .jc .slide blockquote{margin:14px 0 0;font-family:var(--serif);font-style:italic;font-size:26px;line-height:1.4;color:var(--ink)}
