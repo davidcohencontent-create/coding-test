@@ -178,6 +178,31 @@ html{scroll-behavior:smooth}
 .jc .thanks-list h3{margin-bottom:4px}
 .jc .thanks-list p{color:var(--muted)}
 
+/* Price section: offer card + embedded Whop checkout side by side */
+.jc .buy{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:24px;max-width:1000px;margin:8px auto 0;text-align:left;align-items:start}
+.jc .offer,.jc .checkout-card{background:var(--white);color:var(--ink);border-radius:2px;box-shadow:0 30px 60px -28px rgba(0,0,0,.5)}
+.jc .offer{padding:32px;text-align:center}
+.jc .offer-img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:2px;margin:0 0 24px}
+.jc .offer h3{text-transform:uppercase;font-size:24px}
+.jc .final .offer .price{color:var(--ink);font-size:64px;margin:12px 0 10px}
+.jc .final .offer p.offer-line{color:var(--muted);font-size:17px;margin:0 0 22px}
+.jc .offer-list{list-style:none;margin:0 0 28px;padding:0;text-align:left;border-top:1px solid var(--line)}
+.jc .offer-list li{position:relative;padding:11px 0 11px 30px;border-bottom:1px solid var(--line);font-size:16px}
+.jc .offer-list li::before{content:"";position:absolute;left:3px;top:19px;width:12px;height:7px;border-left:1.5px solid var(--accent);border-bottom:1.5px solid var(--accent);transform:rotate(-45deg)}
+.jc .offer .btn{width:100%}
+.jc .checkout-card{padding:20px}
+.jc .trust{list-style:none;display:flex;flex-wrap:wrap;justify-content:center;gap:10px 26px;margin:0 0 16px;padding:4px 0 16px;border-bottom:1px solid var(--line);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.jc .trust li{display:inline-flex;align-items:center;gap:8px}
+.jc .trust li::before{content:"";width:13px;height:13px;background:var(--accent);-webkit-mask:center/contain no-repeat;mask:center/contain no-repeat}
+.jc .trust .t-lock::before{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 10V7a5 5 0 0 1 10 0v3h1a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V11a1 1 0 0 1 1-1zm2 0h6V7a3 3 0 0 0-6 0z'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 10V7a5 5 0 0 1 10 0v3h1a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V11a1 1 0 0 1 1-1zm2 0h6V7a3 3 0 0 0-6 0z'/%3E%3C/svg%3E")}
+.jc .trust .t-bolt::before{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M13 2 4 14h7l-1 8 9-12h-7z'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M13 2 4 14h7l-1 8 9-12h-7z'/%3E%3C/svg%3E")}
+.jc .trust .t-shield::before{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2 4 5v6c0 5 3.4 9.3 8 11 4.6-1.7 8-6 8-11V5z'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2 4 5v6c0 5 3.4 9.3 8 11 4.6-1.7 8-6 8-11V5z'/%3E%3C/svg%3E")}
+.jc #whop-checkout{min-height:520px}
+.jc .also{max-width:1000px;margin:20px auto 0;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:18px 24px;border:1px solid rgba(255,255,255,.25);border-radius:2px;text-align:left}
+.jc .final .wrap .also p{color:rgba(255,255,255,.85);font-size:16px;margin:0}
+.jc .also strong{color:#fff;font-weight:600;margin-right:6px}
+.jc .also .btn{flex:none}
+
 /* Plans inside the final CTA */
 .jc .final .plans{margin-top:8px;text-align:left;color:var(--ink)}
 .jc .final .plan.pick{border-color:#fff;box-shadow:0 30px 60px -24px rgba(0,0,0,.55)}
@@ -338,6 +363,10 @@ html{scroll-behavior:smooth}
   .jc .tools li{grid-template-columns:1fr;gap:4px;padding:18px 0}
   .jc .tools .tool{font-size:21px}
   .jc .tiers{grid-template-columns:1fr}
+  .jc .buy{grid-template-columns:1fr}
+  .jc .offer{padding:24px}
+  .jc .checkout-card{padding:12px}
+  .jc .also{flex-direction:column;align-items:flex-start}
   .jc .pay{padding:56px 0}
   .jc .pay-grid{grid-template-columns:1fr;gap:36px}
   .jc .pay-box{padding:12px}

@@ -1,32 +1,36 @@
 <div class="jc">
-  <!-- Final CTA: question and the two formats (each "Elegir" → its own Whop checkout URL in page.js) -->
+  <!-- Final CTA: question, the 74 € offer with the embedded Whop checkout, and the 457 € option -->
   <section class="final" id="precios">
     <div class="wrap">
       <h2>¿Vas a seguir esperando a <em>sentirte preparada?</em></h2>
       <!-- TODO client: confirm what each format includes (downloadable material? live group session?) and the length/number of the weekly calls -->
-      <div class="tiers">
-        <div class="tier">
+      <div class="buy">
+        <div class="offer">
+          <!-- Offer image: replace with the client's asset (transparent PNG/WebP, about 1200×900, object centred) -->
+          <img class="offer-img" src="https://davidcohencontent-create.github.io/coding-test/funnel/img/dia-bloqueado.jpg" alt="" loading="lazy">
           <h3>Curso de Confianza</h3>
           <p class="price">74 €</p>
-          <ul>
-            <li class="yes"><span class="sr">Incluido: </span>10 días de vídeos · 11 lecciones grabadas</li>
-            <li class="yes"><span class="sr">Incluido: </span>Meditaciones guiadas</li>
-            <li class="no"><span class="sr">No incluido: </span>Acceso directo a Judith</li>
-            <li class="no"><span class="sr">No incluido: </span>Llamadas semanales con Judith</li>
+          <p class="offer-line">Diez días para dejar de esperar a sentirte preparada.</p>
+          <ul class="offer-list">
+            <li>10 días de vídeos · 11 lecciones grabadas</li>
+            <li>Meditaciones guiadas</li>
+            <li>A tu ritmo y sin caducidad</li>
           </ul>
-          <a href="#precios" class="btn ghost" data-buy="curso">Elegir</a>
+          <a href="#checkout" class="btn">Empezar ya</a>
         </div>
-        <div class="tier pick">
-          <h3>Con Judith</h3>
-          <p class="price">457 €</p>
-          <ul>
-            <li class="yes"><span class="sr">Incluido: </span>10 días de vídeos · 11 lecciones grabadas</li>
-            <li class="yes"><span class="sr">Incluido: </span>Meditaciones guiadas</li>
-            <li class="yes"><span class="sr">Incluido: </span>Acceso directo a Judith</li>
-            <li class="yes"><span class="sr">Incluido: </span>Llamadas semanales con Judith</li>
+        <div class="checkout-card" id="checkout">
+          <ul class="trust">
+            <li class="t-lock">Pago seguro</li>
+            <li class="t-bolt">Acceso inmediato</li>
+            <!-- TODO client: add <li class="t-shield">14 días de garantía</li> once the guarantee is confirmed -->
           </ul>
-          <a href="#precios" class="btn" data-buy="con-judith">Elegir</a>
+          <!-- Whop checkout (74 €): page.js sets the plan ID and return URL, then loads Whop's embed -->
+          <div id="whop-checkout" data-whop-checkout-theme="light"></div>
         </div>
+      </div>
+      <div class="also">
+        <p><strong>Con Judith · 457 €</strong> Todo el curso, más acceso directo a Judith y llamadas semanales.</p>
+        <a href="#precios" class="btn light sm" data-buy="con-judith">Elegir</a>
       </div>
       <!-- TODO client: diagnóstico gratuito. The line was removed until the quiz URL exists; restore it here linking to that URL. -->
     </div>

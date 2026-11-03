@@ -78,10 +78,6 @@ scoped += '''
 
 # ---------- Footer code: Vimeo API + all page behaviour, started once GHL has rendered the sections ----------
 js = (SRC / 'motion.js').read_text() + '\n' + (SRC / 'page.js').read_text()
-# In GHL the 74 € "Elegir" goes to the funnel's Pago step (path /pago); the 457 € card stays as it is for now
-_cur = "const WHOP_CHECKOUT_URL_CURSO = 'TODO client';"
-assert _cur + '      // 74 €' in js
-js = js.replace(_cur + '      // 74 €', "const WHOP_CHECKOUT_URL_CURSO = '/pago';      // 74 € · GHL funnel step with the embedded Whop checkout")
 (OUT / '3-footer-code.html').write_text('''<!-- Curso de Confianza: paste into GHL page Settings → Tracking Code → Footer -->
 <script src="https://player.vimeo.com/api/player.js"></script>
 <script>
@@ -132,7 +128,7 @@ n = len(SLUGS) + 2
 write(n, 'pie', footer)
 print('css', len(scoped), 'chars; sections:', *names, sep='\n  ')
 
-# ---------- Extra funnel steps: Pago (embedded Whop checkout, 74 €) and Gracias ----------
+# ---------- Extra funnel step: Gracias (Whop sends buyers here after paying) ----------
 simple_header = '''<div class="jc">
 <header>
   <div class="wrap">
@@ -140,48 +136,6 @@ simple_header = '''<div class="jc">
   </div>
 </header>
 </div>
-'''
-pago = '''<div class="jc">
-<section class="pay">
-  <div class="wrap pay-grid">
-    <div class="pay-summary">
-      <h1>Curso de <em>Confianza</em></h1>
-      <p class="price">74 €</p>
-      <ul class="pay-list">
-        <li>10 días de vídeos · 11 lecciones grabadas</li>
-        <li>Meditaciones guiadas</li>
-        <li>A tu ritmo y sin caducidad</li>
-      </ul>
-      <p class="pay-note">Pago seguro procesado por Whop.</p>
-    </div>
-    <div class="pay-box">
-      <div id="whop-checkout" data-whop-checkout-theme="light"></div>
-    </div>
-  </div>
-</section>
-</div>
-<script>
-(function () {
-  // Whop plan ID of the 74 € plan (Whop → Checkout links → ⋯ → Details)
-  var WHOP_PLAN_ID = 'plan_IJNoDfl4ZUsMy';
-  // After paying, Whop sends the buyer to this funnel's Gracias step (path /gracias)
-  var GRACIAS_URL = location.origin + '/gracias';
-
-  if (window.__jcWhopLoaded) return;
-  var box = document.getElementById('whop-checkout');
-  if (!box) return;
-  if (!/^plan_\\w+$/.test(WHOP_PLAN_ID)) {
-    box.outerHTML = '<p class="pay-missing">Falta el ID del plan de Whop: pégalo en el código de esta sección (WHOP_PLAN_ID).</p>';
-    return;
-  }
-  window.__jcWhopLoaded = true;
-  box.setAttribute('data-whop-checkout-plan-id', WHOP_PLAN_ID);
-  box.setAttribute('data-whop-checkout-return-url', GRACIAS_URL);
-  var s = document.createElement('script');
-  s.src = 'https://js.whop.com/static/checkout/loader.js'; s.async = true; s.defer = true;
-  document.head.appendChild(s);
-})();
-</script>
 '''
 gracias = '''<div class="jc">
 <section class="thanks">
@@ -200,11 +154,13 @@ gracias = '''<div class="jc">
 </div>
 '''
 pie = (sec_dir / f'{len(SLUGS) + 2:02d}-pie.html').read_text()
-for step, middle in (('pago', pago), ('gracias', gracias)):
+import shutil
+shutil.rmtree(OUT / 'pago', ignore_errors=True)  # the checkout now lives on the sales page
+for step, middle in (('gracias', gracias),):
     d = OUT / step; d.mkdir(exist_ok=True)
     for f in d.glob('*.html'): f.unlink()
     (d / '01-cabecera.html').write_text(simple_header)
     (d / f'02-{step}.html').write_text(middle)
     (d / '03-pie.html').write_text(pie)
-print('pago + gracias steps written')
+print('gracias step written')
 
