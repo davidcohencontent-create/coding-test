@@ -103,10 +103,11 @@ js = js.replace(_ws, "const WHOP_CHECKOUT_SCRIPT = 'https://davidcohencontent-cr
 # ---------- Sections ----------
 html = (SRC / 'index.html').read_text()
 html = html.replace('src="img/', 'src="' + IMG_BASE)
-body = html[html.index('<header>'):html.index('<script')]
+body = html[html.index('<header>'):html.index('<script src=')]
 header = body[:body.index('</header>') + 9]
 main = body[body.index('<main id="top">') + len('<main id="top">'):body.index('</main>')]
-footer = body[body.index('<footer>'):body.index('</footer>') + 9]
+footer = body[body.index('<footer'):]  # footer + its small links script
+footer = footer[:footer.index('</script>') + 9]
 
 # Split main into its top-level <section>s; the comment lines right above a section belong to it
 lines = main.split('\n'); starts = []

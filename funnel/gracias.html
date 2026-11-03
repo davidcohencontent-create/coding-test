@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap">
-<link rel="stylesheet" href="styles.css?v=20261103c">
+<link rel="stylesheet" href="styles.css?v=20261103d">
 </head>
 <body>
 
@@ -50,7 +50,41 @@
 </script>
 
 
-<footer><div class="wrap">© 2026 Judith Calzada</div></footer>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-top">
+      <span class="name">Judith Calzada</span>
+      <div class="foot-contact" data-needs="contact" hidden>
+        <span>¿Tienes alguna pregunta antes de empezar?</span>
+        <a class="btn light sm" data-link="contact" href="#">Contactar con Judith</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <nav class="foot-legal" aria-label="Legal">
+        <a data-link="privacy" href="#" hidden>Política de privacidad</a>
+        <a data-link="terms" href="#" hidden>Términos del servicio</a>
+      </nav>
+      <span>© 2026 Judith Calzada</span>
+    </div>
+  </div>
+</footer>
+<script>
+(function () {
+  // TODO client: Judith's legal pages and contact. Anything left empty stays hidden, so no link ever goes nowhere.
+  var LINKS = {
+    privacy: '',  // Política de privacidad, e.g. https://judithcalzadaduaigues.com/politica-de-privacidad/
+    terms: '',    // Términos del servicio
+    contact: ''   // Contact: 'mailto:hola@…', 'https://wa.me/34…' or a contact page URL
+  };
+  document.querySelectorAll('.site-footer [data-link]').forEach(function (a) {
+    var url = LINKS[a.getAttribute('data-link')];
+    if (!url) return;
+    a.href = url; a.hidden = false;
+    if (/^https?:/.test(url)) { a.target = '_blank'; a.rel = 'noopener'; }
+    var block = a.closest('[data-needs]'); if (block) block.hidden = false;
+  });
+})();
+</script>
 
 </body>
 </html>

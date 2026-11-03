@@ -337,6 +337,15 @@ html{scroll-behavior:smooth}
 .jc .final p:not(.label){color:rgba(255,255,255,.8);font-size:19px;margin:22px 0 40px}
 
 .jc footer{padding:32px 0 48px;color:rgba(255,255,255,.55);font-size:13px;background:var(--navy)}
+/* Footer: name, contact button, legal links */
+.jc .site-footer{padding:48px 0 36px}
+.jc .foot-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;padding-bottom:28px;border-bottom:1px solid rgba(255,255,255,.12)}
+.jc .site-footer .name{color:#fff}
+.jc .foot-contact{display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:15px;color:rgba(255,255,255,.75)}
+.jc .foot-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px 24px;padding-top:20px}
+.jc .foot-legal{display:flex;flex-wrap:wrap;gap:8px 24px}
+.jc .foot-legal a{color:rgba(255,255,255,.7);text-decoration:none}
+.jc .foot-legal a:hover{color:#fff;text-decoration:underline}
 
 /* Entrance: elements fade up once as they scroll in (motion.js adds .reveal; off for reduced motion) */
 .jc .reveal{opacity:0;transform:translateY(18px);transition:opacity .9s var(--ease),transform .9s var(--ease);transition-delay:var(--d,0ms)}
