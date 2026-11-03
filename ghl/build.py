@@ -192,12 +192,21 @@ print('gracias step written')
 
 # ---------- Legal steps: aviso-legal, privacidad, cookies ----------
 legal_header = simple_header.replace('<span class="name">Judith Calzada</span>', '<a class="name" href="/">Judith Calzada</a>')
+_tb = footer[footer.index('var TITULAR = {'):]; _tb = _tb[:_tb.index('};')]
+TITULAR = dict(re.findall(r"(\w+): '([^']*)'", _tb))
 for slug in LEGAL:
     page = (SRC / f'{slug}.html').read_text()
     sec = page[page.index('<section class="legal">'):page.index('</main>')].rstrip()
     d = OUT / 'legal' / slug; d.mkdir(parents=True, exist_ok=True)
     for f in d.glob('*.html'): f.unlink()
     (d / '01-cabecera.html').write_text(legal_header)
+    # Write Judith's details (TITULAR in the footer script) straight into the page, so they show without the script
+    for key, val in TITULAR.items():
+        if not val: continue
+        tag = f'<a data-t="{key}" href="#"></a>' if key == 'email' else None
+        if tag and tag in sec: sec = sec.replace(tag, f'<a data-t="{key}" href="mailto:{val}">{val}</a>')
+        sec = re.sub(rf'<dd data-t="{key}">[^<]*</dd>', f'<dd data-t="{key}">{val}</dd>', sec)
+        sec = re.sub(rf'<div data-t-row hidden>(<dt>[^<]*</dt>(?:<dd>)?<(?:dd|a) data-t="{key}")', r'<div data-t-row>\1', sec)
     (d / f'02-{slug}.html').write_text(f'<div class="jc">\n{ghl_links(sec)}\n</div>\n')
     (d / '03-pie.html').write_text(pie)
 print('legal steps written:', *LEGAL)
