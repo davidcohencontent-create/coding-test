@@ -4,7 +4,10 @@ const WHOP_PLAN_ID_CURSO = 'plan_IJNoDfl4ZUsMy';
 const WHOP_CHECKOUT_SCRIPT = 'whop-checkout.js?v=2';
 // After paying, the buyer goes to the Gracias page: the /gracias funnel step in GHL, gracias.html on the GitHub preview
 const ON_PREVIEW = /github\.io$/.test(location.hostname) || location.protocol === 'file:';
-const GRACIAS_URL = ON_PREVIEW ? new URL('gracias.html', location.href).href : location.origin + '/gracias';
+// Where buyers land after checkout. Leave empty to use /gracias on the live domain; while testing on a GHL preview link,
+// paste the Gracias step's full preview URL here (e.g. 'https://sites.leadconnectorhq.com/preview/…').
+const GRACIAS_PAGE = '';
+const GRACIAS_URL = GRACIAS_PAGE || (ON_PREVIEW ? new URL('gracias.html', location.href).href : location.origin + '/gracias');
 (() => {
   const box = document.getElementById('whop-checkout');
   if (!box || window.__jcWhopLoaded) return;
@@ -16,7 +19,7 @@ const GRACIAS_URL = ON_PREVIEW ? new URL('gracias.html', location.href).href : l
     // A link with ?promo=CODE opens the checkout with that Whop promo code already applied (buyers can also type one in)
     promoCode: new URLSearchParams(location.search).get('promo') || undefined,
     // Paid, or a 100 % promo code that made it free: either way the order stands
-    onComplete: r => { if (r && r.result !== 'waitlist_entry') location.href = GRACIAS_URL + '?status=succeeded'; },
+    onComplete: r => { if (r && r.result !== 'waitlist_entry') location.href = GRACIAS_URL + (GRACIAS_URL.includes('?') ? '&' : '?') + 'status=succeeded'; },
   });
   const load = () => {
     if (window.__jcWhopLoaded) return;
