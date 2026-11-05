@@ -447,6 +447,165 @@ footer{padding:32px 0 48px;color:rgba(255,255,255,.55);font-size:13px;background
   .label{font-size:21px}
 }
 
+/* ===== Theme: light and friendly. White page, soft rounded cards with thin borders, condensed serif headings with italic
+   accents, a handwritten touch for small notes, yellow pill buttons with a soft glow. Overrides the base styles above. ===== */
+:root{
+  --bg:#fff; --white:#fff; --soft:#f6f6f5; --line:#ebebea; --ink:#161616; --muted:#5e5e5e; --accent:#161616; --accent-dark:#000;
+  --yellow:#f5c542; --yellow-dark:#ebb620; --yellow-glow:rgba(245,197,66,.45); --navy:#161616; --blush:#fdf3d8;
+  --serif:'Instrument Serif','Times New Roman',serif;
+  --font:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --hand:'Reenie Beanie','Comic Sans MS',cursive;
+  --r-card:28px; --r-panel:20px;
+}
+body{background:#fff;font-size:17px;line-height:1.65;letter-spacing:-.005em}
+section{padding:112px 0}
+section.white{background:#fff}
+section.grey{background:var(--soft)}
+.band{display:none}
+
+/* Type: condensed serif, sentence case, italic accent words */
+h1,h2,h3{font-family:var(--serif);font-weight:400;letter-spacing:-.01em}
+h1,h2{text-transform:none;line-height:1.02}
+h1{font-size:clamp(40px,5.4vw,72px)}
+h2{font-size:clamp(36px,4.4vw,60px)}
+h1 em,h2 em,h3 em{font-style:italic;font-weight:400;letter-spacing:-.01em;color:var(--ink)}
+h3{font-size:28px;line-height:1.1}
+.label,.sub.center{font-family:var(--hand);font-style:normal;font-size:34px;line-height:1.05;letter-spacing:0;color:#2f2f2f}
+.sub.center{margin-top:10px}
+.sub{color:var(--muted)}
+
+/* Buttons: yellow pill, black text, ↗ arrow, soft glow */
+.btn{background:var(--yellow);color:#161616;border:0;border-radius:999px;padding:14px 26px;gap:10px;
+  font-family:var(--font);font-size:16px;font-weight:500;letter-spacing:-.01em;text-transform:none;
+  box-shadow:0 10px 24px -10px var(--yellow-glow),inset 0 -2px 0 rgba(0,0,0,.08)}
+.btn::after{content:"↗";font-size:15px}
+.btn:hover{background:var(--yellow-dark);transform:translateY(-1px)}
+.btn:hover::after{transform:translate(2px,-2px)}
+.btn:focus-visible{outline:2px solid #161616;outline-offset:3px}
+.btn.light{background:var(--yellow);color:#161616}
+.btn.light:hover{background:var(--yellow-dark)}
+.btn.ghost{background:#fff;color:var(--muted);box-shadow:inset 0 0 0 1px var(--line)}
+.btn.ghost:hover{background:var(--soft);color:var(--ink)}
+.btn.sm{padding:10px 18px;font-size:14px}
+.btn.sm::after{display:inline}
+
+/* Header: white, thin line */
+header{background:rgba(255,255,255,.92);color:var(--ink);border-bottom:1px solid var(--line);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px)}
+.name{font-family:var(--serif);font-size:28px;font-weight:400;letter-spacing:-.01em}
+
+/* Cards everywhere: white, thin border, big radius; inner grey panels */
+.checks,.tools,.faq,.days{border:1px solid var(--line);border-radius:var(--r-card);padding:8px 32px;background:#fff}
+.checks li,.tools li,.day,.faq details{border-color:var(--line)}
+.checks li:last-child,.tools li:last-child,.day:last-child,.faq details:last-child{border-bottom:0}
+.faq details:first-child{border-top:0}
+.checks li{font-size:19px}
+.checks li::before{border-color:var(--yellow-dark);border-width:0 0 2.5px 2.5px}
+.tools .tool{font-family:var(--serif);font-size:28px;color:var(--ink)}
+.day .d,.day .free{font-family:var(--serif);color:var(--ink)}
+.day summary:hover,.faq summary:hover{color:var(--muted)}
+.faq summary::after{background:linear-gradient(var(--ink),var(--ink)) center/14px 1.5px no-repeat,linear-gradient(var(--ink),var(--ink)) center/1.5px 14px no-repeat}
+.faq details[open] summary::after{background-size:14px 1.5px,1.5px 0}
+
+.video,.trailer,.locked-video{border-radius:var(--r-panel)}
+.video{padding:0;border:6px solid #fff;box-shadow:0 0 0 1px var(--line),0 30px 60px -40px rgba(0,0,0,.35)}
+.step-img,.gallery img,.offer-img,.about .ph{border-radius:var(--r-panel)}
+.about img.ph{background:var(--soft)}
+.ph{border-radius:var(--r-panel)}
+
+/* Method */
+.unlock .n,.progress b{font-family:var(--serif);color:var(--ink)}
+.unlock h3{text-transform:none;font-size:36px;letter-spacing:-.01em}
+.unlock .was{text-decoration-color:rgba(0,0,0,.35)}
+.progress .bar i{background:var(--yellow)}
+.pull{border-left-color:var(--yellow);font-family:var(--serif);color:var(--ink)}
+.about p.end,.about p.beat,.coda{font-family:var(--serif);color:var(--ink)}
+
+/* Reviews: each one a card */
+.slide>*{max-width:720px}
+.slide{padding:8px 12px}
+.slide .who{padding:28px 32px 0}
+.slide blockquote{margin:0;padding:16px 32px 32px;font-family:var(--font);font-style:normal;font-size:19px;line-height:1.6;color:#333}
+.slide>.who,.slide>blockquote{background:#fff;border:1px solid var(--line)}
+.slide>.who{border-bottom:0;border-radius:var(--r-card) var(--r-card) 0 0}
+.slide>blockquote{border-top:0;border-radius:0 0 var(--r-card) var(--r-card)}
+.slide figcaption{color:var(--ink);font-weight:500;letter-spacing:0}
+.stars,.slide .stars{color:var(--yellow-dark)}
+.avatar{border:1px solid var(--line);background-color:var(--soft)}
+.arrow{border-color:var(--line);background:#fff}
+.arrow:hover{background:var(--yellow);border-color:var(--yellow)}
+.dots button.on{background:var(--yellow-dark)}
+.logos{background:var(--soft)}
+
+/* Two paths: two cards side by side */
+.compare{gap:0 20px;box-shadow:none;border-radius:0;overflow:visible}
+.compare>div{border-top:0}
+.compare .w,.compare .g{background:#fff;color:var(--muted);border-left:1px solid var(--line);border-right:1px solid var(--line)}
+.compare .g{background:var(--blush);color:var(--ink);border-color:#f6e2a8}
+.compare .head{border-top:1px solid var(--line);border-radius:var(--r-card) var(--r-card) 0 0;font-family:var(--serif);font-weight:400;font-size:24px;padding-top:28px}
+.compare .g.head{color:var(--ink);border-top-color:#f6e2a8}
+.compare .foot{border-bottom:1px solid var(--line);border-radius:0 0 var(--r-card) var(--r-card)}
+.compare .g.foot{border-bottom-color:#f6e2a8}
+.compare .w.foot .btn{box-shadow:inset 0 0 0 1px var(--line);background:#fff}
+
+/* Price section: light grey band with rounded corners, white cards inside */
+.final{color:var(--ink);background:var(--soft);border-radius:48px;margin:0 12px;padding:120px 0}
+.final::before{display:none}
+.final h2{color:var(--ink)}
+.final .label{color:#4a4a4a}
+.final p:not(.label){color:var(--muted)}
+.offer,.checkout-card,.tier,.plan,.cols>div{border-radius:var(--r-card);border:1px solid var(--line);box-shadow:none;background:#fff}
+.offer-img{background:var(--soft)}
+.offer h3,.tier h3,.plan h3{text-transform:none;font-size:34px}
+.final .offer .price,.final .tier .price,.final .plan .price,.price{font-family:var(--serif);font-weight:400;color:var(--ink)}
+.final .offer p.offer-line{color:var(--muted)}
+.offer-list li::before,.tier li.yes::before,.cols li::before{border-color:var(--yellow-dark);border-width:0 0 2px 2px}
+.trust li::before{background:var(--yellow-dark)}
+.also{border:1px solid var(--line);border-radius:var(--r-card);background:#fff;padding:18px 24px}
+.also.full{border-style:dashed}
+.final .wrap .also p,.final .wrap .also.full p{color:var(--muted)}
+.also strong,.also.full strong{color:var(--ink)}
+.badge-full{border-color:var(--line);color:var(--muted);background:var(--soft)}
+.also .btn.is-disabled{background:var(--soft);color:#9a9a9a;box-shadow:none}
+.also .btn.is-disabled::after{display:none}
+.cols>.yes{background:var(--blush);border-color:#f6e2a8}
+
+/* Trailer paywall */
+.paywall{background:rgba(255,255,255,.9);color:var(--ink)}
+.paywall h3{text-transform:none;font-size:34px}
+.paywall p{color:var(--muted)}
+.timer{background:rgba(255,255,255,.9);color:var(--ink);border-radius:999px}
+.play{background:var(--yellow)}
+.play::after{border-left-color:#161616}
+
+/* Thank-you list, legal pages */
+.thanks-list li::before{font-family:var(--serif);color:var(--ink)}
+.legal a{color:var(--ink)}
+.legal h2{font-family:var(--serif);font-size:clamp(28px,3vw,36px)}
+
+/* Footer: light grey, big rounded top corners, dark text */
+footer,.site-footer{background:var(--soft);color:var(--muted);border-radius:48px 48px 0 0}
+.site-footer{padding:64px 0 40px}
+.site-footer .name{color:var(--ink);font-size:32px}
+.foot-top{border-bottom-color:var(--line)}
+.foot-contact{color:var(--muted)}
+.foot-legal a{color:var(--muted)}
+.foot-legal a:hover{color:var(--ink)}
+.foot-note{color:#8a8a8a}
+
+@media (max-width:760px){
+  section{padding:72px 0}
+  .checks,.tools,.faq,.days{padding:4px 20px;border-radius:22px}
+  .final{margin:0 8px;border-radius:32px;padding:80px 0}
+  .slide .who{padding:22px 22px 0}
+  .slide blockquote{padding:14px 22px 24px;font-size:17px}
+  .compare{gap:0 8px}
+  .compare .head{font-size:18px;padding-top:20px}
+  .compare .foot .btn{font-size:12px;letter-spacing:0;padding:12px 8px}
+  footer,.site-footer{border-radius:32px 32px 0 0}
+  .label,.sub.center{font-size:30px}
+  .offer h3{font-size:30px}
+}
+
 /* Funnel steps: checkout, upsell, thank you */
 .steps-bar{font-size:13px;color:rgba(255,255,255,.6)}
 .steps-bar b{color:#fff;font-weight:500}

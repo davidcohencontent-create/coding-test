@@ -446,10 +446,169 @@ html{scroll-behavior:smooth}
   .jc .label{font-size:21px}
 }
 
+/* ===== Theme: light and friendly. White page, soft rounded cards with thin borders, condensed serif headings with italic
+   accents, a handwritten touch for small notes, yellow pill buttons with a soft glow. Overrides the base styles above. ===== */
+.jc{
+  --bg:#fff; --white:#fff; --soft:#f6f6f5; --line:#ebebea; --ink:#161616; --muted:#5e5e5e; --accent:#161616; --accent-dark:#000;
+  --yellow:#f5c542; --yellow-dark:#ebb620; --yellow-glow:rgba(245,197,66,.45); --navy:#161616; --blush:#fdf3d8;
+  --serif:'Instrument Serif','Times New Roman',serif;
+  --font:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --hand:'Reenie Beanie','Comic Sans MS',cursive;
+  --r-card:28px; --r-panel:20px;
+}
+.jc{background:#fff;font-size:17px;line-height:1.65;letter-spacing:-.005em}
+.jc section{padding:112px 0}
+.jc section.white{background:#fff}
+.jc section.grey{background:var(--soft)}
+.jc .band{display:none}
+
+/* Type: condensed serif, sentence case, italic accent words */
+.jc h1,.jc h2,.jc h3{font-family:var(--serif);font-weight:400;letter-spacing:-.01em}
+.jc h1,.jc h2{text-transform:none;line-height:1.02}
+.jc h1{font-size:clamp(40px,5.4vw,72px)}
+.jc h2{font-size:clamp(36px,4.4vw,60px)}
+.jc h1 em,.jc h2 em,.jc h3 em{font-style:italic;font-weight:400;letter-spacing:-.01em;color:var(--ink)}
+.jc h3{font-size:28px;line-height:1.1}
+.jc .label,.jc .sub.center{font-family:var(--hand);font-style:normal;font-size:34px;line-height:1.05;letter-spacing:0;color:#2f2f2f}
+.jc .sub.center{margin-top:10px}
+.jc .sub{color:var(--muted)}
+
+/* Buttons: yellow pill, black text, ↗ arrow, soft glow */
+.jc .btn{background:var(--yellow);color:#161616;border:0;border-radius:999px;padding:14px 26px;gap:10px;
+  font-family:var(--font);font-size:16px;font-weight:500;letter-spacing:-.01em;text-transform:none;
+  box-shadow:0 10px 24px -10px var(--yellow-glow),inset 0 -2px 0 rgba(0,0,0,.08)}
+.jc .btn::after{content:"↗";font-size:15px}
+.jc .btn:hover{background:var(--yellow-dark);transform:translateY(-1px)}
+.jc .btn:hover::after{transform:translate(2px,-2px)}
+.jc .btn:focus-visible{outline:2px solid #161616;outline-offset:3px}
+.jc .btn.light{background:var(--yellow);color:#161616}
+.jc .btn.light:hover{background:var(--yellow-dark)}
+.jc .btn.ghost{background:#fff;color:var(--muted);box-shadow:inset 0 0 0 1px var(--line)}
+.jc .btn.ghost:hover{background:var(--soft);color:var(--ink)}
+.jc .btn.sm{padding:10px 18px;font-size:14px}
+.jc .btn.sm::after{display:inline}
+
+/* Header: white, thin line */
+.jc header{background:rgba(255,255,255,.92);color:var(--ink);border-bottom:1px solid var(--line);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px)}
+.jc .name{font-family:var(--serif);font-size:28px;font-weight:400;letter-spacing:-.01em}
+
+/* Cards everywhere: white, thin border, big radius; inner grey panels */
+.jc .checks,.jc .tools,.jc .faq,.jc .days{border:1px solid var(--line);border-radius:var(--r-card);padding:8px 32px;background:#fff}
+.jc .checks li,.jc .tools li,.jc .day,.jc .faq details{border-color:var(--line)}
+.jc .checks li:last-child,.jc .tools li:last-child,.jc .day:last-child,.jc .faq details:last-child{border-bottom:0}
+.jc .faq details:first-child{border-top:0}
+.jc .checks li{font-size:19px}
+.jc .checks li::before{border-color:var(--yellow-dark);border-width:0 0 2.5px 2.5px}
+.jc .tools .tool{font-family:var(--serif);font-size:28px;color:var(--ink)}
+.jc .day .d,.jc .day .free{font-family:var(--serif);color:var(--ink)}
+.jc .day summary:hover,.jc .faq summary:hover{color:var(--muted)}
+.jc .faq summary::after{background:linear-gradient(var(--ink),var(--ink)) center/14px 1.5px no-repeat,linear-gradient(var(--ink),var(--ink)) center/1.5px 14px no-repeat}
+.jc .faq details[open] summary::after{background-size:14px 1.5px,1.5px 0}
+
+.jc .video,.jc .trailer,.jc .locked-video{border-radius:var(--r-panel)}
+.jc .video{padding:0;border:6px solid #fff;box-shadow:0 0 0 1px var(--line),0 30px 60px -40px rgba(0,0,0,.35)}
+.jc .step-img,.jc .gallery img,.jc .offer-img,.jc .about .ph{border-radius:var(--r-panel)}
+.jc .about img.ph{background:var(--soft)}
+.jc .ph{border-radius:var(--r-panel)}
+
+/* Method */
+.jc .unlock .n,.jc .progress b{font-family:var(--serif);color:var(--ink)}
+.jc .unlock h3{text-transform:none;font-size:36px;letter-spacing:-.01em}
+.jc .unlock .was{text-decoration-color:rgba(0,0,0,.35)}
+.jc .progress .bar i{background:var(--yellow)}
+.jc .pull{border-left-color:var(--yellow);font-family:var(--serif);color:var(--ink)}
+.jc .about p.end,.jc .about p.beat,.jc .coda{font-family:var(--serif);color:var(--ink)}
+
+/* Reviews: each one a card */
+.jc .slide>*{max-width:720px}
+.jc .slide{padding:8px 12px}
+.jc .slide .who{padding:28px 32px 0}
+.jc .slide blockquote{margin:0;padding:16px 32px 32px;font-family:var(--font);font-style:normal;font-size:19px;line-height:1.6;color:#333}
+.jc .slide>.who,.jc .slide>blockquote{background:#fff;border:1px solid var(--line)}
+.jc .slide>.who{border-bottom:0;border-radius:var(--r-card) var(--r-card) 0 0}
+.jc .slide>blockquote{border-top:0;border-radius:0 0 var(--r-card) var(--r-card)}
+.jc .slide figcaption{color:var(--ink);font-weight:500;letter-spacing:0}
+.jc .stars,.jc .slide .stars{color:var(--yellow-dark)}
+.jc .avatar{border:1px solid var(--line);background-color:var(--soft)}
+.jc .arrow{border-color:var(--line);background:#fff}
+.jc .arrow:hover{background:var(--yellow);border-color:var(--yellow)}
+.jc .dots button.on{background:var(--yellow-dark)}
+.jc .logos{background:var(--soft)}
+
+/* Two paths: two cards side by side */
+.jc .compare{gap:0 20px;box-shadow:none;border-radius:0;overflow:visible}
+.jc .compare>div{border-top:0}
+.jc .compare .w,.jc .compare .g{background:#fff;color:var(--muted);border-left:1px solid var(--line);border-right:1px solid var(--line)}
+.jc .compare .g{background:var(--blush);color:var(--ink);border-color:#f6e2a8}
+.jc .compare .head{border-top:1px solid var(--line);border-radius:var(--r-card) var(--r-card) 0 0;font-family:var(--serif);font-weight:400;font-size:24px;padding-top:28px}
+.jc .compare .g.head{color:var(--ink);border-top-color:#f6e2a8}
+.jc .compare .foot{border-bottom:1px solid var(--line);border-radius:0 0 var(--r-card) var(--r-card)}
+.jc .compare .g.foot{border-bottom-color:#f6e2a8}
+.jc .compare .w.foot .btn{box-shadow:inset 0 0 0 1px var(--line);background:#fff}
+
+/* Price section: light grey band with rounded corners, white cards inside */
+.jc .final{color:var(--ink);background:var(--soft);border-radius:48px;margin:0 12px;padding:120px 0}
+.jc .final::before{display:none}
+.jc .final h2{color:var(--ink)}
+.jc .final .label{color:#4a4a4a}
+.jc .final p:not(.label){color:var(--muted)}
+.jc .offer,.jc .checkout-card,.jc .tier,.jc .plan,.jc .cols>div{border-radius:var(--r-card);border:1px solid var(--line);box-shadow:none;background:#fff}
+.jc .offer-img{background:var(--soft)}
+.jc .offer h3,.jc .tier h3,.jc .plan h3{text-transform:none;font-size:34px}
+.jc .final .offer .price,.jc .final .tier .price,.jc .final .plan .price,.jc .price{font-family:var(--serif);font-weight:400;color:var(--ink)}
+.jc .final .offer p.offer-line{color:var(--muted)}
+.jc .offer-list li::before,.jc .tier li.yes::before,.jc .cols li::before{border-color:var(--yellow-dark);border-width:0 0 2px 2px}
+.jc .trust li::before{background:var(--yellow-dark)}
+.jc .also{border:1px solid var(--line);border-radius:var(--r-card);background:#fff;padding:18px 24px}
+.jc .also.full{border-style:dashed}
+.jc .final .wrap .also p,.jc .final .wrap .also.full p{color:var(--muted)}
+.jc .also strong,.jc .also.full strong{color:var(--ink)}
+.jc .badge-full{border-color:var(--line);color:var(--muted);background:var(--soft)}
+.jc .also .btn.is-disabled{background:var(--soft);color:#9a9a9a;box-shadow:none}
+.jc .also .btn.is-disabled::after{display:none}
+.jc .cols>.yes{background:var(--blush);border-color:#f6e2a8}
+
+/* Trailer paywall */
+.jc .paywall{background:rgba(255,255,255,.9);color:var(--ink)}
+.jc .paywall h3{text-transform:none;font-size:34px}
+.jc .paywall p{color:var(--muted)}
+.jc .timer{background:rgba(255,255,255,.9);color:var(--ink);border-radius:999px}
+.jc .play{background:var(--yellow)}
+.jc .play::after{border-left-color:#161616}
+
+/* Thank-you list, legal pages */
+.jc .thanks-list li::before{font-family:var(--serif);color:var(--ink)}
+.jc .legal a{color:var(--ink)}
+.jc .legal h2{font-family:var(--serif);font-size:clamp(28px,3vw,36px)}
+
+/* Footer: light grey, big rounded top corners, dark text */
+.jc footer,.jc .site-footer{background:var(--soft);color:var(--muted);border-radius:48px 48px 0 0}
+.jc .site-footer{padding:64px 0 40px}
+.jc .site-footer .name{color:var(--ink);font-size:32px}
+.jc .foot-top{border-bottom-color:var(--line)}
+.jc .foot-contact{color:var(--muted)}
+.jc .foot-legal a{color:var(--muted)}
+.jc .foot-legal a:hover{color:var(--ink)}
+.jc .foot-note{color:#8a8a8a}
+
+@media (max-width:760px){
+  .jc section{padding:72px 0}
+  .jc .checks,.jc .tools,.jc .faq,.jc .days{padding:4px 20px;border-radius:22px}
+  .jc .final{margin:0 8px;border-radius:32px;padding:80px 0}
+  .jc .slide .who{padding:22px 22px 0}
+  .jc .slide blockquote{padding:14px 22px 24px;font-size:17px}
+  .jc .compare{gap:0 8px}
+  .jc .compare .head{font-size:18px;padding-top:20px}
+  .jc .compare .foot .btn{font-size:12px;letter-spacing:0;padding:12px 8px}
+  .jc footer,.jc .site-footer{border-radius:32px 32px 0 0}
+  .jc .label,.jc .sub.center{font-size:30px}
+  .jc .offer h3{font-size:30px}
+}
+
 
 /* GHL: neutralise GHL's section/row/column/element boxes around our sections, so every section runs edge to edge
    with no white strips or gaps, whatever padding, width or background those boxes were given in the builder */
-html:has(.jc),body:has(.jc){background:#f3f1ef!important}
+html:has(.jc),body:has(.jc){background:#fff!important}
 body :has(> .jc),body :has(.jc){padding:0!important;margin:0!important;max-width:none!important;gap:0!important;border:0!important;box-shadow:none!important;background:transparent!important;min-height:0!important}
 .jc{display:block;width:100%}
 
