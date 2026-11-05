@@ -305,6 +305,8 @@ document.querySelectorAll('img[data-fallback]').forEach(img => {
     opacity:0;transform:translateX(-50%) scale(.6) rotate(-6deg);transition:opacity .12s,transform .2s cubic-bezier(.34,1.6,.5,1)}
   .jm.scream .jm-yell{opacity:1;transform:translateX(-50%) scale(1) rotate(-4deg)}
   .jm.yell-below .jm-yell{bottom:auto;top:100%;margin:6px 0 0}
+  .jm.mouth .jm-smile,.jm.mouth .jm-tongue{opacity:0}
+  .jm.mouth .jm-o{opacity:1}
   @keyframes jm-lick{from{transform:scaleY(.8)}to{transform:scaleY(1.15)}}
   @keyframes jm-shake{0%{transform:translate(0,0) rotate(0)}25%{transform:translate(-1.5px,1px) rotate(-3deg)}50%{transform:translate(1.5px,-1px) rotate(2deg)}75%{transform:translate(-1px,-1px) rotate(-2deg)}100%{transform:translate(0,0) rotate(0)}}
   @keyframes jm-land{0%{transform:scale(1.18,.78)}55%{transform:scale(.94,1.08)}100%{transform:scale(1)}}
@@ -376,7 +378,7 @@ document.querySelectorAll('img[data-fallback]').forEach(img => {
     void el.offsetWidth; el.style.transition = '';
     el.classList.add('on'); visible = true;
     later(() => { el.classList.add('arrive'); later(() => el.classList.remove('arrive'), 700); }, 650);
-    if (side === 'bottom' && Math.random() < .55) later(() => talk(pick(LINES)), 900);
+    if (Math.random() < .55) later(() => talk(pick(LINES)), 900);
     // Waddle along the edge once or twice, then leave
     const walks = mobile() ? 1 : 1 + Math.floor(Math.random() * 2);
     let t = 1900;
@@ -394,11 +396,18 @@ document.querySelectorAll('img[data-fallback]').forEach(img => {
     later(() => el.classList.remove('walk'), 1500);
   }
   function talk(text) {
-    if (el.dataset.side !== 'bottom') return;
-    const r = el.getBoundingClientRect();
+    const side = el.dataset.side, r = el.getBoundingClientRect();
     say.textContent = text;
-    say.style.left = Math.max(12, Math.min(innerWidth - 220, r.left + r.width * .55)) + 'px';
+    const w = say.offsetWidth, h = say.offsetHeight;
+    let x, y;
+    if (side === 'left') { x = r.right - r.width * .2; y = r.top + r.height * .1 - h; }
+    else if (side === 'right') { x = r.left + r.width * .2 - w; y = r.top + r.height * .1 - h; }
+    else { x = r.left + r.width * .55; y = innerHeight - r.height * .72 - h - 4; }
+    say.style.left = Math.max(12, Math.min(innerWidth - w - 12, x)) + 'px';
+    say.style.top = Math.max(80, Math.min(innerHeight - h - 12, y)) + 'px';
+    say.style.bottom = 'auto';
     say.classList.add('on');
+    if (voiceOn) voice.say(text, mouthFor);
   }
   function leave() { if (hovering) return later(leave, 1500); hide(); }
   function hide() {
@@ -417,32 +426,81 @@ document.querySelectorAll('img[data-fallback]').forEach(img => {
     later(hide, 1900);
   }
 
-  // Scream: a short cartoon "aaah" made on the spot with the Web Audio API (no sound file). Only ever starts from a drag.
-  let actx = null, lastYell = 0;
+  // Voice: the mascot's own babble language, made live with the Web Audio API (no sound files). Each vowel of what it
+  // says becomes a short sung syllable with that vowel's colour (a, e, i, o, u), consonants are tiny clicks and hisses,
+  // "!" lifts the pitch and "?" bends it up at the end, and the mouth moves with every syllable. It only speaks out loud
+  // once the visitor has played with it (clicked or grabbed it), so it never surprises anyone.
+  const voice = (() => {
+    let ctx = null, out = null, noiseBuf = null;
+    const VOWELS = { a: [800, 1250], e: [480, 1850], i: [320, 2350], o: [500, 900], u: [340, 760] };
+    const PITCH = 440;                                  // a small, bright character
+    function init() {
+      if (ctx) { if (ctx.state === 'suspended') ctx.resume(); return true; }
+      try {
+        ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const comp = ctx.createDynamicsCompressor(); comp.connect(ctx.destination);
+        out = ctx.createGain(); out.gain.value = .2; out.connect(comp);
+        noiseBuf = ctx.createBuffer(1, ctx.sampleRate * .2, ctx.sampleRate);
+        const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+        return true;
+      } catch (e) { return false; }
+    }
+    function tone(t, dur, f0, f1, vowel, gain = 1, vib = 0) {
+      const [F1, F2] = VOWELS[vowel] || VOWELS.a;
+      const o = ctx.createOscillator(), g = ctx.createGain(), b1 = ctx.createBiquadFilter(), b2 = ctx.createBiquadFilter();
+      o.type = 'sawtooth';
+      o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + dur);
+      if (vib) { const v = ctx.createOscillator(), vg = ctx.createGain(); v.frequency.value = 8; vg.gain.value = vib; v.connect(vg); vg.connect(o.frequency); v.start(t); v.stop(t + dur + .05); }
+      b1.type = b2.type = 'bandpass'; b1.frequency.value = F1; b2.frequency.value = F2; b1.Q.value = 6; b2.Q.value = 9;
+      o.connect(b1); o.connect(b2); b1.connect(g); b2.connect(g); g.connect(out);
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.9 * gain, t + .012);
+      g.gain.setValueAtTime(.9 * gain, t + dur * .65); g.gain.exponentialRampToValueAtTime(.001, t + dur);
+      o.start(t); o.stop(t + dur + .05);
+    }
+    function tick(t, kind) {                           // consonant: a hiss (s, z, c, f, j) or a soft click (the rest)
+      const n = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
+      n.buffer = noiseBuf; f.type = kind === 'hiss' ? 'highpass' : 'bandpass'; f.frequency.value = kind === 'hiss' ? 4200 : 1800;
+      n.connect(f); f.connect(g); g.connect(out);
+      const len = kind === 'hiss' ? .045 : .014;
+      g.gain.setValueAtTime(kind === 'hiss' ? .35 : .5, t); g.gain.exponentialRampToValueAtTime(.001, t + len);
+      n.start(t); n.stop(t + len + .01);
+    }
+    // Speak a phrase; calls onSyllable(ms from now, length ms) so the mouth can follow
+    function say(text, onSyllable) {
+      if (!init()) return 0;
+      const plain = text.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+      const excited = /!/.test(text), asks = /\?/.test(text);
+      const syl = [...plain].filter(c => VOWELS[c]).length || 1;
+      let t = ctx.currentTime + .03, k = 0, prev = '';
+      const start = t;
+      for (const c of plain) {
+        if (VOWELS[c]) {
+          const dur = .075 + Math.random() * .03, last = k === syl - 1;
+          let f = PITCH * (excited ? 1.18 : 1) * (1 - k / syl * .12) * (1 + (Math.random() - .5) * .16);
+          const f1 = asks && last ? f * 1.45 : excited && last ? f * .8 : f * .96;
+          tone(t, dur, f, f1, c, last ? 1 : .85);
+          if (onSyllable) onSyllable((t - ctx.currentTime) * 1000, dur * 1000);
+          t += dur + .012; k++;
+        } else if (/[szcfjx]/.test(c) && c !== prev) { tick(t, 'hiss'); t += .03; }
+        else if (/[a-z]/.test(c)) { tick(t, 'click'); t += .012; }
+        else if (c === ' ') t += .05;
+        else if (/[.,…]/.test(c)) t += .14;
+        prev = c;
+      }
+      return (t - start) * 1000;
+    }
+    const scream = () => { if (!init()) return; const t = ctx.currentTime + .01, d = .6 + Math.random() * .2, f = PITCH * 1.3;
+      tone(t, d * .25, f, f * 1.5, 'a', 1, 0); tone(t + d * .22, d * .78, f * 1.5, f * .85, 'a', 1, 30); };
+    const squeak = () => { if (!init()) return; const t = ctx.currentTime + .01; tone(t, .09, PITCH * 1.5, PITCH * 2.1, 'i', .9); };
+    const oof = () => { if (!init()) return; const t = ctx.currentTime + .01; tone(t, .16, PITCH * .8, PITCH * .55, 'u', 1); };
+    return { say, scream, squeak, oof };
+  })();
+  let voiceOn = false, lastYell = 0;                     // turned on by the first click or grab
+  function mouthFor(ms, len) { setTimeout(() => { el.classList.add('mouth'); setTimeout(() => el.classList.remove('mouth'), len * .8); }, Math.max(0, ms)); }
   function screamSound() {
     const now = performance.now();
-    if (now - lastYell < 650) return;
-    lastYell = now;
-    try {
-      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
-      if (actx.state === 'suspended') actx.resume();
-      const t = actx.currentTime, dur = .55 + Math.random() * .25;
-      const o = actx.createOscillator(), vib = actx.createOscillator(), vg = actx.createGain(), g = actx.createGain();
-      const f1 = actx.createBiquadFilter(), f2 = actx.createBiquadFilter(), mix = actx.createGain();
-      o.type = 'sawtooth';
-      const base = 520 + Math.random() * 180;
-      o.frequency.setValueAtTime(base, t);
-      o.frequency.linearRampToValueAtTime(base * 1.35, t + dur * .25);
-      o.frequency.exponentialRampToValueAtTime(base * .7, t + dur);
-      vib.frequency.value = 9; vg.gain.value = 22; vib.connect(vg); vg.connect(o.frequency);   // wobbly voice
-      f1.type = f2.type = 'bandpass'; f1.frequency.value = 850; f2.frequency.value = 1250; f1.Q.value = f2.Q.value = 5; // "aa" vowel
-      o.connect(f1); o.connect(f2); f1.connect(mix); f2.connect(mix); mix.connect(g); g.connect(actx.destination);
-      g.gain.setValueAtTime(0, t);
-      g.gain.linearRampToValueAtTime(.22, t + .04);
-      g.gain.setValueAtTime(.22, t + dur * .7);
-      g.gain.exponentialRampToValueAtTime(.001, t + dur);
-      o.start(t); vib.start(t); o.stop(t + dur + .05); vib.stop(t + dur + .05);
-    } catch (e) { /* no audio: the scream stays visual */ }
+    if (now - lastYell < 700) return;
+    lastYell = now; voice.scream();
   }
 
   // Drag: grab it (tongue out), move it (it screams and shakes), let go (it falls to the bottom and bounces)
@@ -457,6 +515,7 @@ document.querySelectorAll('img[data-fallback]').forEach(img => {
     sx = e.clientX; sy = e.clientY; px = e.clientX;
     ox = e.clientX - r.left; oy = e.clientY - r.top;
     el.classList.add('grab');
+    voiceOn = true; voice.squeak();
     try { svgEl.setPointerCapture(e.pointerId); } catch (_) {}
   });
   svgEl.addEventListener('pointermove', e => {
@@ -500,6 +559,7 @@ document.querySelectorAll('img[data-fallback]').forEach(img => {
       el.classList.add('on');
       void el.offsetWidth; el.style.transition = '';
       el.classList.add('land'); later(() => el.classList.remove('land'), 500);
+      voice.oof();
       later(() => talk(pick(['¡Uf!', '¡Otra vez!', 'Qué mareo…', '¡Bájame!'])), 300);
       later(() => walk('bottom'), 2600);
       later(leave, 5200);
