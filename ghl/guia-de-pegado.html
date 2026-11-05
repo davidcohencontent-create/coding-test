@@ -1084,7 +1084,7 @@ body :has(&gt; .jc),body :has(.jc){padding:0!important;margin:0!important;max-wi
       .waitlist{text-align:left}
       .waitlist .btn{width:100%}
       .wl-embed{margin:6px -8px 0}
-      .wl-embed iframe{display:block;width:100%;min-height:420px;border:0}
+      .wl-embed iframe{display:block;width:100%!important;min-height:470px;border:0!important;border-radius:0!important}
       .final .wrap .waitlist p.wl-msg{margin:10px 0 0;font-size:14px;color:#b3261e;text-align:center}
       @media (max-width:760px){.cd{gap:6px}.cd div{min-width:0;flex:1}.cd b{font-size:28px}.final .offer .price.soon{font-size:44px}}
     &lt;/style&gt;
@@ -1116,7 +1116,27 @@ body :has(&gt; .jc),body :has(.jc){padding:0!important;margin:0!important;max-wi
           &lt;div class=&quot;waitlist&quot;&gt;
             &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-wl-open&gt;Unirme a la lista de espera&lt;/button&gt;
             &lt;div class=&quot;wl-embed&quot; id=&quot;lista-espera&quot; hidden&gt;
-              &lt;!-- GHL FORM: paste the form&#x27;s embed code here (Sites → Forms → Builder → Integrate → Embed). Nothing else to change. --&gt;
+              &lt;!-- GHL form &quot;Lista de Espera&quot; (Sites → Forms → Integrate → Embed, type Standard) --&gt;
+              &lt;iframe
+                src=&quot;https://api.leadconnectorhq.com/widget/form/sMcm0lzKXctDRTcBHbDI&quot;
+                style=&quot;width:100%;height:100%;border:none;border-radius:8px&quot;
+                id=&quot;inline-sMcm0lzKXctDRTcBHbDI&quot;
+                data-layout=&quot;{&#x27;id&#x27;:&#x27;INLINE&#x27;}&quot;
+                data-trigger-type=&quot;alwaysShow&quot;
+                data-trigger-value=&quot;&quot;
+                data-activation-type=&quot;alwaysActivated&quot;
+                data-activation-value=&quot;&quot;
+                data-deactivation-type=&quot;neverDeactivate&quot;
+                data-deactivation-value=&quot;&quot;
+                data-form-name=&quot;Lista de Espera&quot;
+                data-height=&quot;466&quot;
+                data-layout-iframe-id=&quot;inline-sMcm0lzKXctDRTcBHbDI&quot;
+                data-form-id=&quot;sMcm0lzKXctDRTcBHbDI&quot;
+                data-cookie-consent=&quot;true&quot;
+                data-cookie-consent-provider=&quot;auto&quot;
+                title=&quot;Lista de Espera&quot;&gt;
+              &lt;/iframe&gt;
+              &lt;script src=&quot;https://link.msgsndr.com/js/form_embed.js&quot;&gt;&lt;/script&gt;
             &lt;/div&gt;
             &lt;p class=&quot;wl-msg&quot; hidden&gt;Falta pegar aquí el código del formulario de GHL.&lt;/p&gt;
           &lt;/div&gt;
