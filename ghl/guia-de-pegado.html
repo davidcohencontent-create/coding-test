@@ -1081,22 +1081,11 @@ body :has(&gt; .jc),body :has(.jc){padding:0!important;margin:0!important;max-wi
       .cd b{display:block;font-family:var(--serif);font-weight:500;font-size:34px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
       .cd span{display:block;margin-top:6px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
       .final .wrap .offer p.cd-label{margin:0 0 4px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:600}
-      .waitlist{display:grid;gap:10px;text-align:left}
-      .waitlist .wl-fields{display:grid;gap:10px}
-      .waitlist:not(.open) .wl-fields{display:none}
-      .waitlist input[type=text],.waitlist input[type=email]{font:inherit;font-size:16px;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:2px;padding:14px 16px;width:100%}
-      .waitlist input:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 3px rgba(93,0,24,.12)}
-      .waitlist input.bad{border-color:#b3261e}
-      .waitlist .consent{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.45;color:var(--muted)}
-      .waitlist .consent input{margin:3px 0 0;flex:none;width:16px;height:16px;accent-color:var(--accent)}
-      .waitlist .consent.bad span{color:#b3261e}
-      .waitlist .consent a{color:var(--accent)}
+      .waitlist{text-align:left}
       .waitlist .btn{width:100%}
-      .waitlist .btn[disabled]{opacity:.6;cursor:wait}
-      .final .wrap .waitlist p.wl-msg{margin:4px 0 0;font-size:15px;color:var(--ink);text-align:center}
-      .final .wrap .waitlist p.wl-msg.err{color:#b3261e}
-      .waitlist.done .wl-fields,.waitlist.done .btn{display:none}
-      .final .wrap .waitlist.done p.wl-msg{font-family:var(--serif);font-style:italic;font-size:24px;line-height:1.3;margin:8px 0}
+      .wl-embed{margin:6px -8px 0}
+      .wl-embed iframe{display:block;width:100%;min-height:420px;border:0}
+      .final .wrap .waitlist p.wl-msg{margin:10px 0 0;font-size:14px;color:#b3261e;text-align:center}
       @media (max-width:760px){.cd{gap:6px}.cd div{min-width:0;flex:1}.cd b{font-size:28px}.final .offer .price.soon{font-size:44px}}
     &lt;/style&gt;
     &lt;div class=&quot;wrap&quot;&gt;
@@ -1124,17 +1113,13 @@ body :has(&gt; .jc),body :has(.jc){padding:0!important;margin:0!important;max-wi
             &lt;li&gt;Llamadas grupales con Judith&lt;/li&gt;
             &lt;li&gt;A tu ritmo y sin caducidad&lt;/li&gt;
           &lt;/ul&gt;
-          &lt;form class=&quot;waitlist&quot; id=&quot;lista-espera&quot; novalidate&gt;
-            &lt;div class=&quot;wl-fields&quot;&gt;
-              &lt;label class=&quot;sr&quot; for=&quot;wl-name&quot;&gt;Nombre&lt;/label&gt;
-              &lt;input id=&quot;wl-name&quot; name=&quot;name&quot; type=&quot;text&quot; autocomplete=&quot;given-name&quot; placeholder=&quot;Tu nombre&quot; required&gt;
-              &lt;label class=&quot;sr&quot; for=&quot;wl-email&quot;&gt;Email&lt;/label&gt;
-              &lt;input id=&quot;wl-email&quot; name=&quot;email&quot; type=&quot;email&quot; autocomplete=&quot;email&quot; placeholder=&quot;Tu email&quot; required&gt;
-              &lt;label class=&quot;consent&quot;&gt;&lt;input type=&quot;checkbox&quot; name=&quot;consent&quot; required&gt; &lt;span&gt;Acepto la &lt;a href=&quot;https://sites.leadconnectorhq.com/preview/ZfjXAtHTgjp0tmcPc56W&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;política de privacidad&lt;/a&gt; y recibir emails sobre el curso.&lt;/span&gt;&lt;/label&gt;
+          &lt;div class=&quot;waitlist&quot;&gt;
+            &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-wl-open&gt;Unirme a la lista de espera&lt;/button&gt;
+            &lt;div class=&quot;wl-embed&quot; id=&quot;lista-espera&quot; hidden&gt;
+              &lt;!-- GHL FORM: paste the form&#x27;s embed code here (Sites → Forms → Builder → Integrate → Embed). Nothing else to change. --&gt;
             &lt;/div&gt;
-            &lt;button class=&quot;btn&quot; type=&quot;submit&quot;&gt;Unirme a la lista de espera&lt;/button&gt;
-            &lt;p class=&quot;wl-msg&quot; role=&quot;status&quot; hidden&gt;&lt;/p&gt;
-          &lt;/form&gt;
+            &lt;p class=&quot;wl-msg&quot; hidden&gt;Falta pegar aquí el código del formulario de GHL.&lt;/p&gt;
+          &lt;/div&gt;
         &lt;/div&gt;
       &lt;/div&gt;
       &lt;!-- Con Judith: shown as fully booked, without price --&gt;
@@ -1161,31 +1146,15 @@ body :has(&gt; .jc),body :has(.jc){padding:0!important;margin:0!important;max-wi
         };
         tick();
       }
-      // Waiting list: the button first opens the fields, then sends name + email + consent to the GHL inbound webhook
-      var WAITLIST_WEBHOOK = &#x27;&#x27;; // TODO: paste the GHL inbound webhook URL here (Automation → Workflows → trigger &quot;Inbound Webhook&quot;)
-      var form = document.getElementById(&#x27;lista-espera&#x27;);
-      if (!form || form.dataset.ready) return;
-      form.dataset.ready = &#x27;1&#x27;;
-      var msg = form.querySelector(&#x27;.wl-msg&#x27;);
-      var show = function (text, err) { msg.textContent = text; msg.classList.toggle(&#x27;err&#x27;, !!err); msg.hidden = false; };
-      form.addEventListener(&#x27;submit&#x27;, function (e) {
-        e.preventDefault();
-        if (!form.classList.contains(&#x27;open&#x27;)) { form.classList.add(&#x27;open&#x27;); form.elements.name.focus(); return; }
-        var name = form.elements.name, email = form.elements.email, consent = form.elements.consent;
-        var n = name.value.trim(), m = email.value.trim(), okEmail = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(m);
-        name.classList.toggle(&#x27;bad&#x27;, !n); email.classList.toggle(&#x27;bad&#x27;, !okEmail);
-        consent.closest(&#x27;.consent&#x27;).classList.toggle(&#x27;bad&#x27;, !consent.checked);
-        if (!n || !okEmail) return show(&#x27;Escribe tu nombre y un email válido.&#x27;, true);
-        if (!consent.checked) return show(&#x27;Marca la casilla para poder avisarte.&#x27;, true);
-        if (!WAITLIST_WEBHOOK) return show(&#x27;La lista de espera aún no está conectada.&#x27;, true);
-        var data = { name: n, first_name: n.split(&#x27; &#x27;)[0], email: m, source: &#x27;Lista de espera · Intensivo de la Confianza&#x27;,
-          page: location.href, consent: &#x27;sí&#x27;, date: new Date().toISOString() };
-        var btn = form.querySelector(&#x27;button&#x27;); btn.disabled = true; msg.hidden = true;
-        var done = function () { form.classList.add(&#x27;done&#x27;); show(&#x27;¡Ya estás en la lista! Te escribiré en cuanto abran las plazas.&#x27;); };
-        fetch(WAITLIST_WEBHOOK, { method: &#x27;POST&#x27;, headers: { &#x27;Content-Type&#x27;: &#x27;application/json&#x27; }, body: JSON.stringify(data) })
-          .then(done, function () {   // the webhook may not allow cross-site requests: send it as a simple form post instead
-            fetch(WAITLIST_WEBHOOK, { method: &#x27;POST&#x27;, mode: &#x27;no-cors&#x27;, body: new URLSearchParams(data) }).then(done, done);
-          });
+      // Waiting list: the button opens the GHL form embedded below it (GHL saves the contact; a workflow adds the opportunity)
+      var open = document.querySelector(&#x27;[data-wl-open]&#x27;);
+      if (!open || open.dataset.ready) return;
+      open.dataset.ready = &#x27;1&#x27;;
+      open.addEventListener(&#x27;click&#x27;, function () {
+        var box = document.getElementById(&#x27;lista-espera&#x27;);
+        if (!box.querySelector(&#x27;iframe, form&#x27;)) { box.parentNode.querySelector(&#x27;.wl-msg&#x27;).hidden = false; return; }
+        box.hidden = false; open.hidden = true;
+        box.scrollIntoView({ behavior: &#x27;smooth&#x27;, block: &#x27;nearest&#x27; });
       });
     })();
     &lt;/script&gt;

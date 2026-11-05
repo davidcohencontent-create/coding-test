@@ -7,22 +7,11 @@
       .cd b{display:block;font-family:var(--serif);font-weight:500;font-size:34px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
       .cd span{display:block;margin-top:6px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
       .final .wrap .offer p.cd-label{margin:0 0 4px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:600}
-      .waitlist{display:grid;gap:10px;text-align:left}
-      .waitlist .wl-fields{display:grid;gap:10px}
-      .waitlist:not(.open) .wl-fields{display:none}
-      .waitlist input[type=text],.waitlist input[type=email]{font:inherit;font-size:16px;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:2px;padding:14px 16px;width:100%}
-      .waitlist input:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 3px rgba(93,0,24,.12)}
-      .waitlist input.bad{border-color:#b3261e}
-      .waitlist .consent{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.45;color:var(--muted)}
-      .waitlist .consent input{margin:3px 0 0;flex:none;width:16px;height:16px;accent-color:var(--accent)}
-      .waitlist .consent.bad span{color:#b3261e}
-      .waitlist .consent a{color:var(--accent)}
+      .waitlist{text-align:left}
       .waitlist .btn{width:100%}
-      .waitlist .btn[disabled]{opacity:.6;cursor:wait}
-      .final .wrap .waitlist p.wl-msg{margin:4px 0 0;font-size:15px;color:var(--ink);text-align:center}
-      .final .wrap .waitlist p.wl-msg.err{color:#b3261e}
-      .waitlist.done .wl-fields,.waitlist.done .btn{display:none}
-      .final .wrap .waitlist.done p.wl-msg{font-family:var(--serif);font-style:italic;font-size:24px;line-height:1.3;margin:8px 0}
+      .wl-embed{margin:6px -8px 0}
+      .wl-embed iframe{display:block;width:100%;min-height:420px;border:0}
+      .final .wrap .waitlist p.wl-msg{margin:10px 0 0;font-size:14px;color:#b3261e;text-align:center}
       @media (max-width:760px){.cd{gap:6px}.cd div{min-width:0;flex:1}.cd b{font-size:28px}.final .offer .price.soon{font-size:44px}}
     </style>
     <div class="wrap">
@@ -50,17 +39,13 @@
             <li>Llamadas grupales con Judith</li>
             <li>A tu ritmo y sin caducidad</li>
           </ul>
-          <form class="waitlist" id="lista-espera" novalidate>
-            <div class="wl-fields">
-              <label class="sr" for="wl-name">Nombre</label>
-              <input id="wl-name" name="name" type="text" autocomplete="given-name" placeholder="Tu nombre" required>
-              <label class="sr" for="wl-email">Email</label>
-              <input id="wl-email" name="email" type="email" autocomplete="email" placeholder="Tu email" required>
-              <label class="consent"><input type="checkbox" name="consent" required> <span>Acepto la <a href="https://sites.leadconnectorhq.com/preview/ZfjXAtHTgjp0tmcPc56W" target="_blank" rel="noopener">política de privacidad</a> y recibir emails sobre el curso.</span></label>
+          <div class="waitlist">
+            <button class="btn" type="button" data-wl-open>Unirme a la lista de espera</button>
+            <div class="wl-embed" id="lista-espera" hidden>
+              <!-- GHL FORM: paste the form's embed code here (Sites → Forms → Builder → Integrate → Embed). Nothing else to change. -->
             </div>
-            <button class="btn" type="submit">Unirme a la lista de espera</button>
-            <p class="wl-msg" role="status" hidden></p>
-          </form>
+            <p class="wl-msg" hidden>Falta pegar aquí el código del formulario de GHL.</p>
+          </div>
         </div>
       </div>
       <!-- Con Judith: shown as fully booked, without price -->
@@ -87,31 +72,15 @@
         };
         tick();
       }
-      // Waiting list: the button first opens the fields, then sends name + email + consent to the GHL inbound webhook
-      var WAITLIST_WEBHOOK = ''; // TODO: paste the GHL inbound webhook URL here (Automation → Workflows → trigger "Inbound Webhook")
-      var form = document.getElementById('lista-espera');
-      if (!form || form.dataset.ready) return;
-      form.dataset.ready = '1';
-      var msg = form.querySelector('.wl-msg');
-      var show = function (text, err) { msg.textContent = text; msg.classList.toggle('err', !!err); msg.hidden = false; };
-      form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        if (!form.classList.contains('open')) { form.classList.add('open'); form.elements.name.focus(); return; }
-        var name = form.elements.name, email = form.elements.email, consent = form.elements.consent;
-        var n = name.value.trim(), m = email.value.trim(), okEmail = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(m);
-        name.classList.toggle('bad', !n); email.classList.toggle('bad', !okEmail);
-        consent.closest('.consent').classList.toggle('bad', !consent.checked);
-        if (!n || !okEmail) return show('Escribe tu nombre y un email válido.', true);
-        if (!consent.checked) return show('Marca la casilla para poder avisarte.', true);
-        if (!WAITLIST_WEBHOOK) return show('La lista de espera aún no está conectada.', true);
-        var data = { name: n, first_name: n.split(' ')[0], email: m, source: 'Lista de espera · Intensivo de la Confianza',
-          page: location.href, consent: 'sí', date: new Date().toISOString() };
-        var btn = form.querySelector('button'); btn.disabled = true; msg.hidden = true;
-        var done = function () { form.classList.add('done'); show('¡Ya estás en la lista! Te escribiré en cuanto abran las plazas.'); };
-        fetch(WAITLIST_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
-          .then(done, function () {   // the webhook may not allow cross-site requests: send it as a simple form post instead
-            fetch(WAITLIST_WEBHOOK, { method: 'POST', mode: 'no-cors', body: new URLSearchParams(data) }).then(done, done);
-          });
+      // Waiting list: the button opens the GHL form embedded below it (GHL saves the contact; a workflow adds the opportunity)
+      var open = document.querySelector('[data-wl-open]');
+      if (!open || open.dataset.ready) return;
+      open.dataset.ready = '1';
+      open.addEventListener('click', function () {
+        var box = document.getElementById('lista-espera');
+        if (!box.querySelector('iframe, form')) { box.parentNode.querySelector('.wl-msg').hidden = false; return; }
+        box.hidden = false; open.hidden = true;
+        box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       });
     })();
     </script>
