@@ -169,38 +169,6 @@
       if (img.complete && img.naturalWidth === 0) fail(); else img.addEventListener('error', fail);
     });
 
-    // Waiting list: name + email + consent from the price card, sent to a GHL inbound webhook (Automation → Workflows →
-    // trigger "Inbound Webhook"; that workflow then creates the contact with the tag "lista-espera").
-    const WAITLIST_WEBHOOK = ''; // TODO: paste the GHL inbound webhook URL here
-    (() => {
-      const form = document.getElementById('lista-espera');
-      if (!form || form.dataset.ready) return;
-      form.dataset.ready = '1';
-      const msg = form.querySelector('.wl-msg');
-      const show = (text, err) => { msg.textContent = text; msg.classList.toggle('err', !!err); msg.hidden = false; };
-      form.addEventListener('submit', async e => {
-        e.preventDefault();
-        const name = form.elements.name, email = form.elements.email, consent = form.elements.consent;
-        const okEmail = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.value.trim());
-        name.classList.toggle('bad', !name.value.trim());
-        email.classList.toggle('bad', !okEmail);
-        consent.closest('.consent').classList.toggle('bad', !consent.checked);
-        if (!name.value.trim() || !okEmail) return show('Escribe tu nombre y un email válido.', true);
-        if (!consent.checked) return show('Marca la casilla para poder avisarte.', true);
-        if (!WAITLIST_WEBHOOK) return show('La lista de espera aún no está conectada.', true);
-        const data = { name: name.value.trim(), first_name: name.value.trim().split(' ')[0], email: email.value.trim(),
-          source: 'Lista de espera · Curso de Confianza', page: location.href, consent: 'sí', date: new Date().toISOString() };
-        const btn = form.querySelector('button'); btn.disabled = true; msg.hidden = true;
-        try {
-          await fetch(WAITLIST_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-        } catch (err) {
-          // the webhook may not allow cross-site requests: send it anyway as a simple form post (its answer can't be read)
-          await fetch(WAITLIST_WEBHOOK, { method: 'POST', mode: 'no-cors', body: new URLSearchParams(data) }).catch(() => {});
-        }
-        form.classList.add('done');
-        show('¡Ya estás en la lista! Te escribiré en cuanto abran las plazas.');
-      });
-    })();
     return true;
   }
   // GHL renders the page in stages: try on load, then retry briefly until the sections exist.

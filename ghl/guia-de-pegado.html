@@ -231,23 +231,7 @@ html{scroll-behavior:smooth}
 .jc .offer-list li::before{content:&quot;&quot;;position:absolute;left:3px;top:19px;width:12px;height:7px;border-left:1.5px solid var(--accent);border-bottom:1.5px solid var(--accent);transform:rotate(-45deg)}
 .jc .offer .btn{width:100%}
 .jc .buy.solo{grid-template-columns:minmax(0,520px);justify-content:center}
-.jc .final .offer .price.soon{font-style:italic;font-size:52px;margin:14px 0 12px}
 .jc .nowrap{white-space:nowrap}
-/* Waiting-list form in the price card */
-.jc .waitlist{display:grid;gap:10px;text-align:left}
-.jc .waitlist input[type=text],.jc .waitlist input[type=email]{font:inherit;font-size:16px;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:2px;padding:14px 16px;width:100%;transition:border-color .2s,box-shadow .2s}
-.jc .waitlist input:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 3px rgba(93,0,24,.12)}
-.jc .waitlist input.bad{border-color:#b3261e}
-.jc .waitlist .consent{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.45;color:var(--muted);margin:4px 0}
-.jc .waitlist .consent input{margin:3px 0 0;flex:none;width:16px;height:16px;accent-color:var(--accent)}
-.jc .waitlist .consent.bad span{color:#b3261e}
-.jc .waitlist .consent a{color:var(--accent)}
-.jc .waitlist .btn{width:100%;margin-top:4px}
-.jc .waitlist .btn[disabled]{opacity:.6;cursor:wait}
-.jc .final .wrap .waitlist p.wl-msg{margin:6px 0 0;font-size:15px;color:var(--ink);text-align:center}
-.jc .final .wrap .waitlist p.wl-msg.err{color:#b3261e}
-.jc .waitlist.done input,.jc .waitlist.done .consent,.jc .waitlist.done .btn,.jc .waitlist.done label.sr{display:none}
-.jc .final .wrap .waitlist.done p.wl-msg{font-family:var(--serif);font-style:italic;font-size:24px;line-height:1.3;color:var(--ink);margin:8px 0}
 .jc .checkout-card{padding:20px}
 .jc .trust{list-style:none;display:flex;flex-wrap:wrap;justify-content:center;gap:10px 26px;margin:0 0 16px;padding:4px 0 16px;border-bottom:1px solid var(--line);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .jc .trust li{display:inline-flex;align-items:center;gap:8px}
@@ -683,38 +667,6 @@ body :has(&gt; .jc),body :has(.jc){padding:0!important;margin:0!important;max-wi
       if (img.complete &amp;&amp; img.naturalWidth === 0) fail(); else img.addEventListener(&#x27;error&#x27;, fail);
     });
 
-    // Waiting list: name + email + consent from the price card, sent to a GHL inbound webhook (Automation → Workflows →
-    // trigger &quot;Inbound Webhook&quot;; that workflow then creates the contact with the tag &quot;lista-espera&quot;).
-    const WAITLIST_WEBHOOK = &#x27;&#x27;; // TODO: paste the GHL inbound webhook URL here
-    (() =&gt; {
-      const form = document.getElementById(&#x27;lista-espera&#x27;);
-      if (!form || form.dataset.ready) return;
-      form.dataset.ready = &#x27;1&#x27;;
-      const msg = form.querySelector(&#x27;.wl-msg&#x27;);
-      const show = (text, err) =&gt; { msg.textContent = text; msg.classList.toggle(&#x27;err&#x27;, !!err); msg.hidden = false; };
-      form.addEventListener(&#x27;submit&#x27;, async e =&gt; {
-        e.preventDefault();
-        const name = form.elements.name, email = form.elements.email, consent = form.elements.consent;
-        const okEmail = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.value.trim());
-        name.classList.toggle(&#x27;bad&#x27;, !name.value.trim());
-        email.classList.toggle(&#x27;bad&#x27;, !okEmail);
-        consent.closest(&#x27;.consent&#x27;).classList.toggle(&#x27;bad&#x27;, !consent.checked);
-        if (!name.value.trim() || !okEmail) return show(&#x27;Escribe tu nombre y un email válido.&#x27;, true);
-        if (!consent.checked) return show(&#x27;Marca la casilla para poder avisarte.&#x27;, true);
-        if (!WAITLIST_WEBHOOK) return show(&#x27;La lista de espera aún no está conectada.&#x27;, true);
-        const data = { name: name.value.trim(), first_name: name.value.trim().split(&#x27; &#x27;)[0], email: email.value.trim(),
-          source: &#x27;Lista de espera · Curso de Confianza&#x27;, page: location.href, consent: &#x27;sí&#x27;, date: new Date().toISOString() };
-        const btn = form.querySelector(&#x27;button&#x27;); btn.disabled = true; msg.hidden = true;
-        try {
-          await fetch(WAITLIST_WEBHOOK, { method: &#x27;POST&#x27;, headers: { &#x27;Content-Type&#x27;: &#x27;application/json&#x27; }, body: JSON.stringify(data) });
-        } catch (err) {
-          // the webhook may not allow cross-site requests: send it anyway as a simple form post (its answer can&#x27;t be read)
-          await fetch(WAITLIST_WEBHOOK, { method: &#x27;POST&#x27;, mode: &#x27;no-cors&#x27;, body: new URLSearchParams(data) }).catch(() =&gt; {});
-        }
-        form.classList.add(&#x27;done&#x27;);
-        show(&#x27;¡Ya estás en la lista! Te escribiré en cuanto abran las plazas.&#x27;);
-      });
-    })();
     return true;
   }
   // GHL renders the page in stages: try on load, then retry briefly until the sections exist.
@@ -1117,31 +1069,69 @@ body :has(&gt; .jc),body :has(.jc){padding:0!important;margin:0!important;max-wi
     &lt;/div&gt;
   &lt;/section&gt;
 
-  &lt;!-- Final CTA: question and the course card. For now no price and no checkout: &quot;Próximamente&quot; and the waiting-list form
-       (page.js sends it to the GHL inbound webhook set in WAITLIST_WEBHOOK). --&gt;
+  &lt;!-- Final CTA: the Intensivo card with a countdown to the opening date and the waiting list (no price for now).
+       Styles and script live in this section, so it pastes into GHL as one block. --&gt;
 &lt;/div&gt;
 </textarea></section><section class="step" id="s13"><header><span class="n">13</span><div><h2>Precio / lista de espera</h2><p>Sección a ancho completo, padding 0, sin fondo · fila de 1 columna, padding 0 · elemento Custom JS/HTML. Incluye el formulario de la lista de espera; se conecta con la URL del webhook de GHL en el Footer code (WAITLIST_WEBHOOK).</p></div><button type="button" class="copy" data-for="c13">Copiar</button></header><textarea id="c13" spellcheck="false">&lt;div class=&quot;jc&quot;&gt;
   &lt;section class=&quot;final&quot; id=&quot;precios&quot;&gt;
+    &lt;style&gt;
+      .final .offer .price.soon{font-style:italic;font-size:52px;margin:14px 0 10px}
+      .cd{display:flex;justify-content:center;gap:10px;margin:6px 0 18px}
+      .cd div{min-width:64px;padding:10px 6px 8px;border:1px solid var(--line);background:#fff;text-align:center}
+      .cd b{display:block;font-family:var(--serif);font-weight:500;font-size:34px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+      .cd span{display:block;margin-top:6px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+      .final .wrap .offer p.cd-label{margin:0 0 4px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:600}
+      .waitlist{display:grid;gap:10px;text-align:left}
+      .waitlist .wl-fields{display:grid;gap:10px}
+      .waitlist:not(.open) .wl-fields{display:none}
+      .waitlist input[type=text],.waitlist input[type=email]{font:inherit;font-size:16px;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:2px;padding:14px 16px;width:100%}
+      .waitlist input:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 3px rgba(93,0,24,.12)}
+      .waitlist input.bad{border-color:#b3261e}
+      .waitlist .consent{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.45;color:var(--muted)}
+      .waitlist .consent input{margin:3px 0 0;flex:none;width:16px;height:16px;accent-color:var(--accent)}
+      .waitlist .consent.bad span{color:#b3261e}
+      .waitlist .consent a{color:var(--accent)}
+      .waitlist .btn{width:100%}
+      .waitlist .btn[disabled]{opacity:.6;cursor:wait}
+      .final .wrap .waitlist p.wl-msg{margin:4px 0 0;font-size:15px;color:var(--ink);text-align:center}
+      .final .wrap .waitlist p.wl-msg.err{color:#b3261e}
+      .waitlist.done .wl-fields,.waitlist.done .btn{display:none}
+      .final .wrap .waitlist.done p.wl-msg{font-family:var(--serif);font-style:italic;font-size:24px;line-height:1.3;margin:8px 0}
+      @media (max-width:760px){.cd{gap:6px}.cd div{min-width:0;flex:1}.cd b{font-size:28px}.final .offer .price.soon{font-size:44px}}
+    &lt;/style&gt;
     &lt;div class=&quot;wrap&quot;&gt;
       &lt;h2&gt;¿Vas a seguir esperando a &lt;em&gt;sentirte preparada?&lt;/em&gt;&lt;/h2&gt;
       &lt;div class=&quot;buy solo&quot;&gt;
         &lt;div class=&quot;offer&quot;&gt;
           &lt;!-- Offer image: replace with the client&#x27;s asset (transparent PNG/WebP, about 1200×900, object centred) --&gt;
           &lt;img class=&quot;offer-img&quot; src=&quot;https://davidcohencontent-create.github.io/coding-test/funnel/img/dia-bloqueado.jpg&quot; alt=&quot;&quot; loading=&quot;lazy&quot;&gt;
-          &lt;h3&gt;Curso de Confianza&lt;/h3&gt;
+          &lt;h3&gt;Intensivo de la Confianza&lt;/h3&gt;
           &lt;p class=&quot;price soon&quot;&gt;Próximamente&lt;/p&gt;
+          &lt;!-- Countdown to the opening: data-open is the moment it ends (26 Nov 2026, 00:00 Madrid time) --&gt;
+          &lt;div class=&quot;countdown&quot; data-open=&quot;2026-11-26T00:00:00+01:00&quot;&gt;
+            &lt;p class=&quot;cd-label&quot;&gt;Las plazas se abren en&lt;/p&gt;
+            &lt;div class=&quot;cd&quot; aria-live=&quot;off&quot;&gt;
+              &lt;div&gt;&lt;b data-u=&quot;d&quot;&gt;21&lt;/b&gt;&lt;span&gt;días&lt;/span&gt;&lt;/div&gt;
+              &lt;div&gt;&lt;b data-u=&quot;h&quot;&gt;00&lt;/b&gt;&lt;span&gt;horas&lt;/span&gt;&lt;/div&gt;
+              &lt;div&gt;&lt;b data-u=&quot;m&quot;&gt;00&lt;/b&gt;&lt;span&gt;min&lt;/span&gt;&lt;/div&gt;
+              &lt;div&gt;&lt;b data-u=&quot;s&quot;&gt;00&lt;/b&gt;&lt;span&gt;seg&lt;/span&gt;&lt;/div&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
           &lt;p class=&quot;offer-line&quot;&gt;Únete a la lista de espera y serás la primera en saber cuándo abren las plazas.&lt;/p&gt;
           &lt;ul class=&quot;offer-list&quot;&gt;
             &lt;li&gt;10 días de vídeos · 11 lecciones grabadas&lt;/li&gt;
             &lt;li&gt;Meditaciones guiadas&lt;/li&gt;
+            &lt;li&gt;Llamadas grupales con Judith&lt;/li&gt;
             &lt;li&gt;A tu ritmo y sin caducidad&lt;/li&gt;
           &lt;/ul&gt;
           &lt;form class=&quot;waitlist&quot; id=&quot;lista-espera&quot; novalidate&gt;
-            &lt;label class=&quot;sr&quot; for=&quot;wl-name&quot;&gt;Nombre&lt;/label&gt;
-            &lt;input id=&quot;wl-name&quot; name=&quot;name&quot; type=&quot;text&quot; autocomplete=&quot;given-name&quot; placeholder=&quot;Tu nombre&quot; required&gt;
-            &lt;label class=&quot;sr&quot; for=&quot;wl-email&quot;&gt;Email&lt;/label&gt;
-            &lt;input id=&quot;wl-email&quot; name=&quot;email&quot; type=&quot;email&quot; autocomplete=&quot;email&quot; placeholder=&quot;Tu email&quot; required&gt;
-            &lt;label class=&quot;consent&quot;&gt;&lt;input type=&quot;checkbox&quot; name=&quot;consent&quot; required&gt; &lt;span&gt;Acepto la &lt;a href=&quot;https://sites.leadconnectorhq.com/preview/ZfjXAtHTgjp0tmcPc56W&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;política de privacidad&lt;/a&gt; y recibir emails sobre el curso.&lt;/span&gt;&lt;/label&gt;
+            &lt;div class=&quot;wl-fields&quot;&gt;
+              &lt;label class=&quot;sr&quot; for=&quot;wl-name&quot;&gt;Nombre&lt;/label&gt;
+              &lt;input id=&quot;wl-name&quot; name=&quot;name&quot; type=&quot;text&quot; autocomplete=&quot;given-name&quot; placeholder=&quot;Tu nombre&quot; required&gt;
+              &lt;label class=&quot;sr&quot; for=&quot;wl-email&quot;&gt;Email&lt;/label&gt;
+              &lt;input id=&quot;wl-email&quot; name=&quot;email&quot; type=&quot;email&quot; autocomplete=&quot;email&quot; placeholder=&quot;Tu email&quot; required&gt;
+              &lt;label class=&quot;consent&quot;&gt;&lt;input type=&quot;checkbox&quot; name=&quot;consent&quot; required&gt; &lt;span&gt;Acepto la &lt;a href=&quot;https://sites.leadconnectorhq.com/preview/ZfjXAtHTgjp0tmcPc56W&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;política de privacidad&lt;/a&gt; y recibir emails sobre el curso.&lt;/span&gt;&lt;/label&gt;
+            &lt;/div&gt;
             &lt;button class=&quot;btn&quot; type=&quot;submit&quot;&gt;Unirme a la lista de espera&lt;/button&gt;
             &lt;p class=&quot;wl-msg&quot; role=&quot;status&quot; hidden&gt;&lt;/p&gt;
           &lt;/form&gt;
@@ -1153,6 +1143,52 @@ body :has(&gt; .jc),body :has(.jc){padding:0!important;margin:0!important;max-wi
         &lt;span class=&quot;btn sm is-disabled&quot; aria-disabled=&quot;true&quot;&gt;Completo&lt;/span&gt;
       &lt;/div&gt;
     &lt;/div&gt;
+    &lt;script&gt;
+    (function () {
+      // Countdown to the opening date; when it is reached it says the places are open
+      var box = document.querySelector(&#x27;.countdown&#x27;);
+      if (box &amp;&amp; !box.dataset.run) {
+        box.dataset.run = &#x27;1&#x27;;
+        var end = new Date(box.dataset.open).getTime(), pad = function (n) { return (n &lt; 10 ? &#x27;0&#x27; : &#x27;&#x27;) + n; };
+        var tick = function () {
+          var t = Math.max(0, end - Date.now()), s = Math.floor(t / 1000);
+          box.querySelector(&#x27;[data-u=d]&#x27;).textContent = Math.floor(s / 86400);
+          box.querySelector(&#x27;[data-u=h]&#x27;).textContent = pad(Math.floor(s % 86400 / 3600));
+          box.querySelector(&#x27;[data-u=m]&#x27;).textContent = pad(Math.floor(s % 3600 / 60));
+          box.querySelector(&#x27;[data-u=s]&#x27;).textContent = pad(s % 60);
+          if (t &lt;= 0) { box.querySelector(&#x27;.cd-label&#x27;).textContent = &#x27;¡Las plazas ya están abiertas!&#x27;; box.querySelector(&#x27;.cd&#x27;).hidden = true; return; }
+          setTimeout(tick, 1000 - Date.now() % 1000);
+        };
+        tick();
+      }
+      // Waiting list: the button first opens the fields, then sends name + email + consent to the GHL inbound webhook
+      var WAITLIST_WEBHOOK = &#x27;&#x27;; // TODO: paste the GHL inbound webhook URL here (Automation → Workflows → trigger &quot;Inbound Webhook&quot;)
+      var form = document.getElementById(&#x27;lista-espera&#x27;);
+      if (!form || form.dataset.ready) return;
+      form.dataset.ready = &#x27;1&#x27;;
+      var msg = form.querySelector(&#x27;.wl-msg&#x27;);
+      var show = function (text, err) { msg.textContent = text; msg.classList.toggle(&#x27;err&#x27;, !!err); msg.hidden = false; };
+      form.addEventListener(&#x27;submit&#x27;, function (e) {
+        e.preventDefault();
+        if (!form.classList.contains(&#x27;open&#x27;)) { form.classList.add(&#x27;open&#x27;); form.elements.name.focus(); return; }
+        var name = form.elements.name, email = form.elements.email, consent = form.elements.consent;
+        var n = name.value.trim(), m = email.value.trim(), okEmail = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(m);
+        name.classList.toggle(&#x27;bad&#x27;, !n); email.classList.toggle(&#x27;bad&#x27;, !okEmail);
+        consent.closest(&#x27;.consent&#x27;).classList.toggle(&#x27;bad&#x27;, !consent.checked);
+        if (!n || !okEmail) return show(&#x27;Escribe tu nombre y un email válido.&#x27;, true);
+        if (!consent.checked) return show(&#x27;Marca la casilla para poder avisarte.&#x27;, true);
+        if (!WAITLIST_WEBHOOK) return show(&#x27;La lista de espera aún no está conectada.&#x27;, true);
+        var data = { name: n, first_name: n.split(&#x27; &#x27;)[0], email: m, source: &#x27;Lista de espera · Intensivo de la Confianza&#x27;,
+          page: location.href, consent: &#x27;sí&#x27;, date: new Date().toISOString() };
+        var btn = form.querySelector(&#x27;button&#x27;); btn.disabled = true; msg.hidden = true;
+        var done = function () { form.classList.add(&#x27;done&#x27;); show(&#x27;¡Ya estás en la lista! Te escribiré en cuanto abran las plazas.&#x27;); };
+        fetch(WAITLIST_WEBHOOK, { method: &#x27;POST&#x27;, headers: { &#x27;Content-Type&#x27;: &#x27;application/json&#x27; }, body: JSON.stringify(data) })
+          .then(done, function () {   // the webhook may not allow cross-site requests: send it as a simple form post instead
+            fetch(WAITLIST_WEBHOOK, { method: &#x27;POST&#x27;, mode: &#x27;no-cors&#x27;, body: new URLSearchParams(data) }).then(done, done);
+          });
+      });
+    })();
+    &lt;/script&gt;
   &lt;/section&gt;
 &lt;/div&gt;
 </textarea></section><section class="step" id="s14"><header><span class="n">14</span><div><h2>Preguntas frecuentes</h2><p>Sección a ancho completo, padding 0, sin fondo · fila de 1 columna, padding 0 · elemento Custom JS/HTML.</p></div><button type="button" class="copy" data-for="c14">Copiar</button></header><textarea id="c14" spellcheck="false">&lt;div class=&quot;jc&quot;&gt;
