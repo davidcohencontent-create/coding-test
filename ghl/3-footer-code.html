@@ -201,6 +201,57 @@
         .arrow:hover{transform:scale(1.08)}
       }`;
       const st = document.createElement('style'); st.id = 'jc-hover'; st.textContent = css; document.head.appendChild(st);
+
+      // Photos: on hover a radiant gold border turns around the photo, it glows, and little sparkles fly off its edges
+      const PHOTOS = '.step-img,.gallery img,.about img.ph,.offer-img,.locked-video img';
+      const glow = document.createElement('style');
+      glow.textContent = `
+      @property --jg{syntax:'<angle>';inherits:false;initial-value:0deg}
+      ${PHOTOS.split(',').map(x => x + '').join(',')}{border:3px solid transparent;background-origin:border-box}
+      @media (hover:hover){
+        ${PHOTOS.split(',').map(x => x + ':hover').join(',')}{
+          background:conic-gradient(from var(--jg),#f5c542,#fff6c9,#ffb347,#ffe100,#ffffff,#f5c542) border-box;
+          animation:jg-spin 2.2s linear infinite,jg-pulse 1.6s ease-in-out infinite}
+      }
+      @keyframes jg-spin{to{--jg:360deg}}
+      @keyframes jg-pulse{
+        0%,100%{box-shadow:0 0 0 1px rgba(245,197,66,.5),0 0 18px 2px rgba(245,197,66,.55),0 0 46px 6px rgba(255,179,71,.3)}
+        50%{box-shadow:0 0 0 1px rgba(245,197,66,.7),0 0 28px 6px rgba(245,197,66,.75),0 0 70px 14px rgba(255,179,71,.45)}}
+      .jg-s{position:fixed;left:0;top:0;z-index:2147483640;pointer-events:none}`;
+      document.head.appendChild(glow);
+      if (!matchMedia('(hover: hover)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const STAR = `<svg viewBox="-2 -2 28 28" width="100%" height="100%"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12 7-1 11-5 12-12z" fill="FILL" stroke="#161616" stroke-width="1.4" stroke-linejoin="round"/></svg>`;
+      let live = 0;
+      function sparkle(img) {
+        if (live > 50) return;
+        const r = img.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > innerHeight) return;
+        const side = Math.floor(Math.random() * 4), u = Math.random();
+        const x = side === 0 ? r.left + u * r.width : side === 1 ? r.right : side === 2 ? r.left + u * r.width : r.left;
+        const y = side === 0 ? r.top : side === 1 ? r.top + u * r.height : side === 2 ? r.bottom : r.top + u * r.height;
+        const nx = side === 1 ? 1 : side === 3 ? -1 : 0, ny = side === 0 ? -1 : side === 2 ? 1 : 0;
+        const sz = 11 + Math.random() * 11, d = 14 + Math.random() * 30, rot = (Math.random() - .5) * 200;
+        const e = document.createElement('div'); e.className = 'jg-s';
+        e.style.width = e.style.height = sz + 'px';
+        e.innerHTML = STAR.replace('FILL', Math.random() < .7 ? '#ffe100' : '#ffffff');
+        document.body.appendChild(e); live++;
+        const dx = nx * d + (Math.random() - .5) * 14, dy = ny * d + (Math.random() - .5) * 14;
+        e.animate([
+          { transform: `translate(${x - sz / 2}px,${y - sz / 2}px) scale(0) rotate(0deg)`, opacity: 1 },
+          { transform: `translate(${x - sz / 2 + dx * .5}px,${y - sz / 2 + dy * .5}px) scale(1.1) rotate(${rot / 2}deg)`, opacity: 1, offset: .35 },
+          { transform: `translate(${x - sz / 2 + dx}px,${y - sz / 2 + dy}px) scale(0) rotate(${rot}deg)`, opacity: 0 }
+        ], { duration: 700 + Math.random() * 500, easing: 'cubic-bezier(.2,.7,.3,1)' }).onfinish = () => { e.remove(); live--; };
+      }
+      let timer = 0, current = null;
+      document.addEventListener('pointerover', e => {
+        const img = e.target.closest && e.target.closest(PHOTOS);
+        if (img === current) return;
+        clearInterval(timer); current = img;
+        if (!img) return;
+        for (let i = 0; i < 6; i++) sparkle(img);                 // a little burst on the way in
+        timer = setInterval(() => { if (current) { sparkle(current); if (Math.random() < .5) sparkle(current); } }, 110);
+      }, { passive: true });
+      document.addEventListener('pointerout', e => { if (!e.relatedTarget || !(e.relatedTarget.closest && e.relatedTarget.closest(PHOTOS))) { clearInterval(timer); current = null; } }, { passive: true });
     })();
 
     // Sparkle cursor: the sparkle follows the mouse, twinkles, leans into the movement, grows over anything clickable,
