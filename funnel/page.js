@@ -288,7 +288,27 @@ document.querySelectorAll('img[data-fallback]').forEach(img => {
   @keyframes jm-tap{0%,100%{transform:translateY(0)}30%{transform:translateY(2.4px)}55%{transform:translateY(0)}80%{transform:translateY(2px)}}
   @keyframes jm-bump{0%{transform:translateY(0)}22%{transform:translateY(-10px)}78%{transform:translateY(-10px)}100%{transform:translateY(0)}}
   @keyframes jm-hop{0%,100%{transform:translateY(0) scale(1)}35%{transform:translateY(-14px) scale(1.04,.96)}70%{transform:translateY(0) scale(.98,1.03)}}
-  @media (max-width:760px){.jm{width:84px;height:84px}.jm-say{bottom:72px;font-size:22px}}`;
+  .jm svg{touch-action:none}
+  .jm[data-side=free]{transform:none}
+  .jm.drag,.jm.fall{z-index:2147483600}
+  .jm.drag{transition:none}
+  .jm.fall{transition:top .62s cubic-bezier(.55,0,.85,.4)}
+  .jm .jm-tongue,.jm .jm-scream,.jm .jm-xeyes{opacity:0;transition:opacity .08s}
+  .jm .jm-tongue{transform-box:fill-box;transform-origin:50% 0}
+  .jm.grab .jm-tongue{opacity:1;animation:jm-lick .5s ease-in-out infinite alternate}
+  .jm.scream .jm-smile,.jm.scream .jm-tongue,.jm.scream .jm-eyes,.jm.scream .jm-o{opacity:0}
+  .jm.scream .jm-scream,.jm.scream .jm-xeyes,.jm.scream .jm-dash{opacity:1}
+  .jm.scream svg{animation:jm-shake .11s linear infinite}
+  .jm.land svg{animation:jm-land .5s cubic-bezier(.3,1.6,.5,1) 1}
+  .jm-yell{position:absolute;left:50%;bottom:100%;margin-bottom:4px;padding:6px 14px;background:#fff;border:1.5px solid #161616;border-radius:16px;
+    font:32px/1 'Reenie Beanie','Comic Sans MS',cursive;color:#161616;white-space:nowrap;pointer-events:none;
+    opacity:0;transform:translateX(-50%) scale(.6) rotate(-6deg);transition:opacity .12s,transform .2s cubic-bezier(.34,1.6,.5,1)}
+  .jm.scream .jm-yell{opacity:1;transform:translateX(-50%) scale(1) rotate(-4deg)}
+  .jm.yell-below .jm-yell{bottom:auto;top:100%;margin:6px 0 0}
+  @keyframes jm-lick{from{transform:scaleY(.8)}to{transform:scaleY(1.15)}}
+  @keyframes jm-shake{0%{transform:translate(0,0) rotate(0)}25%{transform:translate(-1.5px,1px) rotate(-3deg)}50%{transform:translate(1.5px,-1px) rotate(2deg)}75%{transform:translate(-1px,-1px) rotate(-2deg)}100%{transform:translate(0,0) rotate(0)}}
+  @keyframes jm-land{0%{transform:scale(1.18,.78)}55%{transform:scale(.94,1.08)}100%{transform:scale(1)}}
+  @media (max-width:760px){.jm{width:84px;height:84px}.jm-say{bottom:72px;font-size:22px}.jm-yell{font-size:26px}}`;
   const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 
   // Original character: a rounded yellow block with a face, little legs and a laptop it types on
@@ -303,6 +323,9 @@ document.querySelectorAll('img[data-fallback]').forEach(img => {
       <circle cx="43" cy="58" r="4" fill="#ef8f6b" opacity=".35"/><circle cx="77" cy="58" r="4" fill="#ef8f6b" opacity=".35"/>
       <path class="jm-smile" d="M52 58q8 7 16 0" stroke="#161616" stroke-width="2.6" stroke-linecap="round" fill="none"/>
       <ellipse class="jm-o" cx="60" cy="60" rx="3.6" ry="4.4" fill="#161616"/>
+      <path class="jm-tongue" d="M55 61.5h10v5.5a5 5 0 0 1-10 0z" fill="#ef6f7a" stroke="#161616" stroke-width="2.2" stroke-linejoin="round"/>
+      <g class="jm-scream"><ellipse cx="60" cy="64" rx="7.5" ry="10" fill="#161616"/><ellipse cx="60" cy="70" rx="4.5" ry="3" fill="#ef6f7a"/></g>
+      <g class="jm-xeyes" stroke="#161616" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M45 44l6 4-6 4M75 44l-6 4 6 4"/></g>
     </g>
     <g class="jm-dash" stroke="#161616" stroke-width="2.4" stroke-linecap="round"><path d="M18 18l-6-6M60 6V-2M102 18l6-6"/></g>
     <g class="jm-laptop">
@@ -313,6 +336,8 @@ document.querySelectorAll('img[data-fallback]').forEach(img => {
     <g class="jm-hands" fill="#fff" stroke="#161616" stroke-width="2.6">
       <ellipse cx="38" cy="80" rx="7" ry="5.5"/><ellipse cx="82" cy="80" rx="7" ry="5.5"/>
     </g></svg>`;
+  const yell = document.createElement('div'); yell.className = 'jm-yell'; yell.textContent = '¡AAAAAH!';
+  el.appendChild(yell);
   const say = document.createElement('div'); say.className = 'jm-say';
   document.body.append(el, say);
 
@@ -324,7 +349,7 @@ document.querySelectorAll('img[data-fallback]').forEach(img => {
   const timers = new Set();
   const later = (fn, ms) => { const t = setTimeout(() => { timers.delete(t); fn(); }, ms); timers.add(t); return t; };
   const clearAll = () => { timers.forEach(clearTimeout); timers.clear(); };
-  let hovering = false, visible = false;
+  let hovering = false, visible = false, dragging = false;
 
   // Stay away from the payment form
   const checkout = document.getElementById('checkout');
@@ -345,7 +370,8 @@ document.querySelectorAll('img[data-fallback]').forEach(img => {
     if (document.hidden || checkoutVisible) return schedule();
     const side = mobile() ? 'bottom' : pick(['bottom', 'bottom', 'left', 'right']);
     el.style.transition = 'none';                 // jump to the new hidden spot without sliding there
-    el.classList.remove('on', 'up', 'walk', 'arrive');
+    el.classList.remove('on', 'up', 'walk', 'arrive', 'land', 'grab', 'scream', 'fall');
+    el.style.transform = '';
     el.dataset.side = side; moveTo(side, spot(side));
     void el.offsetWidth; el.style.transition = '';
     el.classList.add('on'); visible = true;
@@ -376,18 +402,112 @@ document.querySelectorAll('img[data-fallback]').forEach(img => {
   }
   function leave() { if (hovering) return later(leave, 1500); hide(); }
   function hide() {
+    if (dragging) return;
     clearAll(); say.classList.remove('on'); el.classList.remove('walk');
     if (visible) { visible = false; el.classList.remove('on'); }
     schedule();
   }
   function schedule() { later(show, mobile() ? rand(7000, 11000) : rand(3500, 7000)); }
 
-  // Click: jump, "o" mouth, a kind word, then off it goes
-  el.addEventListener('click', () => {
-    clearAll(); el.classList.remove('up', 'walk'); void el.offsetWidth; el.classList.add('up');
+  // Click: tongue out, jump, a kind word, then off it goes
+  function poke() {
+    el.classList.remove('up', 'walk'); void el.offsetWidth; el.classList.add('up', 'grab');
     talk(pick(LINES.slice(0, 5)));
+    later(() => el.classList.remove('grab'), 1100);
     later(hide, 1900);
+  }
+
+  // Scream: a short cartoon "aaah" made on the spot with the Web Audio API (no sound file). Only ever starts from a drag.
+  let actx = null, lastYell = 0;
+  function screamSound() {
+    const now = performance.now();
+    if (now - lastYell < 650) return;
+    lastYell = now;
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      if (actx.state === 'suspended') actx.resume();
+      const t = actx.currentTime, dur = .55 + Math.random() * .25;
+      const o = actx.createOscillator(), vib = actx.createOscillator(), vg = actx.createGain(), g = actx.createGain();
+      const f1 = actx.createBiquadFilter(), f2 = actx.createBiquadFilter(), mix = actx.createGain();
+      o.type = 'sawtooth';
+      const base = 520 + Math.random() * 180;
+      o.frequency.setValueAtTime(base, t);
+      o.frequency.linearRampToValueAtTime(base * 1.35, t + dur * .25);
+      o.frequency.exponentialRampToValueAtTime(base * .7, t + dur);
+      vib.frequency.value = 9; vg.gain.value = 22; vib.connect(vg); vg.connect(o.frequency);   // wobbly voice
+      f1.type = f2.type = 'bandpass'; f1.frequency.value = 850; f2.frequency.value = 1250; f1.Q.value = f2.Q.value = 5; // "aa" vowel
+      o.connect(f1); o.connect(f2); f1.connect(mix); f2.connect(mix); mix.connect(g); g.connect(actx.destination);
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(.22, t + .04);
+      g.gain.setValueAtTime(.22, t + dur * .7);
+      g.gain.exponentialRampToValueAtTime(.001, t + dur);
+      o.start(t); vib.start(t); o.stop(t + dur + .05); vib.stop(t + dur + .05);
+    } catch (e) { /* no audio: the scream stays visual */ }
+  }
+
+  // Drag: grab it (tongue out), move it (it screams and shakes), let go (it falls to the bottom and bounces)
+  const svgEl = el.querySelector('svg');
+  let sx = 0, sy = 0, ox = 0, oy = 0, px = 0, quietT = 0, moved = false;
+  svgEl.addEventListener('pointerdown', e => {
+    if (e.button > 0) return;
+    e.preventDefault();
+    clearAll(); say.classList.remove('on');
+    const r = el.getBoundingClientRect();
+    dragging = true; moved = false;
+    sx = e.clientX; sy = e.clientY; px = e.clientX;
+    ox = e.clientX - r.left; oy = e.clientY - r.top;
+    el.classList.add('grab');
+    try { svgEl.setPointerCapture(e.pointerId); } catch (_) {}
   });
+  svgEl.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    if (!moved && Math.hypot(e.clientX - sx, e.clientY - sy) < 5) return;
+    if (!moved) {                                   // lift it off its edge into free movement
+      moved = true;
+      const r = el.getBoundingClientRect();
+      el.classList.remove('on', 'walk', 'arrive', 'up');
+      el.classList.add('drag');
+      el.dataset.side = 'free';
+      el.style.left = r.left + 'px'; el.style.top = r.top + 'px';
+      ox = Math.min(ox, r.width); oy = Math.min(oy, r.height);
+    }
+    const n = size();
+    const left = Math.max(-n * .3, Math.min(innerWidth - n * .7, e.clientX - ox));
+    const top = Math.max(0, Math.min(innerHeight - n * .7, e.clientY - oy));
+    el.style.left = left + 'px'; el.style.top = top + 'px';
+    el.classList.toggle('yell-below', top < 70);
+    const vx = e.clientX - px; px = e.clientX;
+    el.style.transform = `rotate(${Math.max(-28, Math.min(28, vx * 1.8)).toFixed(1)}deg)`;
+    el.classList.add('scream'); screamSound();
+    clearTimeout(quietT); quietT = setTimeout(() => el.classList.remove('scream'), 260);   // stops when you stop
+  });
+  function drop() {
+    if (!dragging) return;
+    dragging = false;
+    clearTimeout(quietT);
+    el.classList.remove('grab', 'scream');
+    if (!moved) return poke();
+    // Fall to the bottom edge, land with a squash, then carry on like a normal visit
+    const n = size(), floor = innerHeight - n * .72;
+    el.style.transform = '';
+    el.classList.remove('drag'); el.classList.add('fall');
+    void el.offsetWidth;
+    el.style.top = floor + 'px';
+    later(() => {
+      el.classList.remove('fall');
+      el.style.transition = 'none';
+      el.dataset.side = 'bottom'; el.style.top = '';
+      el.classList.add('on');
+      void el.offsetWidth; el.style.transition = '';
+      el.classList.add('land'); later(() => el.classList.remove('land'), 500);
+      later(() => talk(pick(['¡Uf!', '¡Otra vez!', 'Qué mareo…', '¡Bájame!'])), 300);
+      later(() => walk('bottom'), 2600);
+      later(leave, 5200);
+    }, 640);
+  }
+  svgEl.addEventListener('pointerup', drop);
+  svgEl.addEventListener('pointercancel', drop);
+  svgEl.addEventListener('lostpointercapture', drop);
   el.addEventListener('mouseenter', () => { hovering = true; });
   el.addEventListener('mouseleave', () => { hovering = false; });
 
