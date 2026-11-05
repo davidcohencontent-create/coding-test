@@ -59,7 +59,7 @@ scoped = scoped.replace(anchor, reset + anchor, 1)
 scoped += '''
 /* GHL: neutralise GHL's section/row/column/element boxes around our sections, so every section runs edge to edge
    with no white strips or gaps, whatever padding, width or background those boxes were given in the builder */
-html:has(.jc),body:has(.jc){background:#fff!important}
+html:has(.jc),body:has(.jc){background:#f3f1ef!important}
 body :has(> .jc),body :has(.jc){padding:0!important;margin:0!important;max-width:none!important;gap:0!important;border:0!important;box-shadow:none!important;background:transparent!important;min-height:0!important}
 .jc{display:block;width:100%}
 '''
@@ -73,7 +73,7 @@ scoped += '''
 (OUT / '1-head-code.html').write_text('''<!-- Curso de Confianza: paste into GHL page Settings → Tracking Code → Header -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=Reenie+Beanie&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap">
 ''')
 
 # ---------- Footer code: Vimeo API + all page behaviour, started once GHL has rendered the sections ----------

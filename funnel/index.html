@@ -7,8 +7,8 @@
 <meta name="description" content="Te ayudo a dejar de esperar a sentirte preparada para ocupar el lugar que ya te has ganado. Curso de Confianza en 10 días.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=Reenie+Beanie&display=swap">
-<link rel="stylesheet" href="styles.css?v=20261105j">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap">
+<link rel="stylesheet" href="styles.css?v=20261103f">
 </head>
 <body>
 
@@ -21,93 +21,25 @@
 
 <main id="top">
 
-  <!-- Hero, editorial: a short loading counter, the headline building word by word, then the video opening from a line.
-       White, light lettering; its styles and script live here so it pastes as one block. -->
-  <section class="hz">
-    <style>
-      .hz.hz{background:#fff;color:#1d1b26;padding:0 0 112px;overflow:hidden;text-align:left}
-      .hz .hz-bar{height:3px;background:#f5c542;transform-origin:left;transform:scaleX(0);animation:hz-bar 1s cubic-bezier(.65,0,.35,1) forwards,hz-dim .6s ease 1.1s forwards}
-      .hz .hz-wrap{max-width:1200px;margin:0 auto;padding:40px 32px 0}
-      .hz .hz-meta{display:flex;justify-content:space-between;gap:24px;padding-bottom:18px;border-bottom:1px solid #ebebea;font:500 12px/1.2 'Inter','Helvetica Neue',Helvetica,Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#8a8a8a}
-      .hz .hz-count{font-variant-numeric:tabular-nums;transition:opacity .4s}
-      .hz .hz-count.is-fading{opacity:0}
-      .hz .hz-title{margin:56px 0 0;max-width:1120px;font:400 clamp(44px,6.6vw,100px)/.98 'Instrument Serif','Times New Roman',serif;letter-spacing:-.015em;text-transform:none;color:#161616}
-      .hz .hz-title em{font-family:'Instrument Serif','Times New Roman',serif;font-style:italic;font-weight:400;color:#161616;background:linear-gradient(transparent 62%,rgba(245,197,66,.55) 62%,rgba(245,197,66,.55) 88%,transparent 88%)}
-      .hz .hz-w{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.08em;margin-bottom:-.08em}
-      .hz .hz-w>span{display:inline-block;transform:translateY(105%);animation:hz-rise .9s cubic-bezier(.2,.75,.2,1) forwards;animation-delay:calc(.75s + var(--i) * 45ms)}
-      .hz .hz-grid{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:56px;align-items:end;margin-top:64px}
-      .hz .hz-side{opacity:0;transform:translateY(14px);animation:hz-up .9s cubic-bezier(.2,.7,.2,1) 1.75s forwards}
-      .hz .hz-sub{margin:0;font-size:17px;line-height:1.65;color:#5e5e5e;text-wrap:pretty}
-      .hz .hz-btn{display:inline-flex;align-items:center;gap:10px;margin-top:28px;padding:15px 28px;border-radius:999px;background:#f5c542;color:#161616;text-decoration:none;font:500 17px/1 'Inter','Helvetica Neue',Helvetica,Arial,sans-serif;letter-spacing:-.01em;box-shadow:0 12px 28px -10px rgba(245,197,66,.6),inset 0 -2px 0 rgba(0,0,0,.08);transition:background .25s,transform .25s}
-      .hz .hz-btn::after{content:"↗";font-size:16px;transition:transform .25s}
-      .hz .hz-btn:hover{background:#ebb620;transform:translateY(-1px)}
-      .hz .hz-btn:hover::after{transform:translate(2px,-2px)}
-      .hz .hz-proof{margin:16px 0 0;font-size:14px;color:#8a8a8a}
-      .hz .hz-proof b{font-weight:400;color:#ebb620;letter-spacing:.12em}
-      .hz .hz-video{position:relative;aspect-ratio:16/9;background:#f6f6f5;border-radius:20px;border:6px solid #fff;box-shadow:0 0 0 1px #ebebea,0 30px 60px -40px rgba(0,0,0,.35);clip-path:inset(49.5% 0 49.5% 0);animation:hz-open 1.2s cubic-bezier(.77,0,.18,1) 1.5s forwards}
-      .hz .hz-video iframe{position:absolute;inset:0;border-radius:14px;width:100%;height:100%;border:0;opacity:0;transition:opacity .8s ease;animation:hz-show 0s 7s forwards}
-      .hz .hz-video.is-ready iframe{opacity:1}
-      .hz .hz-load{position:absolute;left:20px;bottom:18px;display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#8a8a8a;transition:opacity .4s}
-      .hz .hz-load::before{content:"";width:6px;height:6px;border-radius:50%;background:#ebb620;animation:hz-pulse 1s ease-in-out infinite}
-      .hz .hz-video.is-ready .hz-load{opacity:0}
-      .hz .hz-tag{position:absolute;top:-44px;right:8px;font:28px/1 'Reenie Beanie','Comic Sans MS',cursive;color:#4a4a4a}
-      @keyframes hz-bar{to{transform:scaleX(1)}}
-      @keyframes hz-dim{to{opacity:.15}}
-      @keyframes hz-rise{to{transform:none}}
-      @keyframes hz-up{to{opacity:1;transform:none}}
-      @keyframes hz-open{to{clip-path:inset(0 0 0 0)}}
-      @keyframes hz-show{to{opacity:1}}
-      @keyframes hz-pulse{50%{opacity:.25;transform:scale(.7)}}
-      @media (max-width:860px){
-        .hz.hz{padding-bottom:72px}
-        .hz .hz-wrap{padding:28px 18px 0}
-        .hz .hz-meta{font-size:10px;letter-spacing:.16em}
-        .hz .hz-title{margin-top:36px;letter-spacing:-.03em}
-        .hz .hz-grid{grid-template-columns:1fr;gap:28px;margin-top:40px}
-        .hz .hz-video{order:-1}
-        .hz .hz-btn{width:100%;justify-content:center}
-        .hz .hz-tag,.hz .hz-name{display:none}
-        .hz .hz-btn{margin-top:20px}
-      }
-      @media (prefers-reduced-motion:reduce){
-        .hz .hz-bar,.hz .hz-w>span,.hz .hz-side,.hz .hz-video{animation:none;transform:none;opacity:1;clip-path:none}
-        .hz .hz-bar{opacity:.15}
-      }
-    </style>
-    <div class="hz-bar" aria-hidden="true"></div>
-    <div class="hz-wrap">
-      <div class="hz-meta"><span><span class="hz-name">Judith Calzada — </span>Curso de Confianza</span><span class="hz-count" data-done="10 días · 11 lecciones">10 días · 11 lecciones</span></div>
-      <h1 class="hz-title" aria-label="Te ayudo a dejar de esperar a sentirte preparada para ocupar el lugar que ya te has ganado."><span class="hz-w"><span style="--i:0">Te</span></span> <span class="hz-w"><span style="--i:1">ayudo</span></span> <span class="hz-w"><span style="--i:2">a</span></span> <span class="hz-w"><span style="--i:3">dejar</span></span> <span class="hz-w"><span style="--i:4">de</span></span> <span class="hz-w"><span style="--i:5">esperar</span></span> <span class="hz-w"><span style="--i:6">a</span></span> <span class="hz-w"><span style="--i:7"><em>sentirte</em></span></span> <span class="hz-w"><span style="--i:8"><em>preparada</em></span></span> <span class="hz-w"><span style="--i:9">para</span></span> <span class="hz-w"><span style="--i:10">ocupar</span></span> <span class="hz-w"><span style="--i:11">el</span></span> <span class="hz-w"><span style="--i:12">lugar</span></span> <span class="hz-w"><span style="--i:13">que</span></span> <span class="hz-w"><span style="--i:14">ya</span></span> <span class="hz-w"><span style="--i:15">te</span></span> <span class="hz-w"><span style="--i:16">has</span></span> <span class="hz-w"><span style="--i:17">ganado.</span></span></h1>
-      <div class="hz-grid">
-        <div class="hz-side">
-          <p class="hz-sub">Así es como dejé de esperar a sentirme preparada y empecé a actuar con miedo, un miedo que en cuestión de 10 días convertí en confianza.</p>
-          <a href="#precios" class="hz-btn">Quiero más confianza</a>
-          <p class="hz-proof">+500 profesionales acompañados · <b aria-hidden="true">★★★★★</b> 4,8/5</p>
-        </div>
-        <div class="hz-video">
-          <span class="hz-tag">Mira el vídeo ↓</span>
-          <span class="hz-load" aria-hidden="true">Cargando</span>
-          <iframe src="https://player.vimeo.com/video/1211423165?title=0&amp;byline=0&amp;portrait=0&amp;dnt=1&amp;color=5d0018" title="Vídeo de Judith Calzada" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen onload="this.parentNode.classList.add('is-ready')"></iframe>
-        </div>
+  <!-- Hero: heading, subheading, video, then the CTA -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="intro">
+        <h1>Te ayudo a dejar de esperar a <em>sentirte preparada</em> para ocupar el lugar que ya te has ganado.</h1>
+        <p>Así es como dejé de esperar a sentirme preparada y empecé a actuar con miedo, un miedo que en cuestión de 10 días convertí en confianza.</p>
+      </div>
+      <!-- TODO client: the hero video thumbnail looks blurred on the live page. If it is not just Vimeo's loading state,
+           set a sharp custom thumbnail in Vimeo (Settings → General → Thumbnail) or send a key frame to use as a poster. -->
+      <div class="video">
+        <iframe src="https://player.vimeo.com/video/1211423165?title=0&amp;byline=0&amp;portrait=0&amp;dnt=1&amp;color=5d0018" title="Vídeo de Judith Calzada" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      </div>
+      <div class="cta">
+        <a href="#precios" class="btn light">Quiero más confianza</a>
+        <p class="proof">+500 profesionales acompañados · <span class="stars" aria-hidden="true">★★★★★</span> 4,8/5</p>
       </div>
     </div>
-    <script>
-    (function () {
-      // Loading counter 00 → 100 while the line draws, then it settles on the course facts
-      var el = document.querySelector('.hz-count');
-      if (!el || el.dataset.run || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      el.dataset.run = '1';
-      var t0 = performance.now(), dur = 1000;
-      (function tick(t) {
-        var k = Math.min(1, (t - t0) / dur), n = Math.round(100 * (1 - Math.pow(1 - k, 3)));
-        el.textContent = (n < 10 ? '0' : '') + n;
-        if (k < 1) return requestAnimationFrame(tick);
-        setTimeout(function () { el.classList.add('is-fading');
-          setTimeout(function () { el.textContent = el.dataset.done; el.classList.remove('is-fading'); }, 400); }, 250);
-      })(t0);
-    })();
-    </script>
   </section>
+  <div class="band"></div>
 
   <!-- Identification -->
   <section>
@@ -582,6 +514,6 @@
 
 <script src="motion.js?v=20261103d" defer></script>
 <script src="https://player.vimeo.com/api/player.js" defer></script>
-<script src="page.js?v=20261105j" defer></script>
+<script src="page.js?v=20261103f" defer></script>
 </body>
 </html>
