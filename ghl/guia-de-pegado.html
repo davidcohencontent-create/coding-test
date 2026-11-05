@@ -1084,7 +1084,7 @@ body :has(&gt; .jc),body :has(.jc){padding:0!important;margin:0!important;max-wi
       .waitlist{text-align:left}
       .waitlist .btn{width:100%}
       .wl-embed{margin:6px -8px 0}
-      .wl-embed iframe{display:block;width:100%!important;min-height:470px;border:0!important;border-radius:0!important}
+      .wl-embed iframe{display:block;width:100%!important;max-width:none!important;min-height:470px;border:0!important;border-radius:0!important;background:#fcfbfa}
       .final .wrap .waitlist p.wl-msg{margin:10px 0 0;font-size:14px;color:#b3261e;text-align:center}
       @media (max-width:760px){.cd{gap:6px}.cd div{min-width:0;flex:1}.cd b{font-size:28px}.final .offer .price.soon{font-size:44px}}
     &lt;/style&gt;
@@ -1115,29 +1115,8 @@ body :has(&gt; .jc),body :has(.jc){padding:0!important;margin:0!important;max-wi
           &lt;/ul&gt;
           &lt;div class=&quot;waitlist&quot;&gt;
             &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-wl-open&gt;Unirme a la lista de espera&lt;/button&gt;
-            &lt;div class=&quot;wl-embed&quot; id=&quot;lista-espera&quot; hidden&gt;
-              &lt;!-- GHL form &quot;Lista de Espera&quot; (Sites → Forms → Integrate → Embed, type Standard) --&gt;
-              &lt;iframe
-                src=&quot;https://api.leadconnectorhq.com/widget/form/sMcm0lzKXctDRTcBHbDI&quot;
-                style=&quot;width:100%;height:100%;border:none;border-radius:8px&quot;
-                id=&quot;inline-sMcm0lzKXctDRTcBHbDI&quot;
-                data-layout=&quot;{&#x27;id&#x27;:&#x27;INLINE&#x27;}&quot;
-                data-trigger-type=&quot;alwaysShow&quot;
-                data-trigger-value=&quot;&quot;
-                data-activation-type=&quot;alwaysActivated&quot;
-                data-activation-value=&quot;&quot;
-                data-deactivation-type=&quot;neverDeactivate&quot;
-                data-deactivation-value=&quot;&quot;
-                data-form-name=&quot;Lista de Espera&quot;
-                data-height=&quot;466&quot;
-                data-layout-iframe-id=&quot;inline-sMcm0lzKXctDRTcBHbDI&quot;
-                data-form-id=&quot;sMcm0lzKXctDRTcBHbDI&quot;
-                data-cookie-consent=&quot;true&quot;
-                data-cookie-consent-provider=&quot;auto&quot;
-                title=&quot;Lista de Espera&quot;&gt;
-              &lt;/iframe&gt;
-              &lt;script src=&quot;https://link.msgsndr.com/js/form_embed.js&quot;&gt;&lt;/script&gt;
-            &lt;/div&gt;
+            &lt;!-- GHL form &quot;Lista de Espera&quot;: loaded only when the button is clicked, so every browser sizes it at the card&#x27;s full width --&gt;
+            &lt;div class=&quot;wl-embed&quot; id=&quot;lista-espera&quot; data-form-id=&quot;sMcm0lzKXctDRTcBHbDI&quot; data-form-name=&quot;Lista de Espera&quot; data-height=&quot;466&quot; hidden&gt;&lt;/div&gt;
             &lt;p class=&quot;wl-msg&quot; hidden&gt;Falta pegar aquí el código del formulario de GHL.&lt;/p&gt;
           &lt;/div&gt;
         &lt;/div&gt;
@@ -1171,9 +1150,25 @@ body :has(&gt; .jc),body :has(.jc){padding:0!important;margin:0!important;max-wi
       if (!open || open.dataset.ready) return;
       open.dataset.ready = &#x27;1&#x27;;
       open.addEventListener(&#x27;click&#x27;, function () {
-        var box = document.getElementById(&#x27;lista-espera&#x27;);
-        if (!box.querySelector(&#x27;iframe, form&#x27;)) { box.parentNode.querySelector(&#x27;.wl-msg&#x27;).hidden = false; return; }
-        box.hidden = false; open.hidden = true;
+        var box = document.getElementById(&#x27;lista-espera&#x27;), id = box.getAttribute(&#x27;data-form-id&#x27;);
+        if (!id) { box.parentNode.querySelector(&#x27;.wl-msg&#x27;).hidden = false; return; }
+        box.hidden = false; open.hidden = true;          // show the space first, then load the form into it
+        if (!box.querySelector(&#x27;iframe&#x27;)) {
+          var f = document.createElement(&#x27;iframe&#x27;);
+          f.src = &#x27;https://api.leadconnectorhq.com/widget/form/&#x27; + id;
+          f.id = &#x27;inline-&#x27; + id;
+          f.title = box.getAttribute(&#x27;data-form-name&#x27;);
+          f.style.cssText = &#x27;width:100%;height:&#x27; + box.getAttribute(&#x27;data-height&#x27;) + &#x27;px;border:none&#x27;;
+          var attrs = { &#x27;data-layout&#x27;: &quot;{&#x27;id&#x27;:&#x27;INLINE&#x27;}&quot;, &#x27;data-trigger-type&#x27;: &#x27;alwaysShow&#x27;, &#x27;data-trigger-value&#x27;: &#x27;&#x27;,
+            &#x27;data-activation-type&#x27;: &#x27;alwaysActivated&#x27;, &#x27;data-activation-value&#x27;: &#x27;&#x27;, &#x27;data-deactivation-type&#x27;: &#x27;neverDeactivate&#x27;,
+            &#x27;data-deactivation-value&#x27;: &#x27;&#x27;, &#x27;data-form-name&#x27;: box.getAttribute(&#x27;data-form-name&#x27;), &#x27;data-height&#x27;: box.getAttribute(&#x27;data-height&#x27;),
+            &#x27;data-layout-iframe-id&#x27;: &#x27;inline-&#x27; + id, &#x27;data-form-id&#x27;: id };
+          for (var k in attrs) f.setAttribute(k, attrs[k]);
+          box.appendChild(f);
+          var js = document.createElement(&#x27;script&#x27;);
+          js.src = &#x27;https://link.msgsndr.com/js/form_embed.js&#x27;;
+          box.appendChild(js);
+        }
         box.scrollIntoView({ behavior: &#x27;smooth&#x27;, block: &#x27;nearest&#x27; });
       });
     })();
