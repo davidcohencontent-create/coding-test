@@ -233,6 +233,33 @@ html{scroll-behavior:smooth}
 .jc .buy.solo{grid-template-columns:minmax(0,520px);justify-content:center}
 .jc .final .offer .price.soon{font-style:italic;font-size:52px;margin:14px 0 12px}
 .jc .nowrap{white-space:nowrap}
+/* Waiting-list form in the price card */
+.jc .waitlist{display:grid;gap:10px;text-align:left}
+.jc .waitlist input[type=text],.jc .waitlist input[type=email]{font:inherit;font-size:16px;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:2px;padding:14px 16px;width:100%;transition:border-color .2s,box-shadow .2s}
+.jc .waitlist input:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 3px rgba(93,0,24,.12)}
+.jc .waitlist input.bad{border-color:#b3261e}
+.jc .waitlist .consent{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.45;color:var(--muted);margin:4px 0}
+.jc .waitlist .consent input{margin:3px 0 0;flex:none;width:16px;height:16px;accent-color:var(--accent)}
+.jc .waitlist .consent.bad span{color:#b3261e}
+.jc .waitlist .consent a{color:var(--accent)}
+.jc .waitlist .btn{width:100%;margin-top:4px}
+.jc .waitlist .btn[disabled]{opacity:.6;cursor:wait}
+.jc .final .wrap .waitlist p.wl-msg{margin:6px 0 0;font-size:15px;color:var(--ink);text-align:center}
+.jc .final .wrap .waitlist p.wl-msg.err{color:#b3261e}
+.jc .waitlist.done input,.jc .waitlist.done .consent,.jc .waitlist.done .btn,.jc .waitlist.done label.sr{display:none}
+.jc .final .wrap .waitlist.done p.wl-msg{font-family:var(--serif);font-style:italic;font-size:24px;line-height:1.3;color:var(--ink);margin:8px 0}
+/* Course reviews: every one visible, as cards */
+.jc .rtitle{text-align:center;font-size:clamp(26px,3vw,36px);margin:72px 0 28px}
+.jc .rtitle em{font-style:italic;font-weight:400}
+.jc .rgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+.jc .rcard{margin:0;background:var(--white);border:1px solid var(--line);border-radius:2px;padding:24px 26px}
+.jc .rhead{display:flex;align-items:center;gap:12px}
+.jc .rcard .avatar{width:44px;height:44px;border-width:2px}
+.jc .rcard figcaption{font-size:15px;font-weight:600;color:var(--ink)}
+.jc .rcard .place{display:block;font-size:13px;color:var(--muted)}
+.jc .rcard .stars{margin:12px 0 0;font-size:15px;line-height:1}
+.jc .rcard blockquote{margin:12px 0 0;font-family:var(--serif);font-style:italic;font-size:19px;line-height:1.45;color:var(--ink)}
+@media (max-width:760px){.jc .rgrid{grid-template-columns:1fr}.jc .rcard{padding:20px}.jc .rtitle{margin-top:56px}}
 .jc .checkout-card{padding:20px}
 .jc .trust{list-style:none;display:flex;flex-wrap:wrap;justify-content:center;gap:10px 26px;margin:0 0 16px;padding:4px 0 16px;border-bottom:1px solid var(--line);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .jc .trust li{display:inline-flex;align-items:center;gap:8px}
@@ -667,6 +694,39 @@ body :has(&gt; .jc),body :has(.jc){padding:0!important;margin:0!important;max-wi
       };
       if (img.complete &amp;&amp; img.naturalWidth === 0) fail(); else img.addEventListener(&#x27;error&#x27;, fail);
     });
+
+    // Waiting list: name + email + consent from the price card, sent to a GHL inbound webhook (Automation → Workflows →
+    // trigger &quot;Inbound Webhook&quot;; that workflow then creates the contact with the tag &quot;lista-espera&quot;).
+    const WAITLIST_WEBHOOK = &#x27;&#x27;; // TODO: paste the GHL inbound webhook URL here
+    (() =&gt; {
+      const form = document.getElementById(&#x27;lista-espera&#x27;);
+      if (!form || form.dataset.ready) return;
+      form.dataset.ready = &#x27;1&#x27;;
+      const msg = form.querySelector(&#x27;.wl-msg&#x27;);
+      const show = (text, err) =&gt; { msg.textContent = text; msg.classList.toggle(&#x27;err&#x27;, !!err); msg.hidden = false; };
+      form.addEventListener(&#x27;submit&#x27;, async e =&gt; {
+        e.preventDefault();
+        const name = form.elements.name, email = form.elements.email, consent = form.elements.consent;
+        const okEmail = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.value.trim());
+        name.classList.toggle(&#x27;bad&#x27;, !name.value.trim());
+        email.classList.toggle(&#x27;bad&#x27;, !okEmail);
+        consent.closest(&#x27;.consent&#x27;).classList.toggle(&#x27;bad&#x27;, !consent.checked);
+        if (!name.value.trim() || !okEmail) return show(&#x27;Escribe tu nombre y un email válido.&#x27;, true);
+        if (!consent.checked) return show(&#x27;Marca la casilla para poder avisarte.&#x27;, true);
+        if (!WAITLIST_WEBHOOK) return show(&#x27;La lista de espera aún no está conectada.&#x27;, true);
+        const data = { name: name.value.trim(), first_name: name.value.trim().split(&#x27; &#x27;)[0], email: email.value.trim(),
+          source: &#x27;Lista de espera · Curso de Confianza&#x27;, page: location.href, consent: &#x27;sí&#x27;, date: new Date().toISOString() };
+        const btn = form.querySelector(&#x27;button&#x27;); btn.disabled = true; msg.hidden = true;
+        try {
+          await fetch(WAITLIST_WEBHOOK, { method: &#x27;POST&#x27;, headers: { &#x27;Content-Type&#x27;: &#x27;application/json&#x27; }, body: JSON.stringify(data) });
+        } catch (err) {
+          // the webhook may not allow cross-site requests: send it anyway as a simple form post (its answer can&#x27;t be read)
+          await fetch(WAITLIST_WEBHOOK, { method: &#x27;POST&#x27;, mode: &#x27;no-cors&#x27;, body: new URLSearchParams(data) }).catch(() =&gt; {});
+        }
+        form.classList.add(&#x27;done&#x27;);
+        show(&#x27;¡Ya estás en la lista! Te escribiré en cuanto abran las plazas.&#x27;);
+      });
+    })();
     return true;
   }
   // GHL renders the page in stages: try on load, then retry briefly until the sections exist.
@@ -920,90 +980,53 @@ body :has(&gt; .jc),body :has(.jc){padding:0!important;margin:0!important;max-wi
             &lt;/div&gt;
             &lt;blockquote&gt;“La preparación con Judith fue clave para reforzar las habilidades de liderazgo de nuestro equipo. Su enfoque práctico y estratégico nos dio herramientas aplicables desde el primer día para liderar con más confianza, claridad e impacto.”&lt;/blockquote&gt;
           &lt;/figure&gt;
-          &lt;!-- Alumnas del Curso de Confianza (reviews from the course page) --&gt;
-          &lt;figure class=&quot;slide&quot;&gt;
-            &lt;div class=&quot;who&quot;&gt;
-              &lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;
-              &lt;div&gt;
-                &lt;figcaption&gt;Fernanda G. · D.F. México&lt;/figcaption&gt;
-                &lt;p class=&quot;stars&quot; aria-label=&quot;5 de 5 estrellas&quot;&gt;★★★★★&lt;/p&gt;
-              &lt;/div&gt;
-            &lt;/div&gt;
-            &lt;blockquote&gt;“Pensaba que la confianza era algo que tenías o no tenías. El curso me hizo darme cuenta de que se entrena. Me ha ayudado especialmente a dejar de cuestionarme constantemente después de tomar una decisión.”&lt;/blockquote&gt;
-          &lt;/figure&gt;
-          &lt;figure class=&quot;slide&quot;&gt;
-            &lt;div class=&quot;who&quot;&gt;
-              &lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;
-              &lt;div&gt;
-                &lt;figcaption&gt;Albert M. · Alcobendas&lt;/figcaption&gt;
-                &lt;p class=&quot;stars&quot; aria-label=&quot;5 de 5 estrellas&quot;&gt;★★★★★&lt;/p&gt;
-              &lt;/div&gt;
-            &lt;/div&gt;
-            &lt;blockquote&gt;“Profesionalmente me iba bien, pero seguía teniendo la sensación de que en cualquier momento alguien descubriría que no era tan buena como pensaban. El curso me ayudó a entender de dónde venía esa voz y, sobre todo, a dejar de darle tanto poder.”&lt;/blockquote&gt;
-          &lt;/figure&gt;
-          &lt;figure class=&quot;slide&quot;&gt;
-            &lt;div class=&quot;who&quot;&gt;
-              &lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;
-              &lt;div&gt;
-                &lt;figcaption&gt;Alba S. · Barcelona&lt;/figcaption&gt;
-                &lt;p class=&quot;stars&quot; aria-label=&quot;4 de 5 estrellas&quot;&gt;★★★★☆&lt;/p&gt;
-              &lt;/div&gt;
-            &lt;/div&gt;
-            &lt;blockquote&gt;“Diez días que me han hecho cuestionarme años de inseguridades. Ahora me observo de una manera completamente diferente y confío mucho más en mis decisiones.”&lt;/blockquote&gt;
-          &lt;/figure&gt;
-          &lt;figure class=&quot;slide&quot;&gt;
-            &lt;div class=&quot;who&quot;&gt;
-              &lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;
-              &lt;div&gt;
-                &lt;figcaption&gt;Elisabet M. · Lleida&lt;/figcaption&gt;
-                &lt;p class=&quot;stars&quot; aria-label=&quot;5 de 5 estrellas&quot;&gt;★★★★★&lt;/p&gt;
-              &lt;/div&gt;
-            &lt;/div&gt;
-            &lt;blockquote lang=&quot;ca&quot;&gt;“El que més m’ha agradat és que no és el típic curs de ‘creu en tu i tot anirà bé’. Hi ha exercicis molt concrets que et fan adonar de comportaments que tens totalment automatitzats. M’he endut eines que continuo utilitzant.”&lt;/blockquote&gt;
-          &lt;/figure&gt;
-          &lt;figure class=&quot;slide&quot;&gt;
-            &lt;div class=&quot;who&quot;&gt;
-              &lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;
-              &lt;div&gt;
-                &lt;figcaption&gt;Clara G. · Aitona&lt;/figcaption&gt;
-                &lt;p class=&quot;stars&quot; aria-label=&quot;5 de 5 estrellas&quot;&gt;★★★★★&lt;/p&gt;
-              &lt;/div&gt;
-            &lt;/div&gt;
-            &lt;blockquote&gt;“Tengo un puesto de responsabilidad y nunca me había considerado una persona insegura. Sin embargo, haciendo el curso descubrí cuántas veces me hacía pequeña sin darme cuenta: justificándome demasiado, sobrepreparándome o buscando validación antes de decidir. Ha sido revelador.”&lt;/blockquote&gt;
-          &lt;/figure&gt;
-          &lt;figure class=&quot;slide&quot;&gt;
-            &lt;div class=&quot;who&quot;&gt;
-              &lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;
-              &lt;div&gt;
-                &lt;figcaption&gt;Marc C. · Madrid&lt;/figcaption&gt;
-                &lt;p class=&quot;stars&quot; aria-label=&quot;5 de 5 estrellas&quot;&gt;★★★★★&lt;/p&gt;
-              &lt;/div&gt;
-            &lt;/div&gt;
-            &lt;blockquote&gt;“Hubo un ejercicio que me hizo llorar porque me di cuenta de la cantidad de años que llevaba hablándome de una forma que jamás utilizaría con otra persona. Para mí el curso ha sido mucho más que ganar confianza: ha sido empezar a estar de mi lado.”&lt;/blockquote&gt;
-          &lt;/figure&gt;
-          &lt;figure class=&quot;slide&quot;&gt;
-            &lt;div class=&quot;who&quot;&gt;
-              &lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;
-              &lt;div&gt;
-                &lt;figcaption&gt;Marta L. · Barcelona&lt;/figcaption&gt;
-                &lt;p class=&quot;stars&quot; aria-label=&quot;5 de 5 estrellas&quot;&gt;★★★★★&lt;/p&gt;
-              &lt;/div&gt;
-            &lt;/div&gt;
-            &lt;blockquote&gt;“Llegué al curso en un momento en el que sabía que quería cambiar cosas profesionalmente, pero llevaba meses sin atreverme a dar el paso. En 10 días no desaparecen todos tus miedos, pero sí cambia muchísimo la forma en la que te relacionas con ellos. Para mí ese ha sido el gran aprendizaje.”&lt;/blockquote&gt;
-          &lt;/figure&gt;
-          &lt;figure class=&quot;slide&quot;&gt;
-            &lt;div class=&quot;who&quot;&gt;
-              &lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;
-              &lt;div&gt;
-                &lt;figcaption&gt;Alumna del Curso de Confianza&lt;/figcaption&gt;
-              &lt;/div&gt;
-            &lt;/div&gt;
-            &lt;blockquote&gt;“El curso de Judith transmite una energía muy especial: cercana, natural y llena de vitalidad. Su forma de explicar genera confianza y ayuda a sentirse acompañado durante todo el proceso, y su motivación se contagia. Además, ofrece muchos consejos, herramientas y recursos para aprovechar el curso al máximo, y sus meditaciones son un espacio que se disfruta muchísimo. Una profesora excelente.”&lt;/blockquote&gt;
-          &lt;/figure&gt;
         &lt;/div&gt;
         &lt;button class=&quot;arrow next&quot; type=&quot;button&quot; aria-label=&quot;Siguiente&quot;&gt;&lt;/button&gt;
       &lt;/div&gt;
       &lt;div class=&quot;dots&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
+      &lt;!-- Alumnas del Curso de Confianza: every review visible at once --&gt;
+      &lt;h3 class=&quot;rtitle&quot;&gt;Lo que dicen &lt;em&gt;mis alumnas&lt;/em&gt;&lt;/h3&gt;
+      &lt;div class=&quot;rgrid&quot;&gt;
+          &lt;figure class=&quot;rcard&quot;&gt;
+            &lt;div class=&quot;rhead&quot;&gt;&lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;div&gt;&lt;figcaption&gt;Fernanda G.&lt;/figcaption&gt;&lt;span class=&quot;place&quot;&gt;D.F. México&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+            &lt;p class=&quot;stars&quot; aria-label=&quot;5 de 5 estrellas&quot;&gt;★★★★★&lt;/p&gt;
+            &lt;blockquote&gt;“Pensaba que la confianza era algo que tenías o no tenías. El curso me hizo darme cuenta de que se entrena. Me ha ayudado especialmente a dejar de cuestionarme constantemente después de tomar una decisión.”&lt;/blockquote&gt;
+          &lt;/figure&gt;
+          &lt;figure class=&quot;rcard&quot;&gt;
+            &lt;div class=&quot;rhead&quot;&gt;&lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;div&gt;&lt;figcaption&gt;Albert M.&lt;/figcaption&gt;&lt;span class=&quot;place&quot;&gt;Alcobendas&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+            &lt;p class=&quot;stars&quot; aria-label=&quot;5 de 5 estrellas&quot;&gt;★★★★★&lt;/p&gt;
+            &lt;blockquote&gt;“Profesionalmente me iba bien, pero seguía teniendo la sensación de que en cualquier momento alguien descubriría que no era tan buena como pensaban. El curso me ayudó a entender de dónde venía esa voz y, sobre todo, a dejar de darle tanto poder.”&lt;/blockquote&gt;
+          &lt;/figure&gt;
+          &lt;figure class=&quot;rcard&quot;&gt;
+            &lt;div class=&quot;rhead&quot;&gt;&lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;div&gt;&lt;figcaption&gt;Alba S.&lt;/figcaption&gt;&lt;span class=&quot;place&quot;&gt;Barcelona&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+            &lt;p class=&quot;stars&quot; aria-label=&quot;4 de 5 estrellas&quot;&gt;★★★★☆&lt;/p&gt;
+            &lt;blockquote&gt;“Diez días que me han hecho cuestionarme años de inseguridades. Ahora me observo de una manera completamente diferente y confío mucho más en mis decisiones.”&lt;/blockquote&gt;
+          &lt;/figure&gt;
+          &lt;figure class=&quot;rcard&quot;&gt;
+            &lt;div class=&quot;rhead&quot;&gt;&lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;div&gt;&lt;figcaption&gt;Elisabet M.&lt;/figcaption&gt;&lt;span class=&quot;place&quot;&gt;Lleida&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+            &lt;p class=&quot;stars&quot; aria-label=&quot;5 de 5 estrellas&quot;&gt;★★★★★&lt;/p&gt;
+            &lt;blockquote lang=&quot;ca&quot;&gt;“El que més m’ha agradat és que no és el típic curs de ‘creu en tu i tot anirà bé’. Hi ha exercicis molt concrets que et fan adonar de comportaments que tens totalment automatitzats. M’he endut eines que continuo utilitzant.”&lt;/blockquote&gt;
+          &lt;/figure&gt;
+          &lt;figure class=&quot;rcard&quot;&gt;
+            &lt;div class=&quot;rhead&quot;&gt;&lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;div&gt;&lt;figcaption&gt;Clara G.&lt;/figcaption&gt;&lt;span class=&quot;place&quot;&gt;Aitona&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+            &lt;p class=&quot;stars&quot; aria-label=&quot;5 de 5 estrellas&quot;&gt;★★★★★&lt;/p&gt;
+            &lt;blockquote&gt;“Tengo un puesto de responsabilidad y nunca me había considerado una persona insegura. Sin embargo, haciendo el curso descubrí cuántas veces me hacía pequeña sin darme cuenta: justificándome demasiado, sobrepreparándome o buscando validación antes de decidir. Ha sido revelador.”&lt;/blockquote&gt;
+          &lt;/figure&gt;
+          &lt;figure class=&quot;rcard&quot;&gt;
+            &lt;div class=&quot;rhead&quot;&gt;&lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;div&gt;&lt;figcaption&gt;Marc C.&lt;/figcaption&gt;&lt;span class=&quot;place&quot;&gt;Madrid&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+            &lt;p class=&quot;stars&quot; aria-label=&quot;5 de 5 estrellas&quot;&gt;★★★★★&lt;/p&gt;
+            &lt;blockquote&gt;“Hubo un ejercicio que me hizo llorar porque me di cuenta de la cantidad de años que llevaba hablándome de una forma que jamás utilizaría con otra persona. Para mí el curso ha sido mucho más que ganar confianza: ha sido empezar a estar de mi lado.”&lt;/blockquote&gt;
+          &lt;/figure&gt;
+          &lt;figure class=&quot;rcard&quot;&gt;
+            &lt;div class=&quot;rhead&quot;&gt;&lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;div&gt;&lt;figcaption&gt;Marta L.&lt;/figcaption&gt;&lt;span class=&quot;place&quot;&gt;Barcelona&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+            &lt;p class=&quot;stars&quot; aria-label=&quot;5 de 5 estrellas&quot;&gt;★★★★★&lt;/p&gt;
+            &lt;blockquote&gt;“Llegué al curso en un momento en el que sabía que quería cambiar cosas profesionalmente, pero llevaba meses sin atreverme a dar el paso. En 10 días no desaparecen todos tus miedos, pero sí cambia muchísimo la forma en la que te relacionas con ellos. Para mí ese ha sido el gran aprendizaje.”&lt;/blockquote&gt;
+          &lt;/figure&gt;
+          &lt;figure class=&quot;rcard&quot;&gt;
+            &lt;div class=&quot;rhead&quot;&gt;&lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;div&gt;&lt;figcaption&gt;Alumna del Curso de Confianza&lt;/figcaption&gt;&lt;/div&gt;&lt;/div&gt;
+            &lt;blockquote&gt;“El curso de Judith transmite una energía muy especial: cercana, natural y llena de vitalidad. Su forma de explicar genera confianza y ayuda a sentirse acompañado durante todo el proceso, y su motivación se contagia. Además, ofrece muchos consejos, herramientas y recursos para aprovechar el curso al máximo, y sus meditaciones son un espacio que se disfruta muchísimo. Una profesora excelente.”&lt;/blockquote&gt;
+          &lt;/figure&gt;
+      &lt;/div&gt;
       &lt;!-- Logo strip: scrolls slowly; page.js duplicates the row for a seamless loop.
            Every logo sits in the same slot and is turned the same pale grey; &quot;crop&quot; = square image with the wordmark across the middle (cropped to it), &quot;heavy&quot; = bold logo given a smaller slot. --&gt;
       &lt;div class=&quot;logos&quot; aria-label=&quot;Empresas con las que he trabajado&quot;&gt;
@@ -1068,10 +1091,10 @@ body :has(&gt; .jc),body :has(.jc){padding:0!important;margin:0!important;max-wi
     &lt;/div&gt;
   &lt;/section&gt;
 
-  &lt;!-- Final CTA: question and the course card. For now no price and no checkout: &quot;Próximamente&quot; and a waiting list.
-       The button goes to #lista-espera: in GHL, put a Form element (name + email) right after this section and give it that ID. --&gt;
+  &lt;!-- Final CTA: question and the course card. For now no price and no checkout: &quot;Próximamente&quot; and the waiting-list form
+       (page.js sends it to the GHL inbound webhook set in WAITLIST_WEBHOOK). --&gt;
 &lt;/div&gt;
-</textarea></section><section class="step" id="s13"><header><span class="n">13</span><div><h2>Precio / lista de espera</h2><p>Sección a ancho completo, padding 0, sin fondo · fila de 1 columna, padding 0 · elemento Custom JS/HTML. Justo después, añade una sección con un Form (nombre + email) y pon su ID en “lista-espera”: ahí lleva el botón de la lista de espera.</p></div><button type="button" class="copy" data-for="c13">Copiar</button></header><textarea id="c13" spellcheck="false">&lt;div class=&quot;jc&quot;&gt;
+</textarea></section><section class="step" id="s13"><header><span class="n">13</span><div><h2>Precio / lista de espera</h2><p>Sección a ancho completo, padding 0, sin fondo · fila de 1 columna, padding 0 · elemento Custom JS/HTML. Incluye el formulario de la lista de espera; se conecta con la URL del webhook de GHL en el Footer code (WAITLIST_WEBHOOK).</p></div><button type="button" class="copy" data-for="c13">Copiar</button></header><textarea id="c13" spellcheck="false">&lt;div class=&quot;jc&quot;&gt;
   &lt;section class=&quot;final&quot; id=&quot;precios&quot;&gt;
     &lt;div class=&quot;wrap&quot;&gt;
       &lt;h2&gt;¿Vas a seguir esperando a &lt;em&gt;sentirte preparada?&lt;/em&gt;&lt;/h2&gt;
@@ -1087,7 +1110,15 @@ body :has(&gt; .jc),body :has(.jc){padding:0!important;margin:0!important;max-wi
             &lt;li&gt;Meditaciones guiadas&lt;/li&gt;
             &lt;li&gt;A tu ritmo y sin caducidad&lt;/li&gt;
           &lt;/ul&gt;
-          &lt;a href=&quot;#lista-espera&quot; class=&quot;btn&quot;&gt;Unirme a la lista de espera&lt;/a&gt;
+          &lt;form class=&quot;waitlist&quot; id=&quot;lista-espera&quot; novalidate&gt;
+            &lt;label class=&quot;sr&quot; for=&quot;wl-name&quot;&gt;Nombre&lt;/label&gt;
+            &lt;input id=&quot;wl-name&quot; name=&quot;name&quot; type=&quot;text&quot; autocomplete=&quot;given-name&quot; placeholder=&quot;Tu nombre&quot; required&gt;
+            &lt;label class=&quot;sr&quot; for=&quot;wl-email&quot;&gt;Email&lt;/label&gt;
+            &lt;input id=&quot;wl-email&quot; name=&quot;email&quot; type=&quot;email&quot; autocomplete=&quot;email&quot; placeholder=&quot;Tu email&quot; required&gt;
+            &lt;label class=&quot;consent&quot;&gt;&lt;input type=&quot;checkbox&quot; name=&quot;consent&quot; required&gt; &lt;span&gt;Acepto la &lt;a href=&quot;https://sites.leadconnectorhq.com/preview/ZfjXAtHTgjp0tmcPc56W&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;política de privacidad&lt;/a&gt; y recibir emails sobre el curso.&lt;/span&gt;&lt;/label&gt;
+            &lt;button class=&quot;btn&quot; type=&quot;submit&quot;&gt;Unirme a la lista de espera&lt;/button&gt;
+            &lt;p class=&quot;wl-msg&quot; role=&quot;status&quot; hidden&gt;&lt;/p&gt;
+          &lt;/form&gt;
         &lt;/div&gt;
       &lt;/div&gt;
       &lt;!-- Con Judith: shown as fully booked, without price --&gt;

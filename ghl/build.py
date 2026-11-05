@@ -142,7 +142,10 @@ def write(n, slug, content):
     p = sec_dir / f'{n:02d}-{slug}.html'
     p.write_text(f'<div class="jc">\n{content.rstrip()}\n</div>\n'); names.append(p.name)
 write(1, 'cabecera', header.replace('href="#top"', 'href="#"'))
-for n, (slug, b) in enumerate(zip(SLUGS, blocks), start=2): write(n, slug, b)
+def section_links(b):  # links to the legal pages inside sections (e.g. the waiting-list consent) go to the published GHL pages
+    for slug, url in GHL_LEGAL_URLS.items(): b = b.replace(f'href="{slug}.html"', f'href="{url}" target="_blank" rel="noopener"')
+    return b
+for n, (slug, b) in enumerate(zip(SLUGS, blocks), start=2): write(n, slug, section_links(b))
 n = len(SLUGS) + 2
 write(n, 'pie', footer)
 print('css', len(scoped), 'chars; sections:', *names, sep='\n  ')
@@ -240,7 +243,7 @@ for name in names:
     slug = name[3:-5]
     note = 'Sección a ancho completo, padding 0, sin fondo · fila de 1 columna, padding 0 · elemento Custom JS/HTML.'
     if slug == 'precios':
-        note += ' Justo después, añade una sección con un Form (nombre + email) y pon su ID en “lista-espera”: ahí lleva el botón de la lista de espera.'
+        note += ' Incluye el formulario de la lista de espera; se conecta con la URL del webhook de GHL en el Footer code (WAITLIST_WEBHOOK).'
     steps.append((LABELS.get(slug, slug), note, (OUT / 'sections' / name).read_text()))
 
 def block(i, title, note, code):

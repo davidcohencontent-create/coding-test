@@ -14,7 +14,15 @@
             <li>Meditaciones guiadas</li>
             <li>A tu ritmo y sin caducidad</li>
           </ul>
-          <a href="#lista-espera" class="btn">Unirme a la lista de espera</a>
+          <form class="waitlist" id="lista-espera" novalidate>
+            <label class="sr" for="wl-name">Nombre</label>
+            <input id="wl-name" name="name" type="text" autocomplete="given-name" placeholder="Tu nombre" required>
+            <label class="sr" for="wl-email">Email</label>
+            <input id="wl-email" name="email" type="email" autocomplete="email" placeholder="Tu email" required>
+            <label class="consent"><input type="checkbox" name="consent" required> <span>Acepto la <a href="https://sites.leadconnectorhq.com/preview/ZfjXAtHTgjp0tmcPc56W" target="_blank" rel="noopener">política de privacidad</a> y recibir emails sobre el curso.</span></label>
+            <button class="btn" type="submit">Unirme a la lista de espera</button>
+            <p class="wl-msg" role="status" hidden></p>
+          </form>
         </div>
       </div>
       <!-- Con Judith: shown as fully booked, without price -->
