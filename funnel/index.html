@@ -21,25 +21,69 @@
 
 <main id="top">
 
-  <!-- Hero: heading, subheading, video, then the CTA -->
-  <section class="hero">
-    <div class="wrap">
-      <div class="intro">
-        <h1>Te ayudo a dejar de esperar a <em>sentirte preparada</em> para ocupar el lugar que ya te has ganado.</h1>
-        <p>Así es como dejé de esperar a sentirme preparada y empecé a actuar con miedo, un miedo que en cuestión de 10 días convertí en confianza.</p>
+  <!-- Hero, minimal: white, light lettering, a thin line that draws in on load, text that rises in line by line,
+       and a quiet loader in the video frame until Vimeo is ready. Its styles live here so it pastes as one block. -->
+  <section class="hx">
+    <style>
+      .hx.hx{background:#fff;color:#1d1b26;padding:0 0 104px;text-align:center;overflow:hidden}
+      .hx .hx-line{height:2px;background:#5d0018;transform-origin:left;transform:scaleX(0);animation:hx-line 1.4s cubic-bezier(.65,0,.35,1) .1s forwards,hx-fade .6s ease 1.6s forwards}
+      .hx .hx-wrap{max-width:1000px;margin:0 auto;padding:88px 24px 0}
+      .hx .hx-eyebrow{display:inline-flex;align-items:center;gap:14px;margin:0 0 28px;font:500 12px/1 'PP Neue Montreal','Helvetica Neue',Helvetica,Arial,sans-serif;letter-spacing:.24em;text-transform:uppercase;color:#7a7682}
+      .hx .hx-eyebrow::before,.hx .hx-eyebrow::after{content:"";width:28px;height:1px;background:currentColor;opacity:.5}
+      .hx .hx-title{margin:0 auto;max-width:860px;font:300 clamp(30px,4.2vw,54px)/1.12 'PP Neue Montreal','Helvetica Neue',Helvetica,Arial,sans-serif;letter-spacing:-.025em;text-transform:none;color:#1d1b26;text-wrap:balance}
+      .hx .hx-title em{font-family:'EB Garamond',Garamond,'Times New Roman',serif;font-style:italic;font-weight:400;letter-spacing:-.01em;color:#5d0018}
+      .hx .hx-sub{margin:24px auto 0;max-width:600px;font-size:18px;line-height:1.65;color:#6b6874;text-wrap:pretty}
+      .hx .hx-video{position:relative;aspect-ratio:16/9;max-width:960px;margin:56px auto 0;background:#f6f4f2;border:1px solid rgba(29,27,38,.08);overflow:hidden}
+      .hx .hx-video iframe{position:absolute;inset:0;width:100%;height:100%;border:0;opacity:0;transition:opacity .8s ease;animation:hx-show 0s 7s forwards}
+      .hx .hx-video.is-ready iframe{opacity:1}
+      .hx .hx-loader{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:16px;transition:opacity .5s ease}
+      .hx .hx-video.is-ready .hx-loader{opacity:0;pointer-events:none}
+      .hx .hx-ring{width:34px;height:34px;border-radius:50%;border:1.5px solid rgba(93,0,24,.15);border-top-color:#5d0018;animation:hx-spin .9s linear infinite}
+      .hx .hx-loader span{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#9a96a0}
+      .hx .hx-cta{margin-top:44px;display:flex;flex-direction:column;align-items:center;gap:16px}
+      .hx .hx-btn{display:inline-flex;align-items:center;gap:12px;padding:17px 34px;background:#1d1b26;color:#fff;text-decoration:none;font:500 13px/1 'PP Neue Montreal','Helvetica Neue',Helvetica,Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;transition:background .25s,transform .25s}
+      .hx .hx-btn::after{content:"→";transition:transform .25s}
+      .hx .hx-btn:hover{background:#5d0018;transform:translateY(-1px)}
+      .hx .hx-btn:hover::after{transform:translateX(4px)}
+      .hx .hx-proof{margin:0;font-size:14px;letter-spacing:.02em;color:#7a7682}
+      .hx .hx-proof b{font-weight:400;color:#5d0018;letter-spacing:.12em}
+      /* Load-in: each block rises and sharpens in turn */
+      .hx [data-hx]{opacity:0;transform:translateY(16px);filter:blur(6px);animation:hx-up 1s cubic-bezier(.2,.7,.2,1) forwards;animation-delay:calc(.35s + var(--i) * .14s)}
+      @keyframes hx-up{to{opacity:1;transform:none;filter:none}}
+      @keyframes hx-line{to{transform:scaleX(1)}}
+      @keyframes hx-fade{to{opacity:.12}}
+      @keyframes hx-spin{to{transform:rotate(360deg)}}
+      @keyframes hx-show{to{opacity:1}}
+      @media (max-width:760px){
+        .hx.hx{padding-bottom:72px}
+        .hx .hx-wrap{padding:56px 16px 0}
+        .hx .hx-eyebrow{margin-bottom:20px;font-size:11px}
+        .hx .hx-sub{font-size:16px}
+        .hx .hx-video{margin-top:36px}
+        .hx .hx-cta{margin-top:32px}
+        .hx .hx-btn{width:100%;justify-content:center}
+      }
+      @media (prefers-reduced-motion:reduce){
+        .hx [data-hx]{animation:none;opacity:1;transform:none;filter:none}
+        .hx .hx-line{animation:none;transform:none;opacity:.12}
+        .hx .hx-ring{animation-duration:2.4s}
+      }
+    </style>
+    <div class="hx-line" aria-hidden="true"></div>
+    <div class="hx-wrap">
+      <p class="hx-eyebrow" data-hx style="--i:0">Curso de Confianza</p>
+      <h1 class="hx-title" data-hx style="--i:1">Te ayudo a dejar de esperar a <em>sentirte preparada</em> para ocupar el lugar que ya te has ganado.</h1>
+      <p class="hx-sub" data-hx style="--i:2">Así es como dejé de esperar a sentirme preparada y empecé a actuar con miedo, un miedo que en cuestión de 10 días convertí en confianza.</p>
+      <div class="hx-video" data-hx style="--i:3">
+        <div class="hx-loader" aria-hidden="true"><i class="hx-ring"></i><span>Cargando vídeo</span></div>
+        <iframe src="https://player.vimeo.com/video/1211423165?title=0&amp;byline=0&amp;portrait=0&amp;dnt=1&amp;color=5d0018" title="Vídeo de Judith Calzada" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen onload="this.parentNode.classList.add('is-ready')"></iframe>
       </div>
-      <!-- TODO client: the hero video thumbnail looks blurred on the live page. If it is not just Vimeo's loading state,
-           set a sharp custom thumbnail in Vimeo (Settings → General → Thumbnail) or send a key frame to use as a poster. -->
-      <div class="video">
-        <iframe src="https://player.vimeo.com/video/1211423165?title=0&amp;byline=0&amp;portrait=0&amp;dnt=1&amp;color=5d0018" title="Vídeo de Judith Calzada" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-      </div>
-      <div class="cta">
-        <a href="#precios" class="btn light">Quiero más confianza</a>
-        <p class="proof">+500 profesionales acompañados · <span class="stars" aria-hidden="true">★★★★★</span> 4,8/5</p>
+      <div class="hx-cta" data-hx style="--i:4">
+        <a href="#precios" class="hx-btn">Quiero más confianza</a>
+        <p class="hx-proof">+500 profesionales acompañados · <b aria-hidden="true">★★★★★</b> 4,8/5</p>
       </div>
     </div>
   </section>
-  <div class="band"></div>
 
   <!-- Identification -->
   <section>
