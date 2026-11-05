@@ -144,39 +144,87 @@ document.querySelectorAll('img[data-fallback]').forEach(img => {
   if (img.complete && img.naturalWidth === 0) fail(); else img.addEventListener('error', fail);
 });
 
-// Mascot: a small yellow character that now and then peeks in from the left, right or bottom edge, blinks, types on its
-// laptop and follows the cursor with its eyes. Click it and it jumps and says something kind, then hides again.
-// It stays away while the checkout is on screen, never shows for reduced motion, and its styles come with it (GHL-safe).
+// Cursor and hover effects. Injected from here (not the Custom CSS) so they always apply, also inside GHL.
+(() => {
+  if (window.__jcHover) return;
+  window.__jcHover = true;
+  const CURSOR = "url(\"data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2224%22 height=%2244%22 viewBox=%22-1 -1 24 44%22%3E%3Cg transform=%22matrix%281 0 0 -1 0 42%29%22%3E%3Cpath d=%22M10.9579 5.71958C9.41943 8.93752 7.90241 12.1652 6.51197 15.4492C5.11764 18.739 3.84795 22.0852 2.82363 25.5091C2.53347 26.4827 2.27836 27.464 1.99599 28.4414C1.85772 28.9234 1.71361 29.4033 1.57729 29.8852C1.51498 30.1048 1.47603 30.3458 1.38645 30.5556C1.31635 30.7208 1.12745 30.8141 1.03398 30.9734C0.919079 31.1677 0.96386 31.4009 1.10991 31.5622C1.71555 32.2365 2.4984 32.7107 3.21699 33.2509C3.89079 33.76 4.43022 34.4867 5.21501 34.8384C5.46428 34.9492 5.72523 34.9045 5.88102 34.6636C6.3036 34.0165 6.45161 33.2703 6.67946 32.5455C6.92483 31.7643 7.1663 30.9831 7.40388 30.202C7.87515 28.6591 8.44378 27.1414 9.03579 25.6413C10.214 22.6546 11.5635 19.7398 12.9734 16.8561C14.3677 14.0034 15.8186 11.178 17.3823 8.4148C18.1632 7.03319 18.9733 5.66711 19.8165 4.32048C20.2372 3.64813 20.6676 2.98162 21.1057 2.32093C21.2089 2.16353 21.3141 2.00808 21.4192 1.85262C21.4465 1.81181 21.3959 1.87982 21.3959 1.88176C21.4095 1.86427 21.4231 1.84873 21.4368 1.83124C21.4738 1.78654 21.5088 1.73992 21.5458 1.69522C21.7172 1.47564 21.8924 1.24634 21.9684 0.97429C22.0541 0.669208 21.9684 0.282512 21.6763 0.113454C21.3472 -0.0789231 20.8292 0.0260083 20.4689 0.0512699C19.6413 0.109566 18.8234 0.276678 18.0074 0.412702C16.3911 0.682807 14.7689 0.952917 13.1623 1.27937C12.7845 1.35516 12.4106 1.44844 12.0465 1.57474C11.7212 1.68745 11.6278 1.98864 11.7563 2.2879C11.7894 2.36757 11.8439 2.42975 11.8985 2.49582C12.062 2.7018 12.4165 2.66682 12.5878 2.49582C12.7923 2.29178 12.7514 2.01584 12.5878 1.80792L12.5976 1.79626L12.3074 2.50942C13.0124 2.26652 13.7485 2.15381 14.4787 2.01779C15.2519 1.87399 16.025 1.73408 16.7981 1.6C17.5712 1.46591 18.3482 1.33767 19.1233 1.20748C19.4796 1.14724 19.8341 1.07922 20.1943 1.04424C20.5546 1.00927 20.9441 0.947086 21.3044 0.999553L21.0901 0.875185C21.0414 0.824662 21.0629 0.68864 21.0434 0.671151C21.0492 0.676981 21.0161 0.766363 21.0181 0.762476C21.0336 0.727499 20.9402 0.890735 20.9149 0.927655C20.8117 1.08311 20.7182 1.17444 20.5916 1.35127C20.2489 1.8293 19.9373 2.33258 19.6179 2.8281C18.9402 3.87937 18.2839 4.94619 17.6472 6.02272C16.3872 8.15247 15.2012 10.325 14.0659 12.5227C11.7563 16.994 9.55965 21.5508 7.76415 26.2553C7.25394 27.5923 6.77877 28.9408 6.36008 30.3069C6.14782 30.9987 5.93361 31.6905 5.71744 32.3803C5.52271 33.0002 5.40391 33.6259 5.04559 34.1778L5.7116 34.0029C5.34159 33.8377 5.04364 33.5754 4.74959 33.3014C4.43411 33.008 4.12058 32.7242 3.77784 32.4639C3.10404 31.9528 2.37377 31.5117 1.80318 30.8782L1.87914 31.467C1.90445 31.4223 1.96872 31.3912 2.00767 31.3543C2.07972 31.2902 2.14398 31.2085 2.19461 31.125C2.29782 30.9501 2.35236 30.748 2.40688 30.5537C2.53152 30.1009 2.66394 29.6501 2.79636 29.1993C3.04757 28.3365 3.27541 27.4698 3.52273 26.6051C4.01347 24.8912 4.56654 23.1967 5.17023 21.5198C6.37177 18.1775 7.76414 14.909 9.24026 11.6794C10.0757 9.84889 10.9384 8.03006 11.805 6.21316C11.9179 5.97609 11.8712 5.68849 11.6297 5.54858C11.4174 5.42422 11.0767 5.48446 10.9637 5.72347L10.9579 5.71958Z%22 fill=%22#FFE100%22 stroke=%22#161616%22 stroke-width=%22.7%22 stroke-linejoin=%22round%22/%3E%3Cpath d=%22M0.381636 33.2295C0.270635 34.8656 0.167431 36.5018 0.194694 38.1419C0.208326 38.9561 0.262842 39.7683 0.317369 40.5806C0.350475 41.0742 0.223901 41.797 0.835381 41.9816C1.04959 42.0458 1.2677 41.935 1.38455 41.7582C2.12845 40.6389 2.81198 39.4846 3.54614 38.3595C3.8733 37.8582 4.20436 37.3568 4.57242 36.8846C4.94048 36.4124 5.28905 35.9305 5.27153 35.3281C5.254 34.7257 4.27836 34.7024 4.29783 35.3281C4.31146 35.775 3.89667 36.1754 3.64351 36.5096C3.27351 36.9973 2.93855 37.5123 2.60555 38.0253C1.91033 39.0999 1.25407 40.2017 0.545222 41.2685L1.09439 41.045C1.28913 41.3054 1.36118 41.3656 1.31249 41.2277L1.30275 41.183C1.29106 41.2626 1.30275 41.1247 1.30275 41.1111C1.3008 41.0178 1.30664 40.9265 1.3047 40.8332C1.30275 40.5281 1.26575 40.2191 1.24628 39.9141C1.19954 39.1659 1.16449 38.4178 1.16254 37.6677C1.16059 36.187 1.25406 34.7082 1.35338 33.2314C1.37091 32.9691 1.11775 32.7456 0.866534 32.7456C0.588057 32.7456 0.397213 32.9691 0.379687 33.2314L0.381636 33.2295Z%22 fill=%22#FFE100%22 stroke=%22#161616%22 stroke-width=%22.7%22 stroke-linejoin=%22round%22/%3E%3Cpath d=%22M1.30279 39.8812C1.24826 39.6402 1.16842 39.4051 1.09832 39.168C1.06327 39.0436 1.02821 38.9173 1.0029 38.7891C0.997056 38.7619 0.991211 38.7327 0.987316 38.7055C0.981474 38.6686 0.983431 38.5753 0.985378 38.7055C0.985378 38.6453 0.973694 38.5831 0.973694 38.5229L0.142156 38.8668C0.173314 38.9057 0.165527 38.896 0.120737 38.8357C0.132421 38.8513 0.144104 38.8668 0.155789 38.8843C0.173315 38.9096 0.190834 38.9348 0.20836 38.9601C0.251203 39.0203 0.292101 39.0844 0.332996 39.1466C0.412839 39.2671 0.488783 39.3876 0.572521 39.5061C0.769207 39.7859 0.987321 40.0541 1.28527 40.2329C1.46443 40.3397 1.73122 40.3125 1.87532 40.1571C2.02917 39.99 2.05254 39.7685 1.95128 39.5683C1.74875 39.168 1.47416 38.8066 1.27942 38.4024L0.514102 38.9912C0.89579 39.2904 1.28527 39.58 1.70202 39.8306C1.86949 39.9317 2.09149 39.9103 2.24338 39.7918C2.38554 39.6829 2.48681 39.4614 2.41865 39.2807C2.3505 39.1 2.27649 38.9348 2.16743 38.7832C2.10706 38.6997 2.04475 38.62 1.97659 38.5423C1.95128 38.5151 1.92596 38.4879 1.90064 38.4626C1.88312 38.4451 1.86365 38.4276 1.84612 38.4121C1.87338 38.4548 1.87533 38.4626 1.85391 38.4315C1.73122 38.3013 1.6319 38.1342 1.5248 37.9885C1.41185 37.835 1.29695 37.6815 1.18205 37.5299L0.632901 38.243C0.658217 38.2489 0.681575 38.2586 0.706891 38.2644C0.759471 38.278 0.619264 38.21 0.687422 38.2586C0.701054 38.2683 0.775056 38.3208 0.712739 38.2702C0.650423 38.2197 0.726368 38.2858 0.734158 38.2936C0.745842 38.3052 0.761427 38.3344 0.777006 38.3402C0.738059 38.2897 0.730266 38.278 0.74974 38.3091C0.755582 38.3188 0.763367 38.3285 0.769209 38.3382C0.825683 38.4218 0.882162 38.4801 0.956163 38.5423C1.17038 38.725 1.40212 38.8862 1.65333 39.0145C1.88118 39.1291 2.19081 39.0825 2.31933 38.8396C2.43618 38.6181 2.38749 38.2974 2.14407 38.175C2.02722 38.1167 1.91622 38.0526 1.80717 37.9788C1.77407 37.9574 1.74291 37.9341 1.71175 37.9127C1.66696 37.8816 1.68448 37.901 1.71759 37.9185C1.68838 37.9049 1.65138 37.8641 1.62801 37.8447C1.61438 37.833 1.52869 37.7767 1.58322 37.8136C1.60074 37.8389 1.6027 37.8408 1.58906 37.8214C1.57933 37.8078 1.56959 37.7942 1.55985 37.7805C1.5248 37.7339 1.48974 37.6873 1.45274 37.6445C1.40795 37.5921 1.35538 37.5513 1.30085 37.5104C1.17817 37.4152 1.0399 37.3472 0.889946 37.3103C0.697155 37.2637 0.49852 37.3278 0.377782 37.4852C0.268728 37.6251 0.223948 37.8699 0.338844 38.0254C0.553057 38.313 0.769216 38.6025 0.983429 38.8921C1.04964 38.9814 1.1139 39.065 1.19374 39.1427C1.221 39.168 1.24632 39.1952 1.27164 39.2224C1.28138 39.2321 1.36316 39.3254 1.31642 39.271C1.26969 39.2166 1.34369 39.3118 1.35343 39.3235C1.3729 39.3526 1.39238 39.3837 1.40991 39.4148C1.42743 39.4459 1.44496 39.477 1.46054 39.51C1.51702 39.6247 1.43911 39.4517 1.47611 39.545L2.19081 38.997C2.00581 38.8862 1.82665 38.7677 1.65138 38.6433C1.56764 38.5831 1.4839 38.5229 1.40016 38.4607C1.35537 38.4276 1.31253 38.3946 1.26774 38.3596C1.35537 38.4257 1.21517 38.3188 1.20154 38.3072C1.00874 38.1556 0.76921 38.109 0.562786 38.2683C0.356363 38.4276 0.331056 38.6725 0.438163 38.8959C0.632901 39.3021 0.907474 39.6616 1.11 40.0619L1.77602 39.3973C1.74681 39.3798 1.72148 39.3584 1.69227 39.3429C1.66306 39.3215 1.67669 39.3312 1.73317 39.374C1.71759 39.3604 1.70201 39.3487 1.68838 39.3351C1.64165 39.2943 1.59881 39.2496 1.55791 39.203C1.53649 39.1797 1.51701 39.1544 1.49559 39.1311C1.43133 39.0592 1.55596 39.2146 1.48196 39.1136C1.43912 39.0553 1.39822 38.997 1.35732 38.9368C1.18595 38.6822 1.02432 38.4238 0.831527 38.1847C0.710789 38.0351 0.461527 38.0157 0.299894 38.0837C0.124629 38.1575 0 38.3324 0 38.5267C0.00194739 39.0883 0.241475 39.6052 0.364161 40.1454C0.420635 40.3942 0.720524 40.5632 0.963948 40.4855C1.2249 40.4019 1.36511 40.1532 1.30474 39.887L1.30279 39.8812Z%22 fill=%22#FFE100%22 stroke=%22#161616%22 stroke-width=%22.7%22 stroke-linejoin=%22round%22/%3E%3C/g%3E%3C/svg%3E\") 2 2";
+  const css = `
+  html{cursor:${CURSOR},auto}
+  a,button,summary,label,.btn,[role=button],.arrow,.dots button,.jm svg{cursor:${CURSOR},pointer}
+  input,textarea,select{cursor:text}
+  @media (hover:hover){
+    .checks,.tools,.faq,.days,.offer,.cols>div,.tier,.plan,.also,.slide>blockquote,.slide>.who,.video,.hz-video,.compare>div,.legal-id{
+      transition:transform .4s cubic-bezier(.2,.7,.2,1),box-shadow .4s cubic-bezier(.2,.7,.2,1),border-color .3s,background-color .3s}
+    .checks:hover,.tools:hover,.faq:hover,.days:hover,.offer:hover,.cols>div:hover,.tier:hover,.plan:hover,.also:hover{
+      transform:translateY(-6px);border-color:#f5c542;box-shadow:0 26px 50px -26px rgba(0,0,0,.28),0 0 0 4px rgba(245,197,66,.18)}
+    .slide:hover>.who,.slide:hover>blockquote{border-color:#f5c542;box-shadow:0 0 0 4px rgba(245,197,66,.14)}
+    .video:hover,.hz-video:hover{transform:translateY(-4px) scale(1.01);box-shadow:0 0 0 1px #f5c542,0 34px 60px -30px rgba(0,0,0,.4)}
+    .checks li,.tools li,.offer-list li{transition:background-color .25s,padding .25s}
+    .checks li:hover,.tools li:hover{background-color:rgba(245,197,66,.16);padding-left:54px}
+    .tools li:hover{padding-left:12px}
+    .faq summary,.day summary{border-radius:14px;transition:color .2s,background-color .25s,padding .25s}
+    .faq summary:hover,.day summary:hover{background-color:#f6f6f5;padding-left:14px;padding-right:14px}
+    .compare .w:hover{background-color:#fafafa}
+    .compare .g:hover{background-color:#fbe9b4}
+    .step-img,.gallery img,.about img.ph,.locked-video img,.offer-img{transition:transform .6s cubic-bezier(.2,.7,.2,1),filter .6s}
+    .step-img:hover,.gallery img:hover,.offer-img:hover{transform:scale(1.04) rotate(-.6deg);filter:saturate(1.1)}
+    .about img.ph:hover{transform:scale(1.02)}
+    .btn,.hz-btn{transition:background-color .25s,transform .3s cubic-bezier(.34,1.5,.5,1),box-shadow .3s}
+    .btn:not(.is-disabled):hover,.hz-btn:hover{transform:translateY(-3px) scale(1.04) rotate(-1deg);box-shadow:0 18px 32px -10px rgba(245,197,66,.85),inset 0 -2px 0 rgba(0,0,0,.08)}
+    .btn:not(.is-disabled):active,.hz-btn:active{transform:scale(.97)}
+    h2 em,h1 em{background:linear-gradient(rgba(245,197,66,.55),rgba(245,197,66,.55)) 0 88%/0 28% no-repeat;transition:background-size .6s cubic-bezier(.2,.7,.2,1)}
+    section:hover h2 em{background-size:100% 28%}
+    .foot-legal a,.legal a{text-decoration:none;background:linear-gradient(rgba(245,197,66,.65),rgba(245,197,66,.65)) 0 100%/0 35% no-repeat;transition:background-size .3s,color .2s}
+    .foot-legal a:hover,.legal a:hover{background-size:100% 35%;color:#161616}
+    .arrow:hover{transform:scale(1.08)}
+  }`;
+  const st = document.createElement('style'); st.id = 'jc-hover'; st.textContent = css; document.head.appendChild(st);
+})();
+
+// Mascot: a small yellow character that keeps peeking in from the left, right or bottom edge. Once in, it bobs, waddles
+// along the edge to a new spot or two, blinks, types on its laptop and follows the cursor with its eyes. Click it and it
+// jumps and says something kind. It stays away while the checkout is on screen and never shows for reduced motion.
 (() => {
   if (window.__jcMascot || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   window.__jcMascot = true;
   const css = `
-  .jm{position:fixed;z-index:70;width:112px;height:112px;pointer-events:none;transition:transform .9s cubic-bezier(.34,1.4,.5,1)}
-  .jm svg{display:block;width:100%;height:100%;overflow:visible;pointer-events:auto;cursor:inherit;filter:drop-shadow(0 8px 14px rgba(0,0,0,.12))}
+  .jm{position:fixed;z-index:70;width:112px;height:112px;pointer-events:none;
+    transition:transform .9s cubic-bezier(.34,1.4,.5,1),left 1.5s cubic-bezier(.45,0,.25,1),top 1.5s cubic-bezier(.45,0,.25,1)}
+  .jm svg{display:block;width:100%;height:100%;overflow:visible;pointer-events:auto;filter:drop-shadow(0 8px 14px rgba(0,0,0,.12));
+    transform-origin:50% 90%;animation:jm-bob 2.2s ease-in-out infinite}
+  .jm.walk svg{animation:jm-waddle .32s ease-in-out infinite alternate}
+  .jm.arrive svg{animation:jm-wobble .7s ease-out 1}
   .jm[data-side=bottom]{bottom:0;transform:translateY(105%)}
-  .jm[data-side=bottom].on{transform:translateY(30%)}
+  .jm[data-side=bottom].on{transform:translateY(28%)}
   .jm[data-side=left]{left:0;transform:translateX(-105%) rotate(90deg)}
-  .jm[data-side=left].on{transform:translateX(-30%) rotate(90deg)}
+  .jm[data-side=left].on{transform:translateX(-28%) rotate(90deg)}
   .jm[data-side=right]{right:0;transform:translateX(105%) rotate(-90deg)}
-  .jm[data-side=right].on{transform:translateX(30%) rotate(-90deg)}
+  .jm[data-side=right].on{transform:translateX(28%) rotate(-90deg)}
   .jm .jm-face{transition:transform .18s ease-out}
-  .jm .jm-eyes{transform-box:fill-box;transform-origin:center;animation:jm-blink 4.6s infinite}
+  .jm .jm-eyes{transform-box:fill-box;transform-origin:center;animation:jm-blink 3.8s infinite}
   .jm .jm-hands{transform-box:fill-box;transform-origin:50% 100%;animation:jm-tap 1.1s ease-in-out infinite}
   .jm .jm-laptop{transform-box:fill-box;transform-origin:50% 100%}
+  .jm .jm-legs{transform-box:fill-box;transform-origin:50% 0}
+  .jm.walk .jm-legs{animation:jm-step .32s ease-in-out infinite alternate}
   .jm .jm-o,.jm .jm-dash{opacity:0;transition:opacity .12s}
   .jm .jm-smile{transition:opacity .12s}
   .jm.up .jm-hands,.jm.up .jm-laptop{animation:jm-bump 1s ease-in-out 1}
-  .jm.up .jm-body{animation:jm-hop .6s ease-out 1}
+  .jm.up svg{animation:jm-hop .6s cubic-bezier(.3,1.6,.5,1) 1}
   .jm.up .jm-smile{opacity:0}
   .jm.up .jm-o,.jm.up .jm-dash{opacity:1}
   .jm-say{position:fixed;z-index:71;bottom:96px;padding:10px 16px;background:#fff;border:1.5px solid #161616;border-radius:18px;
     font:26px/1 'Reenie Beanie','Comic Sans MS',cursive;color:#161616;white-space:nowrap;pointer-events:none;
-    opacity:0;transform:translateY(8px) scale(.96);transition:opacity .25s,transform .35s cubic-bezier(.34,1.4,.5,1)}
+    opacity:0;transform:translateY(8px) scale(.96);transition:opacity .25s,transform .35s cubic-bezier(.34,1.4,.5,1),left 1.5s cubic-bezier(.45,0,.25,1)}
   .jm-say.on{opacity:1;transform:none}
+  @keyframes jm-bob{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-5px) rotate(-2deg)}}
+  @keyframes jm-waddle{from{transform:rotate(-7deg) translateY(-2px)}to{transform:rotate(7deg) translateY(0)}}
+  @keyframes jm-wobble{0%{transform:rotate(0)}25%{transform:rotate(-9deg)}50%{transform:rotate(6deg)}75%{transform:rotate(-3deg)}100%{transform:rotate(0)}}
+  @keyframes jm-step{from{transform:scaleY(1)}to{transform:scaleY(.82)}}
   @keyframes jm-blink{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.12)}}
   @keyframes jm-tap{0%,100%{transform:translateY(0)}30%{transform:translateY(2.4px)}55%{transform:translateY(0)}80%{transform:translateY(2px)}}
   @keyframes jm-bump{0%{transform:translateY(0)}22%{transform:translateY(-10px)}78%{transform:translateY(-10px)}100%{transform:translateY(0)}}
-  @keyframes jm-hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+  @keyframes jm-hop{0%,100%{transform:translateY(0) scale(1)}35%{transform:translateY(-14px) scale(1.04,.96)}70%{transform:translateY(0) scale(.98,1.03)}}
   @media (max-width:760px){.jm{width:84px;height:84px}.jm-say{bottom:72px;font-size:22px}}`;
   const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 
@@ -184,57 +232,77 @@ document.querySelectorAll('img[data-fallback]').forEach(img => {
   const el = document.createElement('div');
   el.className = 'jm'; el.setAttribute('aria-hidden', 'true');
   el.innerHTML = `<svg viewBox="0 0 120 120">
-    <g class="jm-body">
-      <path d="M44 100v14M74 100v14" stroke="#161616" stroke-width="3" stroke-linecap="round"/>
-      <rect x="26" y="18" width="68" height="84" rx="22" fill="#f5c542" stroke="#161616" stroke-width="3"/>
-      <path d="M36 28c6-5 14-7 22-7" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".55" fill="none"/>
-      <g class="jm-face">
-        <g class="jm-eyes"><circle cx="50" cy="48" r="3.4" fill="#161616"/><circle cx="70" cy="48" r="3.4" fill="#161616"/></g>
-        <circle cx="43" cy="58" r="4" fill="#ef8f6b" opacity=".35"/><circle cx="77" cy="58" r="4" fill="#ef8f6b" opacity=".35"/>
-        <path class="jm-smile" d="M52 58q8 7 16 0" stroke="#161616" stroke-width="2.6" stroke-linecap="round" fill="none"/>
-        <ellipse class="jm-o" cx="60" cy="60" rx="3.6" ry="4.4" fill="#161616"/>
-      </g>
-      <g class="jm-dash" stroke="#161616" stroke-width="2.4" stroke-linecap="round"><path d="M18 18l-6-6M60 6V-2M102 18l6-6"/></g>
-      <g class="jm-laptop">
-        <path d="M34 80h52l-4 16H38z" fill="#fff" stroke="#161616" stroke-width="2.6" stroke-linejoin="round"/>
-        <path d="M30 96h60" stroke="#161616" stroke-width="3" stroke-linecap="round"/>
-        <circle cx="60" cy="88" r="2.2" fill="#f5c542"/>
-      </g>
-      <g class="jm-hands" fill="#fff" stroke="#161616" stroke-width="2.6">
-        <ellipse cx="38" cy="80" rx="7" ry="5.5"/><ellipse cx="82" cy="80" rx="7" ry="5.5"/>
-      </g>
+    <g class="jm-legs"><path d="M44 100v14M74 100v14" stroke="#161616" stroke-width="3" stroke-linecap="round"/></g>
+    <rect x="26" y="18" width="68" height="84" rx="22" fill="#f5c542" stroke="#161616" stroke-width="3"/>
+    <path d="M36 28c6-5 14-7 22-7" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".55" fill="none"/>
+    <g class="jm-face">
+      <g class="jm-eyes"><circle cx="50" cy="48" r="3.4" fill="#161616"/><circle cx="70" cy="48" r="3.4" fill="#161616"/></g>
+      <circle cx="43" cy="58" r="4" fill="#ef8f6b" opacity=".35"/><circle cx="77" cy="58" r="4" fill="#ef8f6b" opacity=".35"/>
+      <path class="jm-smile" d="M52 58q8 7 16 0" stroke="#161616" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+      <ellipse class="jm-o" cx="60" cy="60" rx="3.6" ry="4.4" fill="#161616"/>
+    </g>
+    <g class="jm-dash" stroke="#161616" stroke-width="2.4" stroke-linecap="round"><path d="M18 18l-6-6M60 6V-2M102 18l6-6"/></g>
+    <g class="jm-laptop">
+      <path d="M34 80h52l-4 16H38z" fill="#fff" stroke="#161616" stroke-width="2.6" stroke-linejoin="round"/>
+      <path d="M30 96h60" stroke="#161616" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="60" cy="88" r="2.2" fill="#f5c542"/>
+    </g>
+    <g class="jm-hands" fill="#fff" stroke="#161616" stroke-width="2.6">
+      <ellipse cx="38" cy="80" rx="7" ry="5.5"/><ellipse cx="82" cy="80" rx="7" ry="5.5"/>
     </g></svg>`;
   const say = document.createElement('div'); say.className = 'jm-say';
   document.body.append(el, say);
 
-  const LINES = ['¡Tú puedes!', 'Confía en ti', 'Sin esperar más', 'Ya estás preparada', 'Un paso cada día', '¡Hola!'];
+  const LINES = ['¡Tú puedes!', 'Confía en ti', 'Sin esperar más', 'Ya estás preparada', 'Un paso cada día', '¡Hola!', 'Hoy es el día'];
   const pick = a => a[Math.floor(Math.random() * a.length)];
   const rand = (a, b) => a + Math.random() * (b - a);
   const mobile = () => innerWidth < 760;
-  const checkout = document.getElementById('checkout');
-  let hideT, nextT, hovering = false;
+  const size = () => (mobile() ? 84 : 112);
+  const timers = new Set();
+  const later = (fn, ms) => { const t = setTimeout(() => { timers.delete(t); fn(); }, ms); timers.add(t); return t; };
+  const clearAll = () => { timers.forEach(clearTimeout); timers.clear(); };
+  let hovering = false, visible = false;
 
   // Stay away from the payment form
+  const checkout = document.getElementById('checkout');
   let checkoutVisible = false;
   if (checkout && 'IntersectionObserver' in window)
     new IntersectionObserver(e => { checkoutVisible = e[0].isIntersecting; if (checkoutVisible) hide(); }).observe(checkout);
 
-  function place() {
-    const side = mobile() ? 'bottom' : pick(['bottom', 'bottom', 'left', 'right']);
-    el.dataset.side = side; el.style.left = el.style.top = '';
-    if (side === 'bottom') el.style.left = Math.round(rand(.08, .82) * (innerWidth - 112)) + 'px';
-    else el.style.top = Math.round(rand(.3, .75) * innerHeight) + 'px';
-    return side;
+  // Where along its edge it stands: px from the left (bottom edge) or from the top (side edges)
+  const spot = side => side === 'bottom'
+    ? Math.round(rand(.06, .86) * (innerWidth - size()))
+    : Math.round(rand(.22, .78) * (innerHeight - size()));
+  function moveTo(side, pos) {
+    if (side === 'bottom') { el.style.left = pos + 'px'; el.style.top = ''; }
+    else { el.style.top = pos + 'px'; el.style.left = ''; }
   }
   function show() {
-    clearTimeout(nextT);
+    clearAll();
     if (document.hidden || checkoutVisible) return schedule();
-    el.classList.remove('on', 'up');
-    const side = place();
-    void el.offsetWidth; // restart the slide-in from the hidden position
-    el.classList.add('on');
-    if (side === 'bottom' && Math.random() < .6) setTimeout(() => talk(pick(LINES)), 700);
-    hideT = setTimeout(() => { if (!hovering) hide(); else hideT = setTimeout(hide, 2500); }, rand(4200, 5600));
+    const side = mobile() ? 'bottom' : pick(['bottom', 'bottom', 'left', 'right']);
+    el.style.transition = 'none';                 // jump to the new hidden spot without sliding there
+    el.classList.remove('on', 'up', 'walk', 'arrive');
+    el.dataset.side = side; moveTo(side, spot(side));
+    void el.offsetWidth; el.style.transition = '';
+    el.classList.add('on'); visible = true;
+    later(() => { el.classList.add('arrive'); later(() => el.classList.remove('arrive'), 700); }, 650);
+    if (side === 'bottom' && Math.random() < .55) later(() => talk(pick(LINES)), 900);
+    // Waddle along the edge once or twice, then leave
+    const walks = mobile() ? 1 : 1 + Math.floor(Math.random() * 2);
+    let t = 1900;
+    for (let i = 0; i < walks; i++) { later(() => walk(side), t); t += rand(2300, 3000); }
+    later(leave, t + rand(600, 1400));
+  }
+  function walk(side) {
+    if (!visible || el.classList.contains('up')) return;
+    say.classList.remove('on');
+    const cur = side === 'bottom' ? parseFloat(el.style.left) : parseFloat(el.style.top);
+    const span = side === 'bottom' ? innerWidth : innerHeight;
+    let next = cur + (Math.random() < .5 ? -1 : 1) * rand(.12, .28) * span;
+    next = Math.max(8, Math.min(span - size() - 8, next));
+    el.classList.add('walk'); moveTo(side, Math.round(next));
+    later(() => el.classList.remove('walk'), 1500);
   }
   function talk(text) {
     if (el.dataset.side !== 'bottom') return;
@@ -243,17 +311,19 @@ document.querySelectorAll('img[data-fallback]').forEach(img => {
     say.style.left = Math.max(12, Math.min(innerWidth - 220, r.left + r.width * .55)) + 'px';
     say.classList.add('on');
   }
+  function leave() { if (hovering) return later(leave, 1500); hide(); }
   function hide() {
-    clearTimeout(hideT); say.classList.remove('on');
-    if (el.classList.contains('on')) { el.classList.remove('on'); schedule(); }
+    clearAll(); say.classList.remove('on'); el.classList.remove('walk');
+    if (visible) { visible = false; el.classList.remove('on'); }
+    schedule();
   }
-  function schedule() { clearTimeout(nextT); nextT = setTimeout(show, mobile() ? rand(20000, 32000) : rand(13000, 22000)); }
+  function schedule() { later(show, mobile() ? rand(7000, 11000) : rand(3500, 7000)); }
 
   // Click: jump, "o" mouth, a kind word, then off it goes
   el.addEventListener('click', () => {
-    el.classList.remove('up'); void el.offsetWidth; el.classList.add('up');
+    clearAll(); el.classList.remove('up', 'walk'); void el.offsetWidth; el.classList.add('up');
     talk(pick(LINES.slice(0, 5)));
-    clearTimeout(hideT); hideT = setTimeout(hide, 1800);
+    later(hide, 1900);
   });
   el.addEventListener('mouseenter', () => { hovering = true; });
   el.addEventListener('mouseleave', () => { hovering = false; });
@@ -263,7 +333,7 @@ document.querySelectorAll('img[data-fallback]').forEach(img => {
   let mx = 0, my = 0, raf = 0;
   addEventListener('mousemove', e => {
     mx = e.clientX; my = e.clientY;
-    if (raf || !el.classList.contains('on')) return;
+    if (raf || !visible) return;
     raf = requestAnimationFrame(() => {
       raf = 0;
       const r = el.getBoundingClientRect();
@@ -276,5 +346,5 @@ document.querySelectorAll('img[data-fallback]').forEach(img => {
     });
   }, { passive: true });
 
-  nextT = setTimeout(show, 6000);
+  later(show, 2500);
 })();
