@@ -248,18 +248,6 @@ html{scroll-behavior:smooth}
 .jc .final .wrap .waitlist p.wl-msg.err{color:#b3261e}
 .jc .waitlist.done input,.jc .waitlist.done .consent,.jc .waitlist.done .btn,.jc .waitlist.done label.sr{display:none}
 .jc .final .wrap .waitlist.done p.wl-msg{font-family:var(--serif);font-style:italic;font-size:24px;line-height:1.3;color:var(--ink);margin:8px 0}
-/* Course reviews: every one visible, as cards */
-.jc .rtitle{text-align:center;font-size:clamp(26px,3vw,36px);margin:72px 0 28px}
-.jc .rtitle em{font-style:italic;font-weight:400}
-.jc .rgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
-.jc .rcard{margin:0;background:var(--white);border:1px solid var(--line);border-radius:2px;padding:24px 26px}
-.jc .rhead{display:flex;align-items:center;gap:12px}
-.jc .rcard .avatar{width:44px;height:44px;border-width:2px}
-.jc .rcard figcaption{font-size:15px;font-weight:600;color:var(--ink)}
-.jc .rcard .place{display:block;font-size:13px;color:var(--muted)}
-.jc .rcard .stars{margin:12px 0 0;font-size:15px;line-height:1}
-.jc .rcard blockquote{margin:12px 0 0;font-family:var(--serif);font-style:italic;font-size:19px;line-height:1.45;color:var(--ink)}
-@media (max-width:760px){.jc .rgrid{grid-template-columns:1fr}.jc .rcard{padding:20px}.jc .rtitle{margin-top:56px}}
 .jc .checkout-card{padding:20px}
 .jc .trust{list-style:none;display:flex;flex-wrap:wrap;justify-content:center;gap:10px 26px;margin:0 0 16px;padding:4px 0 16px;border-bottom:1px solid var(--line);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .jc .trust li{display:inline-flex;align-items:center;gap:8px}
@@ -952,6 +940,87 @@ body :has(&gt; .jc),body :has(.jc){padding:0!important;margin:0!important;max-wi
       &lt;div class=&quot;slider&quot; aria-roledescription=&quot;carrusel&quot;&gt;
         &lt;button class=&quot;arrow prev&quot; type=&quot;button&quot; aria-label=&quot;Anterior&quot;&gt;&lt;/button&gt;
         &lt;div class=&quot;track&quot; tabindex=&quot;0&quot;&gt;
+          &lt;!-- Alumnas del Curso de Confianza first, then the company testimonials --&gt;
+          &lt;figure class=&quot;slide&quot;&gt;
+            &lt;div class=&quot;who&quot;&gt;
+              &lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;
+              &lt;div&gt;
+                &lt;figcaption&gt;Fernanda G. · D.F. México&lt;/figcaption&gt;
+                &lt;p class=&quot;stars&quot; aria-label=&quot;5 de 5 estrellas&quot;&gt;★★★★★&lt;/p&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;blockquote&gt;“Pensaba que la confianza era algo que tenías o no tenías. El curso me hizo darme cuenta de que se entrena. Me ha ayudado especialmente a dejar de cuestionarme constantemente después de tomar una decisión.”&lt;/blockquote&gt;
+          &lt;/figure&gt;
+          &lt;figure class=&quot;slide&quot;&gt;
+            &lt;div class=&quot;who&quot;&gt;
+              &lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;
+              &lt;div&gt;
+                &lt;figcaption&gt;Albert M. · Alcobendas&lt;/figcaption&gt;
+                &lt;p class=&quot;stars&quot; aria-label=&quot;5 de 5 estrellas&quot;&gt;★★★★★&lt;/p&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;blockquote&gt;“Profesionalmente me iba bien, pero seguía teniendo la sensación de que en cualquier momento alguien descubriría que no era tan buena como pensaban. El curso me ayudó a entender de dónde venía esa voz y, sobre todo, a dejar de darle tanto poder.”&lt;/blockquote&gt;
+          &lt;/figure&gt;
+          &lt;figure class=&quot;slide&quot;&gt;
+            &lt;div class=&quot;who&quot;&gt;
+              &lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;
+              &lt;div&gt;
+                &lt;figcaption&gt;Alba S. · Barcelona&lt;/figcaption&gt;
+                &lt;p class=&quot;stars&quot; aria-label=&quot;4 de 5 estrellas&quot;&gt;★★★★☆&lt;/p&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;blockquote&gt;“Diez días que me han hecho cuestionarme años de inseguridades. Ahora me observo de una manera completamente diferente y confío mucho más en mis decisiones.”&lt;/blockquote&gt;
+          &lt;/figure&gt;
+          &lt;figure class=&quot;slide&quot;&gt;
+            &lt;div class=&quot;who&quot;&gt;
+              &lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;
+              &lt;div&gt;
+                &lt;figcaption&gt;Elisabet M. · Lleida&lt;/figcaption&gt;
+                &lt;p class=&quot;stars&quot; aria-label=&quot;5 de 5 estrellas&quot;&gt;★★★★★&lt;/p&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;blockquote lang=&quot;ca&quot;&gt;“El que més m’ha agradat és que no és el típic curs de ‘creu en tu i tot anirà bé’. Hi ha exercicis molt concrets que et fan adonar de comportaments que tens totalment automatitzats. M’he endut eines que continuo utilitzant.”&lt;/blockquote&gt;
+          &lt;/figure&gt;
+          &lt;figure class=&quot;slide&quot;&gt;
+            &lt;div class=&quot;who&quot;&gt;
+              &lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;
+              &lt;div&gt;
+                &lt;figcaption&gt;Clara G. · Aitona&lt;/figcaption&gt;
+                &lt;p class=&quot;stars&quot; aria-label=&quot;5 de 5 estrellas&quot;&gt;★★★★★&lt;/p&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;blockquote&gt;“Tengo un puesto de responsabilidad y nunca me había considerado una persona insegura. Sin embargo, haciendo el curso descubrí cuántas veces me hacía pequeña sin darme cuenta: justificándome demasiado, sobrepreparándome o buscando validación antes de decidir. Ha sido revelador.”&lt;/blockquote&gt;
+          &lt;/figure&gt;
+          &lt;figure class=&quot;slide&quot;&gt;
+            &lt;div class=&quot;who&quot;&gt;
+              &lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;
+              &lt;div&gt;
+                &lt;figcaption&gt;Marc C. · Madrid&lt;/figcaption&gt;
+                &lt;p class=&quot;stars&quot; aria-label=&quot;5 de 5 estrellas&quot;&gt;★★★★★&lt;/p&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;blockquote&gt;“Hubo un ejercicio que me hizo llorar porque me di cuenta de la cantidad de años que llevaba hablándome de una forma que jamás utilizaría con otra persona. Para mí el curso ha sido mucho más que ganar confianza: ha sido empezar a estar de mi lado.”&lt;/blockquote&gt;
+          &lt;/figure&gt;
+          &lt;figure class=&quot;slide&quot;&gt;
+            &lt;div class=&quot;who&quot;&gt;
+              &lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;
+              &lt;div&gt;
+                &lt;figcaption&gt;Marta L. · Barcelona&lt;/figcaption&gt;
+                &lt;p class=&quot;stars&quot; aria-label=&quot;5 de 5 estrellas&quot;&gt;★★★★★&lt;/p&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;blockquote&gt;“Llegué al curso en un momento en el que sabía que quería cambiar cosas profesionalmente, pero llevaba meses sin atreverme a dar el paso. En 10 días no desaparecen todos tus miedos, pero sí cambia muchísimo la forma en la que te relacionas con ellos. Para mí ese ha sido el gran aprendizaje.”&lt;/blockquote&gt;
+          &lt;/figure&gt;
+          &lt;figure class=&quot;slide&quot;&gt;
+            &lt;div class=&quot;who&quot;&gt;
+              &lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;
+              &lt;div&gt;
+                &lt;figcaption&gt;Alumna del Curso de Confianza&lt;/figcaption&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;blockquote&gt;“El curso de Judith transmite una energía muy especial: cercana, natural y llena de vitalidad. Su forma de explicar genera confianza y ayuda a sentirse acompañado durante todo el proceso, y su motivación se contagia. Además, ofrece muchos consejos, herramientas y recursos para aprovechar el curso al máximo, y sus meditaciones son un espacio que se disfruta muchísimo. Una profesora excelente.”&lt;/blockquote&gt;
+          &lt;/figure&gt;
+          &lt;!-- Company testimonials --&gt;
           &lt;figure class=&quot;slide&quot;&gt;
             &lt;div class=&quot;who&quot;&gt;
               &lt;img class=&quot;avatar&quot; src=&quot;https://davidcohencontent-create.github.io/coding-test/funnel/img/logo-mediolanum-sq.png&quot; alt=&quot;Mediolanum&quot; loading=&quot;lazy&quot; data-fallback&gt;
@@ -984,49 +1053,6 @@ body :has(&gt; .jc),body :has(.jc){padding:0!important;margin:0!important;max-wi
         &lt;button class=&quot;arrow next&quot; type=&quot;button&quot; aria-label=&quot;Siguiente&quot;&gt;&lt;/button&gt;
       &lt;/div&gt;
       &lt;div class=&quot;dots&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
-      &lt;!-- Alumnas del Curso de Confianza: every review visible at once --&gt;
-      &lt;h3 class=&quot;rtitle&quot;&gt;Lo que dicen &lt;em&gt;mis alumnas&lt;/em&gt;&lt;/h3&gt;
-      &lt;div class=&quot;rgrid&quot;&gt;
-          &lt;figure class=&quot;rcard&quot;&gt;
-            &lt;div class=&quot;rhead&quot;&gt;&lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;div&gt;&lt;figcaption&gt;Fernanda G.&lt;/figcaption&gt;&lt;span class=&quot;place&quot;&gt;D.F. México&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
-            &lt;p class=&quot;stars&quot; aria-label=&quot;5 de 5 estrellas&quot;&gt;★★★★★&lt;/p&gt;
-            &lt;blockquote&gt;“Pensaba que la confianza era algo que tenías o no tenías. El curso me hizo darme cuenta de que se entrena. Me ha ayudado especialmente a dejar de cuestionarme constantemente después de tomar una decisión.”&lt;/blockquote&gt;
-          &lt;/figure&gt;
-          &lt;figure class=&quot;rcard&quot;&gt;
-            &lt;div class=&quot;rhead&quot;&gt;&lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;div&gt;&lt;figcaption&gt;Albert M.&lt;/figcaption&gt;&lt;span class=&quot;place&quot;&gt;Alcobendas&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
-            &lt;p class=&quot;stars&quot; aria-label=&quot;5 de 5 estrellas&quot;&gt;★★★★★&lt;/p&gt;
-            &lt;blockquote&gt;“Profesionalmente me iba bien, pero seguía teniendo la sensación de que en cualquier momento alguien descubriría que no era tan buena como pensaban. El curso me ayudó a entender de dónde venía esa voz y, sobre todo, a dejar de darle tanto poder.”&lt;/blockquote&gt;
-          &lt;/figure&gt;
-          &lt;figure class=&quot;rcard&quot;&gt;
-            &lt;div class=&quot;rhead&quot;&gt;&lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;div&gt;&lt;figcaption&gt;Alba S.&lt;/figcaption&gt;&lt;span class=&quot;place&quot;&gt;Barcelona&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
-            &lt;p class=&quot;stars&quot; aria-label=&quot;4 de 5 estrellas&quot;&gt;★★★★☆&lt;/p&gt;
-            &lt;blockquote&gt;“Diez días que me han hecho cuestionarme años de inseguridades. Ahora me observo de una manera completamente diferente y confío mucho más en mis decisiones.”&lt;/blockquote&gt;
-          &lt;/figure&gt;
-          &lt;figure class=&quot;rcard&quot;&gt;
-            &lt;div class=&quot;rhead&quot;&gt;&lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;div&gt;&lt;figcaption&gt;Elisabet M.&lt;/figcaption&gt;&lt;span class=&quot;place&quot;&gt;Lleida&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
-            &lt;p class=&quot;stars&quot; aria-label=&quot;5 de 5 estrellas&quot;&gt;★★★★★&lt;/p&gt;
-            &lt;blockquote lang=&quot;ca&quot;&gt;“El que més m’ha agradat és que no és el típic curs de ‘creu en tu i tot anirà bé’. Hi ha exercicis molt concrets que et fan adonar de comportaments que tens totalment automatitzats. M’he endut eines que continuo utilitzant.”&lt;/blockquote&gt;
-          &lt;/figure&gt;
-          &lt;figure class=&quot;rcard&quot;&gt;
-            &lt;div class=&quot;rhead&quot;&gt;&lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;div&gt;&lt;figcaption&gt;Clara G.&lt;/figcaption&gt;&lt;span class=&quot;place&quot;&gt;Aitona&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
-            &lt;p class=&quot;stars&quot; aria-label=&quot;5 de 5 estrellas&quot;&gt;★★★★★&lt;/p&gt;
-            &lt;blockquote&gt;“Tengo un puesto de responsabilidad y nunca me había considerado una persona insegura. Sin embargo, haciendo el curso descubrí cuántas veces me hacía pequeña sin darme cuenta: justificándome demasiado, sobrepreparándome o buscando validación antes de decidir. Ha sido revelador.”&lt;/blockquote&gt;
-          &lt;/figure&gt;
-          &lt;figure class=&quot;rcard&quot;&gt;
-            &lt;div class=&quot;rhead&quot;&gt;&lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;div&gt;&lt;figcaption&gt;Marc C.&lt;/figcaption&gt;&lt;span class=&quot;place&quot;&gt;Madrid&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
-            &lt;p class=&quot;stars&quot; aria-label=&quot;5 de 5 estrellas&quot;&gt;★★★★★&lt;/p&gt;
-            &lt;blockquote&gt;“Hubo un ejercicio que me hizo llorar porque me di cuenta de la cantidad de años que llevaba hablándome de una forma que jamás utilizaría con otra persona. Para mí el curso ha sido mucho más que ganar confianza: ha sido empezar a estar de mi lado.”&lt;/blockquote&gt;
-          &lt;/figure&gt;
-          &lt;figure class=&quot;rcard&quot;&gt;
-            &lt;div class=&quot;rhead&quot;&gt;&lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;div&gt;&lt;figcaption&gt;Marta L.&lt;/figcaption&gt;&lt;span class=&quot;place&quot;&gt;Barcelona&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
-            &lt;p class=&quot;stars&quot; aria-label=&quot;5 de 5 estrellas&quot;&gt;★★★★★&lt;/p&gt;
-            &lt;blockquote&gt;“Llegué al curso en un momento en el que sabía que quería cambiar cosas profesionalmente, pero llevaba meses sin atreverme a dar el paso. En 10 días no desaparecen todos tus miedos, pero sí cambia muchísimo la forma en la que te relacionas con ellos. Para mí ese ha sido el gran aprendizaje.”&lt;/blockquote&gt;
-          &lt;/figure&gt;
-          &lt;figure class=&quot;rcard&quot;&gt;
-            &lt;div class=&quot;rhead&quot;&gt;&lt;span class=&quot;avatar&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;div&gt;&lt;figcaption&gt;Alumna del Curso de Confianza&lt;/figcaption&gt;&lt;/div&gt;&lt;/div&gt;
-            &lt;blockquote&gt;“El curso de Judith transmite una energía muy especial: cercana, natural y llena de vitalidad. Su forma de explicar genera confianza y ayuda a sentirse acompañado durante todo el proceso, y su motivación se contagia. Además, ofrece muchos consejos, herramientas y recursos para aprovechar el curso al máximo, y sus meditaciones son un espacio que se disfruta muchísimo. Una profesora excelente.”&lt;/blockquote&gt;
-          &lt;/figure&gt;
-      &lt;/div&gt;
       &lt;!-- Logo strip: scrolls slowly; page.js duplicates the row for a seamless loop.
            Every logo sits in the same slot and is turned the same pale grey; &quot;crop&quot; = square image with the wordmark across the middle (cropped to it), &quot;heavy&quot; = bold logo given a smaller slot. --&gt;
       &lt;div class=&quot;logos&quot; aria-label=&quot;Empresas con las que he trabajado&quot;&gt;
