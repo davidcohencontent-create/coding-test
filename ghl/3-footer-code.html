@@ -436,7 +436,7 @@
       }
       function leave() { if (hovering) return later(leave, 1500); hide(); }
       function hide() {
-        if (dragging) return;
+        if (dragging || flying) return;
         clearAll(); say.classList.remove('on'); el.classList.remove('walk');
         if (visible) { visible = false; el.classList.remove('on'); }
         schedule();
@@ -530,21 +530,24 @@
 
       // Drag: grab it (tongue out), move it (it screams and shakes), let go (it falls to the bottom and bounces)
       const svgEl = el.querySelector('svg');
-      let sx = 0, sy = 0, ox = 0, oy = 0, px = 0, quietT = 0, moved = false;
+      let sx = 0, sy = 0, ox = 0, oy = 0, px = 0, quietT = 0, moved = false, samples = [];
       svgEl.addEventListener('pointerdown', e => {
         if (e.button > 0) return;
         e.preventDefault();
         clearAll(); say.classList.remove('on');
+        const caught = flying; stopFlying();
         const r = el.getBoundingClientRect();
-        dragging = true; moved = false;
+        dragging = true; moved = caught; samples = [{ t: performance.now(), x: e.clientX, y: e.clientY }];
+        if (caught) { el.style.transform = ''; ox = e.clientX - parseFloat(el.style.left); oy = e.clientY - parseFloat(el.style.top); }
         sx = e.clientX; sy = e.clientY; px = e.clientX;
-        ox = e.clientX - r.left; oy = e.clientY - r.top;
+        if (!caught) { ox = e.clientX - r.left; oy = e.clientY - r.top; }
         el.classList.add('grab');
         voiceOn = true; voice.squeak();
         try { svgEl.setPointerCapture(e.pointerId); } catch (_) {}
       });
       svgEl.addEventListener('pointermove', e => {
         if (!dragging) return;
+        samples.push({ t: performance.now(), x: e.clientX, y: e.clientY }); if (samples.length > 12) samples.shift();
         if (!moved && Math.hypot(e.clientX - sx, e.clientY - sy) < 5) return;
         if (!moved) {                                   // lift it off its edge into free movement
           moved = true;
@@ -571,24 +574,69 @@
         clearTimeout(quietT);
         el.classList.remove('grab', 'scream');
         if (!moved) return poke();
-        // Fall to the bottom edge, land with a squash, then carry on like a normal visit
-        const n = size(), floor = innerHeight - n * .72;
+        // Throw: carry on with the speed of the last ~90 ms of the drag
+        const now = performance.now(), recent = samples.filter(q => now - q.t < 90);
+        let vx = 0, vy = 0;
+        if (recent.length > 1) {
+          const a = recent[0], z = recent[recent.length - 1], dt = Math.max(16, z.t - a.t) / 1000;
+          vx = (z.x - a.x) / dt; vy = (z.y - a.y) / dt;
+        }
+        const cap = 3200, sp = Math.hypot(vx, vy);
+        if (sp > cap) { vx *= cap / sp; vy *= cap / sp; }
+        fly(vx, vy);
+      }
+
+      // Gravity: it flies, spins, bounces off the walls, ceiling and floor, then settles on the bottom edge
+      let flyRaf = 0, flying = false;
+      function fly(vx, vy) {
+        const n = size(), r = el.getBoundingClientRect();
+        let x = parseFloat(el.style.left) || r.left, y = parseFloat(el.style.top) || r.top, ang = 0, spin = vx * .25, last = performance.now(), bumpT = 0;
+        const G = 2600, floor = () => innerHeight - n * .72, right = () => innerWidth - n;
+        flying = true;
+        el.classList.add('drag');
+        yell.textContent = '¡Wiiiii!';
+        if (Math.hypot(vx, vy) > 700) { el.classList.add('scream'); screamSound(); }
+        cancelAnimationFrame(flyRaf);
+        const step = t => {
+          const dt = Math.min(.033, (t - last) / 1000); last = t;
+          vy += G * dt; x += vx * dt; y += vy * dt;
+          let hit = 0;
+          if (x < 0) { x = 0; hit = Math.abs(vx); vx = -vx * .62; spin = -spin * .7; }
+          if (x > right()) { x = right(); hit = Math.abs(vx); vx = -vx * .62; spin = -spin * .7; }
+          if (y < 0) { y = 0; hit = Math.abs(vy); vy = -vy * .5; }
+          const onFloor = y >= floor();
+          if (onFloor) {
+            y = floor();
+            if (vy > 0) { hit = Math.max(hit, vy); vy = -vy * .48; }
+            vx *= Math.pow(.18, dt);                         // floor friction
+            spin = vx * .25; ang *= Math.pow(.02, dt);       // roll, then sit upright
+          }
+          ang += spin * dt;
+          if (hit > 650 && t - bumpT > 180) { bumpT = t; voice.oof(); el.classList.remove('land'); void el.offsetWidth; el.classList.add('land'); }
+          const fast = Math.hypot(vx, vy) > 650;
+          el.classList.toggle('scream', fast);
+          el.classList.toggle('yell-below', y < 70);
+          el.style.left = x + 'px'; el.style.top = y + 'px';
+          el.style.transform = `rotate(${ang.toFixed(1)}deg)`;
+          if (onFloor && Math.abs(vy) < 140 && Math.abs(vx) < 45 && Math.abs(ang) < 4) return settle();
+          flyRaf = requestAnimationFrame(step);
+        };
+        flyRaf = requestAnimationFrame(step);
+      }
+      function stopFlying() { if (!flying) return; flying = false; cancelAnimationFrame(flyRaf); yell.textContent = '¡AAAAAH!'; }
+      function settle() {
+        stopFlying();
+        el.classList.remove('drag', 'scream', 'fall');
         el.style.transform = '';
-        el.classList.remove('drag'); el.classList.add('fall');
-        void el.offsetWidth;
-        el.style.top = floor + 'px';
-        later(() => {
-          el.classList.remove('fall');
-          el.style.transition = 'none';
-          el.dataset.side = 'bottom'; el.style.top = '';
-          el.classList.add('on');
-          void el.offsetWidth; el.style.transition = '';
-          el.classList.add('land'); later(() => el.classList.remove('land'), 500);
-          voice.oof();
-          later(() => talk(pick(['¡Uf!', '¡Otra vez!', 'Qué mareo…', '¡Bájame!'])), 300);
-          later(() => walk('bottom'), 2600);
-          later(leave, 5200);
-        }, 640);
+        el.style.transition = 'none';
+        el.dataset.side = 'bottom'; el.style.top = '';
+        el.classList.add('on');
+        void el.offsetWidth; el.style.transition = '';
+        el.classList.remove('land'); void el.offsetWidth;
+        el.classList.add('land'); later(() => el.classList.remove('land'), 500);
+        later(() => talk(pick(['¡Uf!', '¡Otra vez!', 'Qué mareo…', '¡Bájame!', '¡Wiii, otra!'])), 300);
+        later(() => walk('bottom'), 2800);
+        later(leave, 5400);
       }
       svgEl.addEventListener('pointerup', drop);
       svgEl.addEventListener('pointercancel', drop);
