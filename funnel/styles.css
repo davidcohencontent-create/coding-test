@@ -192,6 +192,9 @@ img.avatar{background:#fff;padding:9px;object-fit:contain}
 .offer-list li{position:relative;padding:11px 0 11px 30px;border-bottom:1px solid var(--line);font-size:16px}
 .offer-list li::before{content:"";position:absolute;left:3px;top:19px;width:12px;height:7px;border-left:1.5px solid var(--accent);border-bottom:1.5px solid var(--accent);transform:rotate(-45deg)}
 .offer .btn{width:100%}
+.buy.solo{grid-template-columns:minmax(0,520px);justify-content:center}
+.final .offer .price.soon{font-style:italic;font-size:52px;margin:14px 0 12px}
+.nowrap{white-space:nowrap}
 .checkout-card{padding:20px}
 .trust{list-style:none;display:flex;flex-wrap:wrap;justify-content:center;gap:10px 26px;margin:0 0 16px;padding:4px 0 16px;border-bottom:1px solid var(--line);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .trust li{display:inline-flex;align-items:center;gap:8px}
