@@ -330,6 +330,19 @@
         opacity:0;transform:translateX(-50%) scale(.6) rotate(-6deg);transition:opacity .12s,transform .2s cubic-bezier(.34,1.6,.5,1)}
       .jm.scream .jm-yell{opacity:1;transform:translateX(-50%) scale(1) rotate(-4deg)}
       .jm.yell-below .jm-yell{bottom:auto;top:100%;margin:6px 0 0}
+      .jm .jm-happy{opacity:0;transition:opacity .08s}
+      .jm.joy .jm-eyes,.jm.joy .jm-smile,.jm.joy .jm-tongue,.jm.joy .jm-o,.jm.joy .jm-scream,.jm.joy .jm-xeyes{opacity:0}
+      .jm.joy .jm-happy,.jm.joy.fast .jm-dash{opacity:1}
+      .jm.joy.fast .jm-yell{opacity:1;transform:translateX(-50%) scale(1) rotate(-4deg)}
+      .jm.joy svg{animation:jm-giggle .18s ease-in-out infinite alternate}
+      .jm.joy.land svg{animation:jm-land .5s cubic-bezier(.3,1.6,.5,1) 1}
+      .jm svg{transition:filter .25s}
+      .jm.hurt svg{filter:drop-shadow(0 0 6px #ff2a2a) drop-shadow(0 0 18px rgba(255,42,42,.85)) drop-shadow(0 0 34px rgba(255,42,42,.45));transition:filter .04s}
+      .jm.hurt .jm-body-fill{fill:#ff8a7a}
+      .jm .jm-body-fill{transition:fill .3s}
+      .jm.jm-mini{width:44px;height:44px;z-index:2147483599;transition:none;transform:none;will-change:transform}
+      .jm.jm-mini svg{pointer-events:none;animation:none;filter:drop-shadow(0 4px 6px rgba(0,0,0,.12))}
+      @keyframes jm-giggle{from{transform:translateY(0) scale(1)}to{transform:translateY(-1.5px) scale(1.03,.97)}}
       .jm.mouth .jm-smile,.jm.mouth .jm-tongue{opacity:0}
       .jm.mouth .jm-o{opacity:1}
       @keyframes jm-lick{from{transform:scaleY(.8)}to{transform:scaleY(1.15)}}
@@ -343,7 +356,7 @@
       el.className = 'jm'; el.setAttribute('aria-hidden', 'true');
       el.innerHTML = `<svg viewBox="0 0 120 120">
         <g class="jm-legs"><path d="M44 100v14M74 100v14" stroke="#161616" stroke-width="3" stroke-linecap="round"/></g>
-        <rect x="26" y="18" width="68" height="84" rx="22" fill="#f5c542" stroke="#161616" stroke-width="3"/>
+        <rect class="jm-body-fill" x="26" y="18" width="68" height="84" rx="22" fill="#f5c542" stroke="#161616" stroke-width="3"/>
         <path d="M36 28c6-5 14-7 22-7" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".55" fill="none"/>
         <g class="jm-face">
           <g class="jm-eyes"><circle cx="50" cy="48" r="3.4" fill="#161616"/><circle cx="70" cy="48" r="3.4" fill="#161616"/></g>
@@ -352,6 +365,9 @@
           <ellipse class="jm-o" cx="60" cy="60" rx="3.6" ry="4.4" fill="#161616"/>
           <path class="jm-tongue" d="M55 61.5h10v5.5a5 5 0 0 1-10 0z" fill="#ef6f7a" stroke="#161616" stroke-width="2.2" stroke-linejoin="round"/>
           <g class="jm-scream"><ellipse cx="60" cy="64" rx="7.5" ry="10" fill="#161616"/><ellipse cx="60" cy="70" rx="4.5" ry="3" fill="#ef6f7a"/></g>
+          <g class="jm-happy"><path d="M45 50q5-7 10 0M65 50q5-7 10 0" stroke="#161616" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+            <path d="M49 58h22a11 11 0 0 1-22 0z" fill="#161616" stroke="#161616" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M54 66a6 4 0 0 1 12 0a6 3 0 0 1-12 0z" fill="#ef6f7a"/></g>
           <g class="jm-xeyes" stroke="#161616" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M45 44l6 4-6 4M75 44l-6 4 6 4"/></g>
         </g>
         <g class="jm-dash" stroke="#161616" stroke-width="2.4" stroke-linecap="round"><path d="M18 18l-6-6M60 6V-2M102 18l6-6"/></g>
@@ -518,7 +534,11 @@
           tone(t, d * .25, f, f * 1.5, 'a', 1, 0); tone(t + d * .22, d * .78, f * 1.5, f * .85, 'a', 1, 30); };
         const squeak = () => { if (!init()) return; const t = ctx.currentTime + .01; tone(t, .09, PITCH * 1.5, PITCH * 2.1, 'i', .9); };
         const oof = () => { if (!init()) return; const t = ctx.currentTime + .01; tone(t, .16, PITCH * .8, PITCH * .55, 'u', 1); };
-        return { say, scream, squeak, oof };
+        const wee = () => { if (!init()) return; const t = ctx.currentTime + .01; tone(t, .5, PITCH * 1.4, PITCH * 2.2, 'i', 1, 18); };
+        const boing = () => { if (!init()) return; const t = ctx.currentTime + .01; tone(t, .22, PITCH * 1.6, PITCH * .7, 'o', 1, 40); };
+        const peep = () => { if (!init()) return; const t = ctx.currentTime + .01 + Math.random() * .05; tone(t, .07, PITCH * 2.4, PITCH * 2.9, 'i', .55); };
+        const giggle = () => { if (!init()) return; let t = ctx.currentTime + .01; for (let i = 0; i < 4; i++) { tone(t, .07, PITCH * (1.5 - i * .06), PITCH * (1.35 - i * .06), 'i', .8); t += .1; } };
+        return { say, scream, squeak, oof, wee, boing, peep, giggle };
       })();
       let voiceOn = false, lastYell = 0;                     // turned on by the first click or grab
       function mouthFor(ms, len) { setTimeout(() => { el.classList.add('mouth'); setTimeout(() => el.classList.remove('mouth'), len * .8); }, Math.max(0, ms)); }
@@ -586,35 +606,42 @@
         fly(vx, vy);
       }
 
-      // Gravity: it flies, spins, bounces off the walls, ceiling and floor, then settles on the bottom edge
-      let flyRaf = 0, flying = false;
+      // Gravity: it flies (laughing), spins, bounces off the walls, ceiling and floor, then settles on the bottom edge.
+      // Hitting a wall or the ceiling makes it glow red for a moment and pops out little copies of it.
+      let flyRaf = 0, flying = false, hurtT = 0;
+      const FUN = ['¡Wiiiii!', '¡Yupiii!', '¡Jajaja!', '¡Más alto!', '¡Weee!'];
       function fly(vx, vy) {
         const n = size(), r = el.getBoundingClientRect();
         let x = parseFloat(el.style.left) || r.left, y = parseFloat(el.style.top) || r.top, ang = 0, spin = vx * .25, last = performance.now(), bumpT = 0;
         const G = 2600, floor = () => innerHeight - n * .72, right = () => innerWidth - n;
         flying = true;
-        el.classList.add('drag');
-        yell.textContent = '¡Wiiiii!';
-        if (Math.hypot(vx, vy) > 700) { el.classList.add('scream'); screamSound(); }
+        el.classList.remove('scream', 'grab');
+        el.classList.add('drag', 'joy');
+        yell.textContent = pick(FUN);
+        if (Math.hypot(vx, vy) > 500) voice.wee();
         cancelAnimationFrame(flyRaf);
         const step = t => {
           const dt = Math.min(.033, (t - last) / 1000); last = t;
           vy += G * dt; x += vx * dt; y += vy * dt;
-          let hit = 0;
-          if (x < 0) { x = 0; hit = Math.abs(vx); vx = -vx * .62; spin = -spin * .7; }
-          if (x > right()) { x = right(); hit = Math.abs(vx); vx = -vx * .62; spin = -spin * .7; }
-          if (y < 0) { y = 0; hit = Math.abs(vy); vy = -vy * .5; }
+          let wall = 0, wx = 0, wy = 0, dir = 0;
+          if (x < 0) { x = 0; wall = Math.abs(vx); vx = -vx * .62; spin = -spin * .7; wx = 0; wy = y + n / 2; dir = 1; }
+          if (x > right()) { x = right(); wall = Math.abs(vx); vx = -vx * .62; spin = -spin * .7; wx = innerWidth; wy = y + n / 2; dir = -1; }
+          if (y < 0) { y = 0; wall = Math.max(wall, Math.abs(vy)); vy = -vy * .5; wx = x + n / 2; wy = 0; dir = dir || (vx >= 0 ? 1 : -1); }
           const onFloor = y >= floor();
           if (onFloor) {
             y = floor();
-            if (vy > 0) { hit = Math.max(hit, vy); vy = -vy * .48; }
+            if (vy > 0) { if (vy > 650 && t - bumpT > 180) { bumpT = t; squash(); voice.oof(); } vy = -vy * .48; }
             vx *= Math.pow(.18, dt);                         // floor friction
             spin = vx * .25; ang *= Math.pow(.02, dt);       // roll, then sit upright
           }
+          if (wall > 450 && t - bumpT > 160) {               // a wall or the ceiling: red glow, boing, minis pop out
+            bumpT = t; squash(); voice.boing();
+            el.classList.add('hurt'); clearTimeout(hurtT); hurtT = setTimeout(() => el.classList.remove('hurt'), 420);
+            const k = wall > 1400 ? 3 : wall > 800 ? 2 : 1;
+            for (let i = 0; i < k; i++) spawnMini(wx, wy, dir, wall);
+          }
           ang += spin * dt;
-          if (hit > 650 && t - bumpT > 180) { bumpT = t; voice.oof(); el.classList.remove('land'); void el.offsetWidth; el.classList.add('land'); }
-          const fast = Math.hypot(vx, vy) > 650;
-          el.classList.toggle('scream', fast);
+          el.classList.toggle('fast', Math.hypot(vx, vy) > 550);
           el.classList.toggle('yell-below', y < 70);
           el.style.left = x + 'px'; el.style.top = y + 'px';
           el.style.transform = `rotate(${ang.toFixed(1)}deg)`;
@@ -623,10 +650,44 @@
         };
         flyRaf = requestAnimationFrame(step);
       }
-      function stopFlying() { if (!flying) return; flying = false; cancelAnimationFrame(flyRaf); yell.textContent = '¡AAAAAH!'; }
+      function squash() { el.classList.remove('land'); void el.offsetWidth; el.classList.add('land'); }
+
+      // Minis: little copies of the mascot that tumble out of a wall hit, bounce around for a few seconds, then shrink away
+      const minis = []; let miniRaf = 0;
+      function spawnMini(x, y, dir, power) {
+        if (minis.length >= 12) return;
+        const m = document.createElement('div');
+        m.className = 'jm jm-mini joy'; m.setAttribute('aria-hidden', 'true');
+        m.innerHTML = svgEl.outerHTML;
+        document.body.appendChild(m);
+        const sp = Math.min(1, power / 1600);
+        minis.push({ m, x: x - 22 + dir * 10, y: Math.max(0, y - 22), vx: dir * (220 + Math.random() * 520) * (.6 + sp),
+          vy: -(380 + Math.random() * 620) * (.6 + sp), ang: 0, spin: (Math.random() - .5) * 900, born: performance.now(),
+          life: 2600 + Math.random() * 1800, last: performance.now(), s: .85 + Math.random() * .3 });
+        voice.peep();
+        if (!miniRaf) miniRaf = requestAnimationFrame(stepMinis);
+      }
+      function stepMinis(t) {
+        const G = 2200, W = innerWidth - 44, F = innerHeight - 44;
+        for (let i = minis.length - 1; i >= 0; i--) {
+          const q = minis[i], dt = Math.min(.033, (t - q.last) / 1000); q.last = t;
+          q.vy += G * dt; q.x += q.vx * dt; q.y += q.vy * dt;
+          if (q.x < 0) { q.x = 0; q.vx = -q.vx * .7; }
+          if (q.x > W) { q.x = W; q.vx = -q.vx * .7; }
+          if (q.y < 0) { q.y = 0; q.vy = -q.vy * .6; }
+          if (q.y > F) { q.y = F; q.vy = q.vy > 120 ? -q.vy * .55 : 0; q.vx *= Math.pow(.25, dt); q.spin = q.vx * .6; q.ang *= Math.pow(.05, dt); }
+          q.ang += q.spin * dt;
+          const age = t - q.born, out = Math.max(0, (age - q.life) / 350);
+          const sc = q.s * (1 - out) * Math.min(1, age / 120);
+          q.m.style.transform = `translate3d(${q.x.toFixed(1)}px,${q.y.toFixed(1)}px,0) rotate(${q.ang.toFixed(1)}deg) scale(${sc.toFixed(3)})`;
+          if (out >= 1) { q.m.remove(); minis.splice(i, 1); }
+        }
+        miniRaf = minis.length ? requestAnimationFrame(stepMinis) : 0;
+      }
+      function stopFlying() { if (!flying) return; flying = false; cancelAnimationFrame(flyRaf); el.classList.remove('joy', 'fast'); yell.textContent = '¡AAAAAH!'; }
       function settle() {
         stopFlying();
-        el.classList.remove('drag', 'scream', 'fall');
+        el.classList.remove('drag', 'scream', 'fall', 'joy', 'fast');
         el.style.transform = '';
         el.style.transition = 'none';
         el.dataset.side = 'bottom'; el.style.top = '';
@@ -634,7 +695,8 @@
         void el.offsetWidth; el.style.transition = '';
         el.classList.remove('land'); void el.offsetWidth;
         el.classList.add('land'); later(() => el.classList.remove('land'), 500);
-        later(() => talk(pick(['¡Uf!', '¡Otra vez!', 'Qué mareo…', '¡Bájame!', '¡Wiii, otra!'])), 300);
+        voice.giggle();
+        later(() => talk(pick(['¡Otra vez!', '¡Qué divertido!', '¡Wiii, otra!', '¡Más, más!', '¡Jajaja!'])), 500);
         later(() => walk('bottom'), 2800);
         later(leave, 5400);
       }
