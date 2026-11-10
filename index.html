@@ -4,18 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Outreach CRM</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: two screens in one narrow column. Start = daily goal + 3-step DM log. Tracking = metrics + follow-ups.
-   Look: black, monochrome, white as the main accent; blue marks follow-ups, green wins, red missed. */
+/* Layout: three screens in one narrow column. Start = goal + 3-step DM log, To contact = queue, Tracking = pipeline.
+   Look: white paper, soft grey panels, condensed serif with italic accents, one sunny yellow for every action that moves a lead forward.
+   Blue marks follow-ups, green wins, red missed. Single light theme by design. */
 :root{
-  --bg:#000; --panel:#0a0a0a; --ink:#f5f5f5; --muted:#7a7a7a; --line:#1f1f1f; --soft:#161616;
-  --accent:#fff; --accent-ink:#000; --good:#4ade80; --fu:#5b9dff; --bad:#f26d6d;
-  color-scheme:dark;
+  --bg:#ffffff; --panel:#ffffff; --ink:#151515; --muted:#6f6f6f; --line:#ebebeb; --soft:#f6f6f5;
+  --accent:#f6cf45; --accent-deep:#e9b818; --accent-ink:#151515; --good:#1e9e57; --fu:#3d6fe0; --bad:#d84a4a;
+  --serif:'Instrument Serif', Georgia, 'Times New Roman', serif;
+  color-scheme:light;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 'Inter Tight',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;letter-spacing:-.005em}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;letter-spacing:-.01em}
 header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
 header .in{max-width:720px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px}
 header h1{font-size:15px;margin:0;font-weight:650;flex:1}
@@ -84,6 +86,16 @@ h2{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--mute
 .btnlike{display:inline-block;font-size:12px;padding:4px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);cursor:pointer}
 .btnlike:hover{border-color:var(--muted)}
 .fu-h{color:var(--fu)}
+.seg2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.seg2 button{display:grid;gap:2px;text-align:left;padding:10px 12px;align-content:start}
+.seg2 button b{font-size:14px}
+.seg2 button span{font-size:13px;font-variant-numeric:tabular-nums}
+.seg2 button small{font-size:11px;color:var(--muted)}
+.seg2 button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.seg2 button.on small{color:inherit;opacity:.65}
+.pill.offer{background:none;border:1px solid #333;color:var(--ink);font-weight:600;cursor:pointer;font-family:inherit}
+.pill.offer.academy{border-color:#555;color:var(--muted)}
+.stat small{display:block;font-size:11px;color:var(--muted);margin-top:2px}
 nav .lc{display:inline-block;min-width:18px;padding:0 5px;margin-left:4px;border-radius:999px;background:var(--soft);color:var(--ink);font-size:11px;font-weight:700;line-height:18px;text-align:center}
 nav button.on .lc{background:var(--bg);color:var(--ink)}
 .lead{display:flex;gap:10px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line)}
@@ -148,12 +160,121 @@ tr:last-child td{border-bottom:0}
 .toast{border:1px solid var(--line);position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:8px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:50;max-width:calc(100vw - 32px)}
 .toast.show{opacity:1}
 @media (max-width:560px){ .stats{grid-template-columns:repeat(2,1fr)} .grid3{grid-template-columns:1fr 1fr} .grid3 label:first-child{grid-column:1/-1} }
-@media (prefers-reduced-motion:reduce){ .toast{transition:none} }
+/* ===== Light editorial skin ===== */
+header{background:rgba(255,255,255,.88);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px)}
+header h1{font-family:var(--serif);font-weight:400;font-size:26px;letter-spacing:-.01em;line-height:1}
+header h1 i,h2 i{font-style:italic}
+nav button{font-size:14px;font-weight:500;transition:background .2s,color .2s}
+nav button:hover{color:var(--ink)}
+nav button.on{background:var(--soft);color:var(--ink);font-weight:600}
+nav .lc{background:var(--accent);color:var(--accent-ink)}
+nav button.on .lc{background:var(--accent);color:var(--accent-ink)}
+nav .count{background:var(--fu);color:#fff}
+h2{font-family:var(--serif);font-weight:400;font-size:26px;letter-spacing:-.01em;text-transform:none;color:var(--ink);margin:14px 0 -6px;line-height:1.1}
+h2.fu-h{color:var(--ink)} h2.fu-h::after{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--fu);margin-left:8px;vertical-align:4px}
+.card{border-radius:20px;border-color:var(--line);box-shadow:0 1px 0 rgba(0,0,0,.02)}
+.list{padding:2px 0}
+.notice,.er{background:var(--soft);border-radius:14px}
+input,textarea{background:var(--soft);border-color:transparent;border-radius:12px}
+input:focus,textarea:focus{outline:2px solid var(--accent);background:#fff}
+label.f{color:var(--muted)}
+
+/* buttons: quiet pills; the yellow pill is the next step, with a soft glow underneath like a lamp */
+button,.btnlike{border-radius:999px;border-color:var(--line);background:#fff;color:var(--ink);transition:transform .15s ease,box-shadow .2s ease,border-color .2s,background .2s}
+button:hover,.btnlike:hover{border-color:#cfcfcf;transform:translateY(-1px)}
+button:active,.btnlike:active{transform:translateY(0) scale(.97)}
+.primary{position:relative;isolation:isolate;background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600;box-shadow:0 10px 22px -10px rgba(233,184,24,.85)}
+.primary::after{content:'';position:absolute;z-index:-1;left:18%;right:18%;bottom:-9px;height:16px;border-radius:50%;background:var(--accent);filter:blur(10px);opacity:.55;transition:opacity .25s,transform .25s}
+.primary:hover{background:var(--accent);border-color:var(--accent-deep);box-shadow:0 14px 28px -10px rgba(233,184,24,.95)}
+.primary:hover::after{opacity:.85;transform:scaleX(1.15)}
+.primary.go::before{content:'';position:absolute;inset:0;border-radius:inherit;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.75) 48%,transparent 66%);background-size:250% 100%;animation:shine 3.2s ease-in-out infinite;pointer-events:none}
+.big{border-radius:999px;font-size:18px;padding:17px 22px}
+.big.primary{animation:breathe 2.8s ease-in-out infinite}
+.big.primary::after{content:'';}
+.arrow{display:inline-block;margin-left:8px;transition:transform .2s}
+button:hover .arrow{transform:translate(2px,-2px)}
+@keyframes shine{0%,35%{background-position:120% 0}70%,100%{background-position:-120% 0}}
+@keyframes breathe{0%,100%{box-shadow:0 10px 22px -10px rgba(233,184,24,.8)}50%{box-shadow:0 14px 34px -8px rgba(233,184,24,1),0 0 0 6px rgba(246,207,69,.18)}}
+
+/* segmented pickers */
+.seg button,.seg2 button{border-radius:14px;background:var(--soft);border-color:transparent}
+.seg button.on,.seg2 button.on{background:#fff;color:var(--ink);border-color:var(--ink);box-shadow:0 0 0 1px var(--ink) inset}
+.seg2 button.on small{color:var(--muted);opacity:1}
+.seg2 button.on b::after{content:' ✓';color:var(--accent-deep)}
+
+/* goal + consistency */
+.goal .n{font-family:var(--serif);font-weight:400;font-size:56px}
+.slots i{height:8px;border-radius:4px;background:var(--soft);transition:background .4s}
+.slots i.on{background:var(--accent);box-shadow:0 0 12px rgba(246,207,69,.7)}
+.slots.done i.on{background:var(--good);box-shadow:0 0 10px rgba(30,158,87,.35)}
+.cons .nums div{background:var(--soft);border-radius:14px}
+.cons .nums b{font-family:var(--serif);font-weight:400;font-size:30px}
+.heat i{background:var(--soft)}
+.heat i.l1{background:#fbeeb8;color:var(--ink)} .heat i.l2{background:#f8dc77;color:var(--ink)}
+.heat i.hit{background:var(--accent-deep);color:var(--ink)}
+.heat i.today{outline-color:var(--ink)}
+.heat i.future{background:none}
+.next-call{border-radius:14px;background:var(--soft);border-color:transparent}
+
+/* steps */
+.steps div{border-top-color:var(--soft)}
+.steps div.on,.steps div.past{border-top-color:var(--accent-deep)}
+.steps div.on{color:var(--ink)}
+.drop{border:1.5px dashed #d8d8d8;border-radius:16px;background:var(--soft)}
+.drop:hover{border-color:var(--accent-deep)}
+.drop.over,.dm.over{border-color:var(--accent-deep);background:#fffbea}
+
+/* stats */
+.stat{border-radius:18px;background:var(--soft);border-color:transparent}
+.stat b{font-family:var(--serif);font-weight:400;font-size:34px;line-height:1.1;letter-spacing:-.01em}
+.stat.hero{background:#fff7d6;border-color:transparent}
+.score .big-n{font-family:var(--serif);font-weight:400;font-size:64px}
+
+/* properties (Notion-style tags) */
+.pill{border-radius:6px;font-weight:600;font-size:11px;padding:2px 8px;background:var(--soft);color:var(--muted)}
+.pill.good{background:#e6f6ec;color:var(--good)} .pill.solid{background:var(--good);color:#fff}
+.pill.fu{background:var(--fu);color:#fff} .pill.fu-soft{background:#e9effc;color:var(--fu)} .pill.bad{background:#fbe9e9;color:var(--bad)}
+.pill.offer{border:0;background:#fff7d6;color:#7a5b00;border-radius:6px}
+.pill.offer.academy{background:#efeaff;color:#5a3fc0}
+.pill.offer:hover{transform:none;filter:brightness(.97)}
+.crit i b{background:var(--accent-deep)}
+.dm,.lead,.rank,.fuitem,.call{border-bottom-color:var(--line)}
+.dm a,.lead .who a{color:var(--ink)}
+.rank .pos{font-family:var(--serif);font-weight:400;font-size:28px}
+th{color:var(--muted)}
+.dm pre,.fuitem pre{background:var(--soft);border-radius:12px}
+
+/* stage views (Notion-style) */
+.views{display:flex;gap:6px;flex-wrap:wrap}
+.views button{font-size:13px;padding:6px 12px;background:#fff}
+.views button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.views button b{font-weight:600;margin-left:4px;opacity:.7}
+
+/* incentive strip on To contact */
+.potential{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:14px 16px;border-radius:18px;background:linear-gradient(120deg,#fff7d6,#fffdf3)}
+.potential b{font-family:var(--serif);font-weight:400;font-size:30px;line-height:1}
+.potential span{font-size:12px;color:#7a5b00}
+
+/* celebration */
+.spark{position:fixed;z-index:60;pointer-events:none;font-size:14px;color:var(--accent-deep);text-shadow:0 0 8px rgba(246,207,69,.9);animation:spark .9s cubic-bezier(.2,.7,.3,1) forwards}
+@keyframes spark{0%{opacity:1;transform:translate(0,0) scale(.4) rotate(0)}70%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1.1) rotate(160deg)}}
+.confetti{position:fixed;top:-12px;z-index:60;width:8px;height:12px;border-radius:2px;pointer-events:none;animation:fall 1.8s ease-in forwards}
+@keyframes fall{to{transform:translate(var(--dx),105vh) rotate(var(--rot));opacity:.9}}
+.pop{animation:pop .45s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}
+.toast{background:var(--ink);color:#fff;border:0;border-radius:999px;padding:10px 18px;box-shadow:0 10px 30px -10px rgba(0,0,0,.35)}
+
+@media (prefers-reduced-motion:reduce){
+  .toast{transition:none}
+  .big.primary,.primary.go::before,.spark,.confetti,.pop{animation:none!important}
+  .spark,.confetti{display:none}
+  button,.btnlike{transition:none}
+}
 </style>
 </head>
 <body>
 <header><div class="in">
-  <h1>Outreach CRM</h1>
+  <h1>Outreach <i>CRM</i></h1>
   <nav>
     <button data-tab="start">Start</button>
     <button data-tab="leads">To contact<span id="leadCount"></span></button>
@@ -176,12 +297,27 @@ tr:last-child td{border-bottom:0}
 /* Each DM is one document in "dms", keyed by IG handle:
    { handle, url, followers, avgLikes, avgComments, er, channel, shotId, opener (read from the screenshot), loom,
      sentAt, day, status: sent|replied|booked, repliedAt, bookedFor, seen, followedUpAt, reply:{text, sentiment},
-     followUps:[{at, text, loom, shotId}],
+     followUps:[{at, text, loom, shotId}], offer: accelerator|academy,
      score:{overall, criteria:{human, personal, value, lowNo, status, clarity, loom}, style, feedback} } */
 const GOAL = 5, FOLLOW_UP_AFTER = 3, TOO_LATE = 7, DAY = 864e5;
 
 let store = null, sample = null, assets = null, canImages = false, dms = [], loaded = false;
 const CHANNELS = ['Instagram','WhatsApp','Email'];
+// What each prospect is being pitched. Prices are per month.
+const OFFERS = {
+  accelerator: { name:'Accelerator', price:5000, note:'' },
+  academy:     { name:'Academy',     price:997,  note:'Group consulting calls · Whop' },
+};
+const OFFER_KEYS = Object.keys(OFFERS);
+const eur = n => Math.round(n).toLocaleString('de-DE') + '€';
+const offerOf = d => OFFERS[d?.offer] ? d.offer : 'accelerator'; // everything before offers existed was Accelerator
+const offerTag = k => `${OFFERS[k].name} · ${eur(OFFERS[k].price)}/mo`;
+const offerPill = (k, act, h) => `<button class="pill offer ${k}" data-act="${act}" data-h="${esc(h)}" title="Tap to switch offer">${esc(offerTag(k))}</button>`;
+function offerSeg(sel, act){
+  return `<div class="seg2">${OFFER_KEYS.map(k => `<button class="${sel===k?'on':''}" data-act="${act}" data-o="${k}">
+    <b>${OFFERS[k].name}</b><span>${eur(OFFERS[k].price)} / month</span>${OFFERS[k].note ? `<small>${OFFERS[k].note}</small>` : ''}</button>`).join('')}</div>`;
+}
+const nextOffer = k => OFFER_KEYS[(OFFER_KEYS.indexOf(k) + 1) % OFFER_KEYS.length];
 // Distilled from David's sales-training notes. Every DM is scored against these.
 const CRITERIA = [
   ['human',    'Human, not automated'],
@@ -219,6 +355,32 @@ const pct = (a,b) => b ? Math.round(1000*a/b)/10 + '%' : '—';
 const num = v => { const n = parseFloat(String(v ?? '').replace(/[, ]/g,'').replace(/k$/i,'e3').replace(/m$/i,'e6')); return isFinite(n) ? n : null; };
 const localDay = (d = new Date()) => d.toLocaleDateString('en-CA');
 const daysSince = iso => Math.floor((Date.now() - new Date(iso)) / DAY);
+// Small bursts of yellow sparkles from an element; a confetti rain for the big moments.
+function sparkle(el, n = 14){
+  if(!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const r = el.getBoundingClientRect(), cx = r.left + r.width/2, cy = r.top + r.height/2;
+  for(let i = 0; i < n; i++){
+    const s = document.createElement('span'), a = Math.random()*Math.PI*2, d = 40 + Math.random()*60;
+    s.className = 'spark'; s.textContent = Math.random() < .7 ? '✦' : '✧';
+    s.style.left = cx + 'px'; s.style.top = cy + 'px'; s.style.fontSize = (10 + Math.random()*10) + 'px';
+    s.style.setProperty('--dx', Math.cos(a)*d + 'px'); s.style.setProperty('--dy', Math.sin(a)*d + 'px');
+    document.body.appendChild(s); setTimeout(() => s.remove(), 950);
+  }
+}
+function confetti(n = 70){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const colors = ['#f6cf45','#e9b818','#151515','#1e9e57','#3d6fe0','#ffe9a3'];
+  for(let i = 0; i < n; i++){
+    const c = document.createElement('span');
+    c.className = 'confetti'; c.style.left = Math.random()*100 + 'vw'; c.style.background = colors[i % colors.length];
+    c.style.setProperty('--dx', (Math.random()*160 - 80) + 'px'); c.style.setProperty('--rot', (Math.random()*720 - 360) + 'deg');
+    c.style.animationDelay = Math.random()*.35 + 's'; c.style.animationDuration = 1.4 + Math.random()*1 + 's';
+    document.body.appendChild(c); setTimeout(() => c.remove(), 3000);
+  }
+}
+const bump = el => { if(!el) return; el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); };
+let lastToday = null; // DMs today at the last render, to celebrate the moment the goal is hit
+
 function toast(t){ const el=$('#toast'); el.textContent=t; el.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove('show'),2200); }
 
 function parseHandle(raw){
@@ -239,7 +401,10 @@ function tier(er){
 const fmtCall = iso => new Date(iso).toLocaleString(undefined, { weekday:'short', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
 const upcomingCalls = () => dms.filter(d => d.status === 'booked' && d.bookedFor && new Date(d.bookedFor) > Date.now() - 2*3600e3)
   .sort((a,b) => a.bookedFor.localeCompare(b.bookedFor));
+const STAGES = [['all','All'],['sent','Waiting'],['replied','Replied'],['booked','Booked']];
+let stage = 'all';   // which stage the All DMs list shows
 let booking = null; // handle whose booking form is open
+let leadOffer = 'accelerator'; // offer picked for the next batch of pasted profiles
 let leads = [];      // profiles waiting for a first DM (collection "leads", keyed by handle)
 let fuFlow = null;  // follow-up being logged: { handle, step, shot, shotUrl, loom, saving }
 // Every logged follow-up, oldest first. Older DMs only have followedUpAt, so count that as one.
@@ -294,6 +459,8 @@ function renderGoal(){
   const today = new Date(), todayKey = localDay(today);
   const n = counts[todayKey] || 0;
   const c = consistency(counts);
+  const grew = lastToday !== null && n > lastToday, hit = lastToday !== null && lastToday < GOAL && n >= GOAL;
+  lastToday = n;
 
   // Last 5 weeks, Monday-first, so each column is a weekday.
   const start = addDays(today, -((today.getDay() + 6) % 7) - 28);
@@ -309,13 +476,13 @@ function renderGoal(){
   $('#goal').innerHTML = `
     <div class="row" style="justify-content:space-between;align-items:flex-end">
       <div><div class="small muted">Today · ${today.toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'})}</div><div class="n">${n}<small> / ${GOAL}</small></div></div>
-      <div class="small ${n>=GOAL?'':'muted'}" style="${n>=GOAL?'color:var(--good);font-weight:600':''}">${n>=GOAL ? 'Goal hit' : `${GOAL-n} to go`}</div>
+      <div class="small ${n>=GOAL?'':'muted'}" style="${n>=GOAL?'color:var(--good);font-weight:600':''}">${n>=GOAL ? 'Goal hit ✦' : n ? `${GOAL-n} to go. Keep the streak alive` : `${GOAL} to go`}</div>
     </div>
     <div class="slots ${n>=GOAL?'done':''}">${Array.from({length:GOAL},(_,i)=>`<i class="${i<n?'on':''}"></i>`).join('')}</div>
     <div class="small muted">Resets to 0 at midnight.</div>
-    ${upcomingCalls()[0] ? `<div class="next-call"><span class="pill solid">Next call</span><b>@${esc(upcomingCalls()[0].handle)}</b><span class="muted">${esc(fmtCall(upcomingCalls()[0].bookedFor))}</span></div>` : ''}`;
+    ${upcomingCalls()[0] ? `<div class="next-call"><span class="pill solid">Next call</span><b>@${esc(upcomingCalls()[0].handle)}</b><span class="muted">${esc(fmtCall(upcomingCalls()[0].bookedFor))} · ${esc(offerTag(offerOf(upcomingCalls()[0])))}</span></div>` : ''}`;
   $('#cons').innerHTML = `
-      <h2 style="margin:0">Consistency</h2>
+      <h2 style="margin:0"><i>Consistency</i></h2>
       <div class="nums">
         <div><b>${c.streak}<span style="font-size:13px"> day${c.streak===1?'':'s'}</span></b><span>Current streak</span></div>
         <div><b>${c.best}</b><span>Best streak</span></div>
@@ -323,7 +490,9 @@ function renderGoal(){
       </div>
       ${n < GOAL && c.streak ? `<div class="small muted">Send ${GOAL-n} more today to keep your ${c.streak}-day streak.</div>` : ''}
       <div class="heat">${dows}${cells.join('')}</div>
-      <div class="legend"><span><i style="background:var(--soft)"></i>0</span><span><i style="background:#262626"></i>1–2</span><span><i style="background:#4a4a4a"></i>3–4</span><span><i style="background:var(--ink)"></i>${GOAL}+ goal hit</span></div>`;
+      <div class="legend"><span><i style="background:var(--soft)"></i>0</span><span><i style="background:#fbeeb8"></i>1–2</span><span><i style="background:#f8dc77"></i>3–4</span><span><i style="background:var(--accent-deep)"></i>${GOAL}+ goal hit</span></div>`;
+  if(grew) bump($('#goal .n'));
+  if(hit){ confetti(); setTimeout(() => toast(`${GOAL} DMs today. Goal hit ✦`), 300); }
 }
 
 function renderFlow(){
@@ -331,7 +500,7 @@ function renderFlow(){
   if(!store){ el.innerHTML = `<div class="notice">${loaded ? 'Open this page in Claude to log DMs.' : 'Connecting…'}</div>`; return; }
   if(!flow){
     const next = pendingLeads()[0];
-    el.innerHTML = `<div style="display:grid;gap:8px"><button class="primary big" data-act="start">Start outreach</button>
+    el.innerHTML = `<div style="display:grid;gap:8px"><button class="primary big go" data-act="start">Start outreach<span class="arrow">↗</span></button>
       <div class="next-up">${next ? `Next up: <b style="color:var(--ink)">@${esc(next.handle)}</b> · ${pendingLeads().length} pending to contact` : 'No profiles waiting. Add some in <b>To contact</b>, or enter a link yourself.'}</div></div>`;
     return;
   }
@@ -343,6 +512,8 @@ function renderFlow(){
     const er = engagement(d), t = tier(er);
     body = `
       <label class="f">Instagram profile link<input id="f_url" value="${esc(d.url)}" placeholder="https://instagram.com/username" autocomplete="off"></label>
+      <div class="small muted">Offer</div>
+      ${offerSeg(d.offer || 'accelerator', 'offerpick')}
       <div class="small muted">Profile engagement (check their last 3 posts)</div>
       <div class="grid3">
         <label class="f">Followers<input id="f_followers" inputmode="decimal" value="${esc(d.followers)}" placeholder="12.4k"></label>
@@ -386,7 +557,7 @@ function renderResult(){
       ${r.reply ? `<div class="notice"><span class="pill good">Reply spotted</span> ${esc(r.reply.text)}</div>` : ''}`
     : flow.scoring ? `<div class="notice">Scoring…</div>`
     : `<div class="notice">Saved. Scoring isn't available here right now. Ask Claude in chat to score it.</div>`}
-    <button class="primary big" data-act="start">Next DM</button>
+    <button class="primary big go" data-act="start">Next DM<span class="arrow">↗</span></button>
     <button data-act="done" style="justify-self:center;border:0;background:none;color:var(--muted)">Done for now</button>
   </div>`;
 }
@@ -464,7 +635,7 @@ async function save(){
   const doc = {
     handle, url:`https://instagram.com/${handle}`,
     followers:num(d.followers), avgLikes:num(d.avgLikes), avgComments:num(d.avgComments), er,
-    channel:d.channel || 'Instagram', opener:'', loom:d.loom.trim(),
+    channel:d.channel || 'Instagram', offer:d.offer || 'accelerator', opener:'', loom:d.loom.trim(),
     sentAt:new Date().toISOString(), day:localDay(), status:'sent'
   };
   flow.saving = true; renderFlow();
@@ -481,6 +652,7 @@ async function save(){
   try{ localStorage.removeItem('outreach-draft'); }catch(e){}
   flow = { result:{ handle }, scoring:!!(sample && canImages) };
   renderResult();
+  sparkle($('#flow .card'), 22);
   if(!flow.scoring) return;
   try{
     const res = await scoreDM(doc, shot);
@@ -516,6 +688,17 @@ function group(keyFn, order){
   return order ? order.map(k => g[k]).filter(Boolean) : rows.sort((a,b) => b.sent - a.sent);
 }
 
+function offerTable(){
+  const rows = OFFER_KEYS.map(k => {
+    const ds = dms.filter(d => offerOf(d) === k), b = ds.filter(d => d.status === 'booked').length;
+    return { k, sent:ds.length, replies:ds.filter(d => d.status !== 'sent').length, booked:b, value:b * OFFERS[k].price };
+  });
+  return `<div class="card list" style="overflow-x:auto"><table>
+    <tr><th>Offer</th><th class="num">Sent</th><th class="num">Reply rate</th><th class="num">Booked</th><th class="num">Value/mo</th></tr>
+    ${rows.map(r => `<tr><td><b>${OFFERS[r.k].name}</b><div class="small muted">${eur(OFFERS[r.k].price)} / month</div></td><td class="num">${r.sent}</td><td class="num">${pct(r.replies,r.sent)}</td><td class="num">${r.booked}</td><td class="num"><b>${eur(r.value)}</b></td></tr>`).join('')}
+  </table></div>`;
+}
+
 // Rank every opener by what it got: booked, then a warm reply, then any reply, then seen, then nothing.
 function outcome(d){
   if(d.status === 'booked') return { pts:4, label:'Booked', cls:'solid' };
@@ -534,7 +717,7 @@ function openerRanking(){
       <span class="pos">${i+1}</span>
       <div style="min-width:0;flex:1">
         <div class="txt">${esc(d.opener.replace(/https?:\/\/\S+/g,'[Loom]'))}</div>
-        <div class="small muted">@${esc(d.handle)} · ${esc(d.channel || 'Instagram')}</div>
+        <div class="small muted">@${esc(d.handle)} · ${esc(d.channel || 'Instagram')} · ${esc(OFFERS[offerOf(d)].name)}</div>
       </div>
       <span class="pill ${o.cls}">${o.label}</span>
     </div>`).join('')}</div>`;
@@ -556,19 +739,23 @@ function renderLeads(){
   <div class="card" style="display:grid;gap:10px">
     <label class="f" for="leadPaste">Paste Instagram profile links, one per line</label>
     <textarea id="leadPaste" rows="4" placeholder="https://instagram.com/someone&#10;@another.account">${esc(draft)}</textarea>
+    <div class="small muted">Offer for these profiles</div>
+    ${offerSeg(leadOffer, 'leadofferpick')}
     <div class="row" style="justify-content:space-between">
       <span class="small muted">Profiles you've already DMed are skipped.</span>
-      <button class="primary" data-act="leadadd">Add to list</button>
+      <button class="primary go" data-act="leadadd">Add to pipeline ✦</button>
     </div>
   </div>
+  ${pend.length ? `<div class="potential"><div><b>${eur(pend.reduce((t,l) => t + OFFERS[offerOf(l)].price, 0))}</b><span> / month in your queue</span></div><span>Every profile you DM is a shot at it. ${pend.length} waiting.</span></div>` : ''}
   <div class="row" style="justify-content:space-between">
-    <h2 style="margin:0">Pending to contact · ${pend.length}</h2>
-    ${pend.length ? `<button class="primary" data-act="leadnext">DM the next one</button>` : ''}
+    <div><h2 style="margin:0">Pending to <i>contact</i></h2>
+      <div class="small muted" style="margin-top:4px">${pend.length} waiting${pend.length ? ` · ${OFFER_KEYS.map(k => `${pend.filter(l => offerOf(l)===k).length} ${OFFERS[k].name}`).join(' · ')}` : ''}</div></div>
+    ${pend.length ? `<button class="primary go" data-act="leadnext">DM the next one<span class="arrow">↗</span></button>` : ''}
   </div>
   ${pend.length ? `<div class="card list">${pend.map(l => `<div class="lead">
       <div class="who">
         <a href="https://instagram.com/${encodeURIComponent(l.handle)}" target="_blank" rel="noopener">@${esc(l.handle)}</a>
-        <div>Added ${new Date(l.addedAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})}${l.note ? ' · ' + esc(l.note) : ''}</div>
+        <div class="row" style="gap:6px;margin-top:2px">${offerPill(offerOf(l), 'leadoffertoggle', l.handle)}<span>Added ${new Date(l.addedAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})}${l.note ? ' · ' + esc(l.note) : ''}</span></div>
       </div>
       <button class="sm" data-act="leaddm" data-h="${esc(l.handle)}">DM now</button>
       <button class="x" data-act="leaddel" data-h="${esc(l.handle)}" aria-label="Remove @${esc(l.handle)}">✕</button>
@@ -594,18 +781,20 @@ async function addLeads(text){
     if(!h){ bad++; continue; }
     if(c.has(h) || have.has(h) || seen.has(h)){ skipped++; continue; }
     seen.add(h);
-    try{ await store.collection('leads').doc(h).set({ handle:h, url:`https://instagram.com/${h}`, addedAt:now }); added++; }
+    try{ await store.collection('leads').doc(h).set({ handle:h, url:`https://instagram.com/${h}`, addedAt:now, offer:leadOffer }); added++; }
     catch(e){ toast("Couldn't save. Try again."); return; }
   }
   const box = $('#leadPaste'); if(box) box.value = '';
   renderLeads();
-  toast(`Added ${added}` + (skipped ? ` · ${skipped} already in your list or DMed` : '') + (bad ? ` · ${bad} not a profile link` : ''));
+  if(added){ sparkle($('[data-act=leadadd]'), 18); bump($('#leadCount')); }
+  toast(`Added ${added} to ${OFFERS[leadOffer].name}` + (skipped ? ` · ${skipped} already in your list or DMed` : '') + (bad ? ` · ${bad} not a profile link` : ''));
 }
 
 // Open the DM steps on Start with this profile filled in.
 function startWith(handle){
   const lastCh = dms.slice().sort((a,b) => b.sentAt.localeCompare(a.sentAt))[0]?.channel;
-  const d = { url: handle ? `https://instagram.com/${handle}` : '', followers:'', avgLikes:'', avgComments:'', opener:'', loom:'', channel: lastCh || 'Instagram', shot:null, shotUrl:'' };
+  const lead = leads.find(l => l.handle === handle);
+  const d = { url: handle ? `https://instagram.com/${handle}` : '', followers:'', avgLikes:'', avgComments:'', opener:'', loom:'', channel: lastCh || 'Instagram', offer: offerOf(lead), shot:null, shotUrl:'' };
   flow = { step:0, d, lead: handle || null };
   tab = 'start'; showTab(); renderFlow();
 }
@@ -683,7 +872,7 @@ Reply with only JSON: {"text": "the follow-up, word for word", "reply": {"replie
   if(reply && d.status === 'sent') Object.assign(patch, { status: reply.booked ? 'booked' : 'replied', repliedAt:now, reply:{ text:reply.text, sentiment:reply.sentiment } });
   try{
     await store.collection('dms').doc(d.handle).update(patch);
-    fuFlow = null; renderTrack();
+    fuFlow = null; renderTrack(); sparkle($('#track .stats'), 16);
     toast(reply && d.status === 'sent' ? `Follow-up logged · @${d.handle} replied` : `Follow-up #${list.length} logged for @${d.handle}`);
   }catch(e){ fuFlow.saving = false; renderTrack(); toast("Couldn't save. Try again."); }
 }
@@ -698,6 +887,7 @@ function renderTrack(){
 
   const sent = dms.length, replies = dms.filter(d => d.status !== 'sent').length, booked = dms.filter(d => d.status === 'booked').length;
   const late = dms.filter(d => followState(d)?.k === 'late').length;
+  const bookedValue = dms.filter(d => d.status === 'booked').reduce((t,d) => t + OFFERS[offerOf(d)].price, 0);
   const all = dms.slice().sort((a,b) => b.sentAt.localeCompare(a.sentAt));
 
   const row = d => {
@@ -709,7 +899,7 @@ function renderTrack(){
     const fuBtn = d.status !== 'booked' ? `<button class="sm" data-act="fuopen" data-h="${h}" style="${f?.k==='due' ? 'border-color:var(--fu);color:var(--fu)' : ''}">Log follow-up${fuN ? ` (${fuN})` : ''}</button>` : '';
     const btns = d.status === 'sent'
       ? fuBtn
-        + `<button class="sm" data-act="replied" data-h="${h}">Responded</button>`
+        + `<button class="sm primary" data-act="replied" data-h="${h}">Responded</button>`
         + (canImages ? `<label class="btnlike">Check for reply<input type="file" accept="image/*" data-reply="${h}" hidden></label>` : '')
       : fuBtn;
     const bookBtn = `<button class="sm${d.status === 'replied' ? ' primary' : ''}" data-act="bookopen" data-h="${h}">${d.status === 'booked' ? 'Change call time' : 'Book call'}</button>`;
@@ -720,6 +910,7 @@ function renderTrack(){
       <div class="top">
         <a href="${esc(d.url)}" target="_blank" rel="noopener">@${esc(d.handle)}</a>
         <span class="small muted">${new Date(d.sentAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})}${d.channel ? ' · '+esc(d.channel) : ''}${tier(d.er) ? ' · '+tier(d.er)+' eng.' : ''}</span>
+        ${offerPill(offerOf(d), 'dmoffertoggle', d.handle)}
         <span style="flex:1"></span>${status}${fu}
       </div>
       <div class="row" style="margin-top:8px">${btns}${bookBtn}</div>${form}
@@ -739,30 +930,35 @@ function renderTrack(){
     <div class="stat"><span>DMs sent</span><b>${sent}</b></div>
     <div class="stat"><span>Replies</span><b>${replies}</b></div>
     <div class="stat hero"><span>Response rate</span><b>${pct(replies,sent)}</b></div>
-    <div class="stat"><span>Calls booked</span><b>${booked}</b></div>
-    <div class="stat"><span>Booking rate</span><b>${pct(booked,sent)}</b></div>
+    <div class="stat"><span>Calls booked</span><b>${booked}</b><small>${pct(booked,sent)} of DMs</small></div>
+    <div class="stat"><span>Booked value</span><b>${eur(bookedValue)}</b><small>per month if all close</small></div>
     <div class="stat"><span>Missed follow-ups</span><b style="${late?'color:var(--bad)':''}">${late}</b></div>
   </div>
 
-  ${upcomingCalls().length ? `<h2>Upcoming calls</h2>
-  <div class="card list">${upcomingCalls().map(d => `<div class="call"><span class="pill solid">Call</span><span class="when">${esc(fmtCall(d.bookedFor))}</span><a href="${esc(d.url)}" target="_blank" rel="noopener" style="color:var(--ink);font-weight:600;text-decoration:none">@${esc(d.handle)}</a></div>`).join('')}</div>` : ''}
+  ${upcomingCalls().length ? `<h2>Upcoming <i>calls</i></h2>
+  <div class="card list">${upcomingCalls().map(d => `<div class="call"><span class="pill solid">Call</span><span class="when">${esc(fmtCall(d.bookedFor))}</span><a href="${esc(d.url)}" target="_blank" rel="noopener" style="color:var(--ink);font-weight:600;text-decoration:none">@${esc(d.handle)}</a><span style="flex:1"></span><span class="small muted">${esc(offerTag(offerOf(d)))}</span></div>`).join('')}</div>` : ''}
 
-  <h2 class="fu-h">Follow up now</h2>
+  <h2 class="fu-h">Follow up <i>now</i></h2>
   ${due.length ? `<div class="card list">${due.map(row).join('')}</div>`
     : `<div class="card empty small">Nothing due. DMs show up here ${FOLLOW_UP_AFTER} days after sending without a reply. After ${TOO_LATE} days it's too late. To check for a reply, drop a fresh screenshot on any DM below.</div>`}
 
-  <h2 class="fu-h">Follow-ups</h2>
+  <h2 class="fu-h">Follow-<i>ups</i></h2>
   ${followUpHistory()}
 
-  <h2>Opener ranking</h2>
+  <h2>Opener <i>ranking</i></h2>
   ${openerRanking()}
 
-  <h2>What gets replies</h2>
+  <h2>By <i>offer</i></h2>
+  ${offerTable()}
+
+  <h2>What gets <i>replies</i></h2>
   ${bucketTable('Channel', group(d => d.channel || 'Instagram', CHANNELS))}
   ${bucketTable('Profile engagement', group(d => tier(d.er), ['High','Medium','Low']))}
 
-  <h2>All DMs</h2>
-  <div class="card list">${all.map(row).join('')}</div>`;
+  <h2>All <i>DMs</i></h2>
+  <div class="views">${STAGES.map(([k,l]) => `<button class="${stage===k?'on':''}" data-act="stage" data-s="${k}">${l}<b>${k==='all' ? all.length : all.filter(d => d.status===k).length}</b></button>`).join('')}</div>
+  ${(() => { const shown = stage === 'all' ? all : all.filter(d => d.status === stage);
+    return shown.length ? `<div class="card list">${shown.map(row).join('')}</div>` : `<div class="card empty small">Nothing here yet.</div>`; })()}`;
 }
 
 /* ---------- Events ---------- */
@@ -775,6 +971,15 @@ document.addEventListener('click', async e => {
       // Next DM after one is saved should skip the profile just logged (the snapshot may lag a moment).
       const done = flow?.result?.handle;
       startWith(pendingLeads().find(l => l.handle !== done)?.handle); break;
+    }
+    case 'stage': stage = b.dataset.s; renderTrack(); break;
+    case 'offerpick': readStep(); flow.d.offer = b.dataset.o; renderFlow(); break;
+    case 'leadofferpick': leadOffer = b.dataset.o; renderLeads(); break;
+    case 'leadoffertoggle': case 'dmoffertoggle': {
+      const coll = b.dataset.act === 'leadoffertoggle' ? 'leads' : 'dms', h = b.dataset.h;
+      const cur = (coll === 'leads' ? leads : dms).find(x => x.handle === h), nk = nextOffer(offerOf(cur));
+      try{ await store.collection(coll).doc(h).update({ offer:nk }); toast(`@${h} → ${offerTag(nk)}`); }catch(err){ toast("Couldn't save. Try again."); }
+      break;
     }
     case 'leadadd': addLeads($('#leadPaste')?.value || ''); break;
     case 'leadnext': startWith(pendingLeads()[0]?.handle); break;
@@ -812,7 +1017,7 @@ document.addEventListener('click', async e => {
       b.disabled = true;
       try{
         await store.collection('dms').doc(h).update({ status:'booked', bookedFor:when.toISOString(), repliedAt:d?.repliedAt || new Date().toISOString() });
-        booking = null; toast(`Call booked with @${h}`);
+        booking = null; toast(`Call booked with @${h} ✦`); confetti(50);
       }catch(err){ b.disabled = false; toast("Couldn't save. Try again."); }
       break;
     }
@@ -822,7 +1027,8 @@ document.addEventListener('click', async e => {
                   : b.dataset.act === 'replied' ? { status:'replied', repliedAt:now }
                   : { status:'booked' };
       b.disabled = true;
-      try{ await store.collection('dms').doc(h).update(patch); toast(b.dataset.act === 'followed' ? 'Follow-up logged' : b.dataset.act === 'replied' ? `@${h} marked as responded` : `Call booked with @${h}`); }
+      const at = b.getBoundingClientRect(), ghost = { getBoundingClientRect:() => at };
+      try{ await store.collection('dms').doc(h).update(patch); sparkle(ghost, 16); toast(b.dataset.act === 'followed' ? 'Follow-up logged' : b.dataset.act === 'replied' ? `@${h} marked as responded` : `Call booked with @${h}`); }
       catch(err){ b.disabled = false; toast("Couldn't save. Try again."); }
       break;
     }
