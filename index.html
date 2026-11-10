@@ -256,6 +256,21 @@ th{color:var(--muted)}
 .potential span{font-size:12px;color:#40506a}
 
 /* celebration */
+/* pipeline money stack */
+.pipe{display:grid;gap:14px}
+.pipe .total{font-family:var(--serif);font-weight:400;font-size:52px;line-height:1;letter-spacing:-.02em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.pipe .total small{font-family:Inter,system-ui,sans-serif;font-size:14px;-webkit-text-fill-color:var(--muted);color:var(--muted);letter-spacing:0}
+.stack{display:flex;height:14px;border-radius:999px;overflow:hidden;background:var(--soft);gap:2px}
+.stack i{display:block;height:100%;min-width:4px;transition:flex-grow .6s cubic-bezier(.2,.7,.3,1)}
+.pipe .rows{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.pipe .rows div{display:grid;gap:2px;min-width:0}
+.pipe .rows span{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.pipe .rows span i{width:8px;height:8px;border-radius:2px;flex:none}
+.pipe .rows b{font-size:15px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pipe .rows em{font-style:normal;font-size:11px;color:var(--muted)}
+.pipe-mini{display:flex;gap:8px;align-items:baseline;justify-content:flex-start;flex-wrap:wrap;padding:12px 14px;border-radius:14px;background:linear-gradient(120deg,#e3f3fa,#f9e6f1);font-size:13px;color:#40506a}
+.pipe-mini b{font-family:var(--serif);font-weight:400;font-size:26px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+@media (max-width:420px){ .pipe .rows{grid-template-columns:1fr 1fr} }
 .spark.p{color:var(--pink);text-shadow:0 0 8px rgba(216,57,149,.6)}
 .spark{position:fixed;z-index:60;pointer-events:none;font-size:14px;color:var(--accent);text-shadow:0 0 8px rgba(5,147,198,.6);animation:spark .9s cubic-bezier(.2,.7,.3,1) forwards}
 @keyframes spark{0%{opacity:1;transform:translate(0,0) scale(.4) rotate(0)}70%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1.1) rotate(160deg)}}
@@ -481,6 +496,7 @@ function renderGoal(){
     </div>
     <div class="slots ${n>=GOAL?'done':''}">${Array.from({length:GOAL},(_,i)=>`<i class="${i<n?'on':''}"></i>`).join('')}</div>
     <div class="small muted">Resets to 0 at midnight.</div>
+    ${pipeline().total ? `<div class="pipe-mini"><span>Pipeline</span><b>${eur(pipeline().total)}</b><span>/ month potential</span></div>` : ''}
     ${upcomingCalls()[0] ? `<div class="next-call"><span class="pill solid">Next call</span><b>@${esc(upcomingCalls()[0].handle)}</b><span class="muted">${esc(fmtCall(upcomingCalls()[0].bookedFor))} · ${esc(offerTag(offerOf(upcomingCalls()[0])))}</span></div>` : ''}`;
   $('#cons').innerHTML = `
       <h2 style="margin:0"><i>Consistency</i></h2>
@@ -698,6 +714,30 @@ function offerTable(){
     <tr><th>Offer</th><th class="num">Sent</th><th class="num">Reply rate</th><th class="num">Booked</th><th class="num">Value/mo</th></tr>
     ${rows.map(r => `<tr><td><b>${OFFERS[r.k].name}</b><div class="small muted">${eur(OFFERS[r.k].price)} / month</div></td><td class="num">${r.sent}</td><td class="num">${pct(r.replies,r.sent)}</td><td class="num">${r.booked}</td><td class="num"><b>${eur(r.value)}</b></td></tr>`).join('')}
   </table></div>`;
+}
+
+// Every euro in play, per month: queued profiles plus every DM by stage, priced by its offer.
+const PIPE_STAGES = [
+  { k:'queue',   label:'To contact', color:'#cfe8f3' },
+  { k:'sent',    label:'Waiting',    color:'#7cc3e0' },
+  { k:'replied', label:'Replied',    color:'#0593c6' },
+  { k:'booked',  label:'Booked',     color:'#d83995' },
+];
+function pipeline(){
+  const price = x => OFFERS[offerOf(x)].price;
+  const groups = { queue:pendingLeads(), sent:dms.filter(d => d.status === 'sent'), replied:dms.filter(d => d.status === 'replied'), booked:dms.filter(d => d.status === 'booked') };
+  const rows = PIPE_STAGES.map(st => ({ ...st, n:groups[st.k].length, value:groups[st.k].reduce((t,x) => t + price(x), 0) }));
+  return { rows, total:rows.reduce((t,r) => t + r.value, 0) };
+}
+function pipelineCard(){
+  const { rows, total } = pipeline();
+  return `<div class="card pipe">
+    <div class="row" style="justify-content:space-between;align-items:flex-end">
+      <div><h2 style="margin:0 0 6px">Pipeline</h2><div class="total">${eur(total)}<small> / month potential</small></div></div>
+    </div>
+    <div class="stack">${rows.filter(r => r.value).map(r => `<i style="flex-grow:${r.value};background:${r.color}" title="${r.label}: ${eur(r.value)}"></i>`).join('')}</div>
+    <div class="rows">${rows.map(r => `<div><span><i style="background:${r.color}"></i>${r.label}</span><b>${eur(r.value)}</b><em>${r.n} ${r.n===1?'person':'people'}</em></div>`).join('')}</div>
+  </div>`;
 }
 
 // Rank every opener by what it got: booked, then a warm reply, then any reply, then seen, then nothing.
@@ -927,6 +967,7 @@ function renderTrack(){
 
   el.innerHTML = `
   ${fuCardHTML()}
+  ${pipelineCard()}
   <div class="stats">
     <div class="stat"><span>DMs sent</span><b>${sent}</b></div>
     <div class="stat"><span>Replies</span><b>${replies}</b></div>
@@ -1090,7 +1131,7 @@ showTab(); renderGoal(); renderFlow();
   renderFlow(); renderTrack(); renderLeads();
   if(!store) return;
   store.collection('leads').onSnapshot(
-    snap => { leads = snap.docs.map(d => d.data()); renderLeads(); if(!flow) renderFlow(); },
+    snap => { leads = snap.docs.map(d => d.data()); renderLeads(); renderGoal(); renderTrack(); if(!flow) renderFlow(); },
     () => {}
   );
   store.collection('dms').onSnapshot(
