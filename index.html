@@ -194,7 +194,8 @@ button:hover .arrow{transform:translate(2px,-2px)}
 @keyframes breathe{0%,100%{box-shadow:0 10px 24px -10px rgba(5,147,198,.7),0 12px 26px -14px rgba(216,57,149,.6)}50%{box-shadow:0 16px 36px -8px rgba(5,147,198,.85),0 18px 40px -10px rgba(216,57,149,.85),0 0 0 6px rgba(5,147,198,.10)}}
 
 /* segmented pickers */
-.seg button,.seg button.on,
+.seg button{border-radius:14px;background:var(--soft);border-color:transparent}
+.seg button.on{background:#fff;color:var(--ink);border-color:var(--ink);box-shadow:0 0 0 1px var(--ink) inset}
 /* goal + consistency */
 .goal .n{font-family:var(--serif);font-weight:400;font-size:56px}
 .slots i{height:8px;border-radius:4px;background:var(--soft);transition:background .4s}
@@ -437,6 +438,14 @@ async function copyText(t){
     const ta = document.createElement('textarea'); ta.value = t; ta.style.cssText = 'position:fixed;opacity:0'; document.body.appendChild(ta); ta.select();
     let ok = false; try{ ok = document.execCommand('copy'); }catch(_){} ta.remove(); return ok;
   }
+}
+
+// Audience engagement, measured by Claude from the profile's recent reels (stored on the lead as "engagement").
+const compact = n => n == null ? '' : Intl.NumberFormat('en', { notation:'compact', maximumFractionDigits:1 }).format(n);
+function engPill(x){
+  const e = x?.engagement; if(!e?.score) return '';
+  const cls = e.score >= 8 ? 'good' : e.score >= 5 ? 'fu-soft' : 'bad';
+  return `<span class="pill ${cls}" title="Engagement rate ${(e.er*100).toFixed(2)}% · reach ${(e.viewRate*100).toFixed(1)}% · ${compact(e.avgPlays)} avg plays">Engagement ${e.score}/10 · ${e.label}</span>`;
 }
 
 function parseHandle(raw){
@@ -711,6 +720,8 @@ async function save(){
     channel:d.channel || 'Instagram', offer:d.offer || 'accelerator', opener:'', loom:d.loom.trim(),
     sentAt:new Date().toISOString(), day:localDay(), status:'sent'
   };
+  const fromLead = leads.find(l => l.handle === handle);
+  if(fromLead?.engagement) doc.engagement = fromLead.engagement;
   flow.saving = true; renderFlow();
   const shot = d.shot;
   if(shot && assets){
@@ -792,7 +803,7 @@ function boardHTML(){
   const moveSel = (kind, h, cur) => `<select data-move="${kind}:${esc(h)}" aria-label="Move @${esc(h)}"><option value="">Move to…</option>${COLS.filter(c => c.k !== cur && !(kind === 'dm' && c.k === 'lead')).map(c => `<option value="${c.k}">${c.label}</option>`).join('')}</select>`;
   const card = (kind, x, colKey) => {
     const f = kind === 'dm' ? followState(x) : null;
-    const extra = kind === 'lead' ? `<span>Added ${new Date(x.addedAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})}</span>`
+    const extra = kind === 'lead' ? `${engPill(x)}<span>${x.followers ? compact(x.followers) + ' followers' : 'Added ' + new Date(x.addedAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})}</span>`
       : colKey === 'booked' ? (x.bookedFor ? `<span style="color:var(--pink);font-weight:600">${esc(fmtCall(x.bookedFor))}</span>` : `<button class="sm" data-act="bookopen" data-h="${esc(x.handle)}">Set call time</button>`)
       : colKey === 'later' ? `<span class="pill ${f?.k==='due' ? 'fu' : 'fu-soft'}">${f?.k==='due' ? 'Follow up now' : 'Follow up ' + new Date(x.followUpOn || Date.now()).toLocaleDateString(undefined,{month:'short',day:'numeric'})}</span>`
       : f && f.k !== 'done' ? `<span class="pill ${f.k==='due'?'fu':f.k==='late'?'bad':'fu-soft'}">${f.label}</span>`
@@ -903,7 +914,7 @@ function renderLeads(){
   ${pend.length ? `<div class="card list">${pend.map(l => `<div class="lead">
       <div class="who">
         <a href="${igUrl(l.handle)}" class="ig" title="Open @${esc(l.handle)} on Instagram">@${esc(l.handle)}</a>
-        <div>Added ${new Date(l.addedAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})}${l.note ? ' · ' + esc(l.note) : ''}</div>
+        <div class="row" style="gap:6px;margin-top:3px">${engPill(l)}<span>${l.followers ? compact(l.followers) + ' followers · ' : ''}Added ${new Date(l.addedAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})}${l.note ? ' · ' + esc(l.note) : ''}</span></div>
       </div>
       <button class="sm ig-btn" data-act="copyig" data-h="${esc(l.handle)}">Copy link</button>
       <button class="sm" data-act="leaddm" data-h="${esc(l.handle)}">DM now</button>
@@ -943,7 +954,7 @@ async function addLeads(text){
 function startWith(handle){
   const lastCh = dms.slice().sort((a,b) => b.sentAt.localeCompare(a.sentAt))[0]?.channel;
   const lead = leads.find(l => l.handle === handle);
-  const d = { url: handle ? `https://instagram.com/${handle}` : '', followers:'', avgLikes:'', avgComments:'', opener:'', loom:'', channel: lastCh || 'Instagram', offer: offerOf(lead), shot:null, shotUrl:'' };
+  const d = { url: handle ? `https://instagram.com/${handle}` : '', followers:lead?.followers ?? '', avgLikes:lead?.engagement ? Math.round(lead.engagement.avgLikes) : '', avgComments:lead?.engagement ? Math.round(lead.engagement.avgComments) : '', opener:'', loom:'', channel: lastCh || 'Instagram', offer: offerOf(lead), shot:null, shotUrl:'' };
   flow = { step:0, d, lead: handle || null };
   tab = 'start'; showTab(); renderFlow();
 }
@@ -1066,7 +1077,7 @@ function renderTrack(){
     return `<div class="dm"${d.status === 'sent' && canImages ? ` data-drop="${h}"` : ''}>
       <div class="dm-main">
         <div class="who"><a href="${igUrl(d.handle)}" class="ig" title="Open @${h} on Instagram">@${h}</a>
-          <div class="small muted">${new Date(d.sentAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})} · ${esc(d.channel || 'Instagram')}</div></div>
+          <div class="small muted">${new Date(d.sentAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})} · ${esc(d.channel || 'Instagram')}${d.followers ? ' · ' + compact(d.followers) + ' followers' : ''}</div>${d.engagement ? `<div style="margin-top:4px">${engPill(d)}</div>` : ''}</div>
         ${status}${next}
       </div>${form}
       <details class="more"><summary>More</summary>
@@ -1108,7 +1119,7 @@ function renderTrack(){
       ${openerRanking()}
       <div class="sec-h"><h2>What gets <i>replies</i></h2></div>
       ${bucketTable('Channel', group(d => d.channel || 'Instagram', CHANNELS))}
-      ${bucketTable('Profile engagement', group(d => tier(d.er), ['High','Medium','Low']))}`,
+      ${bucketTable('Audience engagement', group(d => d.engagement?.label ?? tier(d.er), ['High','Medium','Low']))}`,
   };
 
   el.innerHTML = `
