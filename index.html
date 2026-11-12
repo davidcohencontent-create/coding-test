@@ -48,7 +48,7 @@ h2{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--mute
 .goal{display:grid;gap:10px}
 .goal .n{font-size:34px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}
 .goal .n small{font-size:16px;color:var(--muted);font-weight:500}
-.slots{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.slots{display:grid;grid-template-columns:repeat(var(--goal,5),1fr);gap:4px}
 .slots i{height:10px;border-radius:5px;background:var(--soft)}
 .slots i.on{background:var(--accent)}
 .slots.done i.on{background:var(--good)}
@@ -72,7 +72,8 @@ h2{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--mute
 .steps div.on{border-color:var(--accent);color:var(--ink);font-weight:600}
 .steps div.past{border-color:var(--accent)}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+@media (max-width:480px){ .seg{grid-template-columns:repeat(2,1fr)} }
 .seg button{padding:9px 8px}
 .seg button.on{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:600}
 .drop{display:grid;place-items:center;min-height:120px;border:1px dashed #3a3a3a;border-radius:10px;color:var(--muted);font-size:13px;cursor:pointer;padding:10px;text-align:center}
@@ -86,6 +87,9 @@ h2{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--mute
 .btnlike{display:inline-block;font-size:12px;padding:4px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);cursor:pointer}
 .btnlike:hover{border-color:var(--muted)}
 .fu-h{color:var(--fu)}
+.wins{display:grid;gap:10px}
+.win{background:var(--soft);border-radius:14px;padding:12px 14px}
+.win .txt{font-size:14px;white-space:pre-line;overflow:hidden;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical}
 a.ig{color:var(--ink);text-decoration:none;cursor:pointer}
 a.ig::after{content:' ↗';font-size:.8em;color:var(--muted);transition:color .15s}
 a.ig:hover{text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--accent)}
@@ -342,6 +346,7 @@ th{color:var(--muted)}
     <div class="card goal" id="goal"></div>
     <div id="flow"></div>
     <div class="glance" id="glance"></div>
+    <div class="card wins" id="wins"></div>
     <div class="card cons" id="cons"></div>
   </section>
   <section id="leads" hidden></section>
@@ -355,10 +360,11 @@ th{color:var(--muted)}
      sentAt, day, status: sent|replied|booked|later|lost, followUpOn (for later), repliedAt, bookedFor, seen, followedUpAt, reply:{text, sentiment},
      followUps:[{at, text, loom, shotId}], offer: accelerator, lostAt (status lost = not interested),
      score:{overall, criteria:{human, personal, value, lowNo, status, clarity, loom}, style, feedback} } */
-const GOAL = 5, FOLLOW_UP_AFTER = 3, TOO_LATE = 7, DAY = 864e5;
+const GOAL = 15, FOLLOW_UP_AFTER = 3, TOO_LATE = 7, DAY = 864e5;
+const HALF = Math.ceil(GOAL / 2); // calendar shading: halfway there
 
 let store = null, sample = null, assets = null, canImages = false, dms = [], loaded = false;
-const CHANNELS = ['Instagram','WhatsApp','Email'];
+const CHANNELS = ['Instagram','LinkedIn','WhatsApp','Email'];
 // What each prospect is being pitched. Prices are per month.
 const OFFERS = {
   accelerator: { name:'Accelerator', price:5000, note:'' },
@@ -534,6 +540,58 @@ function consistency(counts){
   return { streak, best: Math.max(best, streak), hits, span };
 }
 
+/* ---------- Winning messages ---------- */
+let suggestions = null, suggesting = false, copyables = [];
+const cleanOpener = t => (t || '').replace(/https?:\/\/\S*loom\S*/gi, '[Loom link]').trim();
+// Openers that got a response, best first (booked, warm reply, reply, then seen as an open signal).
+function winners(){
+  return dms.filter(d => d.opener && (responded(d) || d.seen))
+    .map(d => ({ d, o:outcome(d) }))
+    .sort((a,b) => b.o.pts - a.o.pts || (b.d.score?.overall || 0) - (a.d.score?.overall || 0))
+    .slice(0, 3);
+}
+function renderWins(){
+  const el = $('#wins'); if(!el) return;
+  const sent = dms.length, resp = dms.filter(responded).length, opened = dms.filter(d => responded(d) || d.seen).length;
+  const w = winners();
+  copyables = [];
+  const item = (text, meta) => { copyables.push(text); return `<div class="win">
+      <div class="txt">${esc(text)}</div>
+      <div class="row" style="justify-content:space-between;gap:8px;margin-top:6px">${meta}<button class="sm" data-act="copytext" data-i="${copyables.length-1}">Copy</button></div>
+    </div>`; };
+  el.innerHTML = `
+    <div class="sec-h"><h2>Winning <i>messages</i></h2><span class="small muted">${pct(resp, sent)} response · ${pct(opened, sent)} opened</span></div>
+    ${w.length ? w.map(({d,o}) => item(cleanOpener(d.opener), `<span class="small muted"><span class="pill ${o.cls}">${o.label}</span> @${esc(d.handle)} · ${esc(d.channel || 'Instagram')}</span>`)).join('')
+      : `<div class="small muted">Once someone replies, their opener shows up here so you can reuse what works.</div>`}
+    ${suggestions ? `<div class="sec-h" style="margin-top:8px"><h2 style="font-size:20px">Try <i>next</i></h2><span class="small muted">Written by Claude from your winners</span></div>
+      ${suggestions.map(sg => item(sg.text, `<span class="small muted">${esc(sg.why)}</span>`)).join('')}` : ''}
+    ${sample && w.length ? `<button class="primary go" data-act="suggest" ${suggesting ? 'disabled' : ''} style="justify-self:start">${suggesting ? 'Writing…' : suggestions ? 'Write 3 more ✦' : 'Suggest 3 openers ✦'}</button>` : ''}`;
+}
+async function suggestOpeners(){
+  if(!sample || suggesting) return;
+  const good = dms.filter(d => d.opener && responded(d)).map(d => ({ d, o:outcome(d) })).sort((a,b) => b.o.pts - a.o.pts).slice(0, 6);
+  const bad = dms.filter(d => d.opener && d.status === 'sent' && !d.seen).slice(0, 6);
+  suggesting = true; renderWins();
+  try{
+    const r = await sample.json(`You write cold outreach openers for an agency owner who sells a 5.000€/month Accelerator (organic content and funnels that sell). Each opener is sent with a short personalised Loom video.
+
+Openers that got replies or calls (best first):
+${good.map(({d,o}) => `- [${o.label}, ${d.channel || 'Instagram'}] """${cleanOpener(d.opener).slice(0,600)}"""`).join('\n')}
+
+Openers that got no reply:
+${bad.map(d => `- """${cleanOpener(d.opener).slice(0,400)}"""`).join('\n') || '(none yet)'}
+
+${RUBRIC}
+
+Write 3 new openers that keep what the winners do and avoid what the no-reply ones do. Write in the same language as the winning openers. Use {name} where the prospect's first name goes and [Loom link] where the video goes. Keep each under 60 words.
+Reply with only JSON: {"suggestions":[{"text":"the opener","why":"one short phrase: what it borrows from the winners"}]}`, { modelTier:'default', cache:false });
+    suggestions = (r?.suggestions || []).filter(x => x?.text).slice(0, 3).map(x => ({ text:String(x.text).slice(0,800), why:String(x.why || '').slice(0,120) }));
+    if(!suggestions.length){ suggestions = null; toast("Couldn't write suggestions. Try again."); }
+  }catch(e){ toast(e?.code === 'not_granted' ? 'Allow Claude to write suggestions to use this' : "Couldn't write suggestions. Try again."); }
+  suggesting = false; renderWins();
+  if(suggestions) sparkle($('#wins [data-act=suggest]'), 14);
+}
+
 function renderGoal(){
   const counts = dayCounts();
   const today = new Date(), todayKey = localDay(today);
@@ -548,7 +606,7 @@ function renderGoal(){
   for(let i = 0; i < 35; i++){
     const dt = addDays(start, i), k = localDay(dt), v = counts[k] || 0;
     const future = k > todayKey;
-    const cls = future ? 'future' : v >= GOAL ? 'hit' : v >= 3 ? 'l2' : v ? 'l1' : '';
+    const cls = future ? 'future' : v >= GOAL ? 'hit' : v >= HALF ? 'l2' : v ? 'l1' : '';
     cells.push(`<i class="${cls} ${k === todayKey ? 'today' : ''}" title="${dt.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'})}: ${v} DM${v===1?'':'s'}">${future ? '' : v || ''}</i>`);
   }
   const dows = ['M','T','W','T','F','S','S'].map(d => `<i class="dow">${d}</i>`).join('');
@@ -558,7 +616,7 @@ function renderGoal(){
       <div><div class="small muted">Today · ${today.toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'})}</div><div class="n">${n}<small> / ${GOAL}</small></div></div>
       <div class="small ${n>=GOAL?'':'muted'}" style="${n>=GOAL?'color:var(--good);font-weight:600':''}">${n>=GOAL ? 'Goal hit ✦' : n ? `${GOAL-n} to go. Keep the streak alive` : `${GOAL} to go`}</div>
     </div>
-    <div class="slots ${n>=GOAL?'done':''}">${Array.from({length:GOAL},(_,i)=>`<i class="${i<n?'on':''}"></i>`).join('')}</div>
+    <div class="slots ${n>=GOAL?'done':''}" style="--goal:${GOAL}">${Array.from({length:GOAL},(_,i)=>`<i class="${i<n?'on':''}"></i>`).join('')}</div>
     <div class="small muted">Daily goal ${GOAL} DMs · resets at midnight</div>`;
   const nc = upcomingCalls()[0];
   $('#glance').innerHTML = `
@@ -573,7 +631,8 @@ function renderGoal(){
       </div>
       ${n < GOAL && c.streak ? `<div class="small muted">Send ${GOAL-n} more today to keep your ${c.streak}-day streak.</div>` : ''}
       <div class="heat">${dows}${cells.join('')}</div>
-      <div class="legend"><span><i style="background:var(--soft)"></i>0</span><span><i style="background:#e2f2f9"></i>1–2</span><span><i style="background:#9fd5ea"></i>3–4</span><span><i style="background:var(--grad)"></i>${GOAL}+ goal hit</span></div>`;
+      <div class="legend"><span><i style="background:var(--soft)"></i>0</span><span><i style="background:#e2f2f9"></i>1–${HALF-1}</span><span><i style="background:#9fd5ea"></i>${HALF}–${GOAL-1}</span><span><i style="background:var(--grad)"></i>${GOAL}+ goal hit</span></div>`;
+  renderWins();
   if(grew) bump($('#goal .n'));
   if(hit){ confetti(); setTimeout(() => toast(`${GOAL} DMs today. Goal hit ✦`), 300); }
 }
@@ -1143,6 +1202,8 @@ document.addEventListener('click', async e => {
     case 'sub': sub = b.dataset.s; renderTrack(); break;
     case 'setlater': { const at = b.getBoundingClientRect(); moveTo('dm', b.dataset.h, 'later').then(ok => { if(ok) sparkle({ getBoundingClientRect:() => at }, 10); renderTrack(); }); break; }
     case 'setlost': { const at = b.getBoundingClientRect(); moveTo('dm', b.dataset.h, 'lost').then(ok => { if(ok) sparkle({ getBoundingClientRect:() => at }, 10); renderTrack(); }); break; }
+    case 'copytext': { const t = copyables[+b.dataset.i]; if(t != null) toast(await copyText(t) ? 'Copied. Swap in their name and your Loom' : 'Select and copy it manually'); break; }
+    case 'suggest': suggestOpeners(); break;
     case 'copyig': { const u = igUrl(b.dataset.h); toast(await copyText(u) ? 'Link copied. Paste it in a new tab' : u); break; }
     case 'leadadd': addLeads($('#leadPaste')?.value || ''); break;
     case 'leadnext': startWith(pendingLeads()[0]?.handle); break;
