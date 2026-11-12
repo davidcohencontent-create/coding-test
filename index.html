@@ -91,6 +91,24 @@ h2{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--mute
 .btnlike{display:inline-block;font-size:12px;padding:4px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);cursor:pointer}
 .btnlike:hover{border-color:var(--muted)}
 .fu-h{color:var(--fu)}
+#edit{border:0;border-radius:22px;padding:0;width:min(560px,calc(100vw - 24px));max-height:calc(100vh - 40px);background:#fff;color:var(--ink);box-shadow:0 30px 80px -20px rgba(0,0,0,.35)}
+#edit::backdrop{background:rgba(20,20,30,.35);backdrop-filter:blur(3px)}
+#edit[open]{display:grid;grid-template-rows:auto 1fr auto}
+.ed-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:18px 20px 10px;border-bottom:1px solid var(--line)}
+.ed-name{font-family:var(--serif);font-size:30px;line-height:1.1}
+.icon-x{border:0;background:var(--soft);width:34px;height:34px;padding:0;border-radius:50%;color:var(--muted)}
+.ed-body{overflow-y:auto;padding:16px 20px;display:grid;gap:12px}
+.ed-body .drop{min-height:90px}
+.ed-select{font:inherit;color:var(--ink);background:var(--soft);border:0;border-radius:12px;padding:9px 11px;width:100%}
+.ed-score{display:grid;gap:10px;background:var(--soft);border-radius:16px;padding:14px}
+.ed-score .crit div{grid-template-columns:minmax(0,8rem) 1fr 2rem}
+.ed-foot{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:12px 20px;border-top:1px solid var(--line)}
+.ghost-danger{border-color:transparent;background:none;color:var(--bad)}
+.danger{background:var(--bad);border-color:var(--bad);color:#fff}
+.k-top{display:flex;align-items:center;gap:6px;min-width:0}
+.k-top a{flex:1;min-width:0}
+.k-edit{border:0;background:none;padding:2px 4px;font-size:11px;color:var(--muted)}
+.k-edit:hover{color:var(--accent);transform:none}
 .wins{display:grid;gap:10px}
 .win{background:var(--soft);border-radius:14px;padding:12px 14px}
 .win .txt{font-size:14px;white-space:pre-line;overflow:hidden;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical}
@@ -358,6 +376,7 @@ th{color:var(--muted)}
   <section id="track" hidden></section>
 </main>
 <div class="toast" id="toast"></div>
+<dialog id="edit" aria-label="Edit contact"></dialog>
 
 <script>
 /* Each DM is one document in "dms", keyed by IG handle:
@@ -556,6 +575,128 @@ function consistency(counts){
   return { streak, best: Math.max(best, streak), hits, span };
 }
 
+/* ---------- Edit a contact ---------- */
+let ed = null; // { kind:'dm'|'lead', h, channel, shot, shotUrl, confirmDelete, scoring, saving }
+function openEdit(kind, h){
+  const x = (kind === 'dm' ? dms : leads).find(y => y.handle === h); if(!x) return;
+  ed = { kind, h, channel:x.channel || 'Instagram', shot:null, shotUrl:'', confirmDelete:false, scoring:false, saving:false };
+  renderEdit(); $('#edit').showModal();
+}
+function editVals(){ // keep typed values across re-renders of the panel
+  const v = {};
+  $('#edit')?.querySelectorAll('[data-f]').forEach(i => v[i.dataset.f] = i.value);
+  return v;
+}
+function renderEdit(keep){
+  if(!ed) return;
+  const x = (ed.kind === 'dm' ? dms : leads).find(y => y.handle === ed.h); if(!x){ closeEdit(); return; }
+  const v = keep || {};
+  const val = (k, fallback) => esc(v[k] ?? fallback ?? '');
+  const pad = n => String(n).padStart(2,'0');
+  const local = iso => { const t = new Date(iso); return `${t.getFullYear()}-${pad(t.getMonth()+1)}-${pad(t.getDate())}T${pad(t.getHours())}:${pad(t.getMinutes())}`; };
+  const e = x.engagement, sc = x.score;
+  const numbers = `<div class="grid3">
+      <label class="f">Followers<input data-f="followers" inputmode="decimal" value="${val('followers', x.followers)}" placeholder="12.4k"></label>
+      <label class="f">Avg likes<input data-f="avgLikes" inputmode="decimal" value="${val('avgLikes', x.avgLikes ?? (e ? Math.round(e.avgLikes) : ''))}" placeholder="350"></label>
+      <label class="f">Avg comments<input data-f="avgComments" inputmode="decimal" value="${val('avgComments', x.avgComments ?? (e ? Math.round(e.avgComments) : ''))}" placeholder="20"></label>
+    </div>${e ? `<div class="small muted">${engPill(x)} measured from their reels${e.checkedAt ? ' on ' + new Date(e.checkedAt).toLocaleDateString(undefined,{month:'short',day:'numeric'}) : ''}</div>` : ''}`;
+  const dmFields = ed.kind !== 'dm' ? '' : `
+    <div class="small muted">Sent via</div>
+    <div class="seg">${CHANNELS.map(c => `<button class="${ed.channel===c?'on':''}" data-act="edchannel" data-c="${c}">${c}</button>`).join('')}</div>
+    <label class="f">Stage<select data-f="status" class="ed-select">${COLS.filter(c => c.k !== 'lead').map(c => `<option value="${c.k}" ${(v.status ?? x.status) === c.k ? 'selected' : ''}>${c.label}</option>`).join('')}</select></label>
+    ${(v.status ?? x.status) === 'booked' ? `<label class="f">Call time<input type="datetime-local" data-f="bookedFor" value="${val('bookedFor', x.bookedFor ? local(x.bookedFor) : '')}"></label>` : ''}
+    ${numbers}
+    <label class="f">Opener (the message you sent)<textarea data-f="opener" rows="4" placeholder="Paste the message, or let Claude read it from the screenshot">${val('opener', x.opener)}</textarea></label>
+    <div class="small muted">Screenshot</div>
+    <label class="drop" for="ed_shot" data-drop="edit">${ed.shotUrl ? `<img src="${ed.shotUrl}" alt="New screenshot">` : x.shotId ? `<img src="${esc(x.shotUrl || '/_blob/' + x.shotId)}" alt="Message screenshot">` : 'Drag & drop a screenshot here<br>or tap to choose'}<input type="file" id="ed_shot" accept="image/*" hidden></label>
+    <label class="f">Loom transcript<textarea data-f="loom" rows="4" placeholder="Paste the Loom transcript">${val('loom', x.loom)}</textarea></label>`;
+  const leadFields = ed.kind !== 'lead' ? '' : numbers;
+  const scoring = ed.kind !== 'dm' ? '' : `
+    <div class="ed-score">
+      <div class="sec-h"><h2 style="font-size:22px">Outreach <i>score</i></h2>
+        ${sample ? `<button class="sm ${sc ? '' : 'primary'}" data-act="edscore" ${ed.scoring ? 'disabled' : ''}>${ed.scoring ? 'Scoring…' : sc ? 'Re-score' : 'Score it ✦'}</button>` : ''}</div>
+      ${sc ? `<div class="score"><div class="big-n">${sc.overall}<span class="small muted">/10</span></div><div class="small"><div class="muted">Style</div><b>${esc(sc.style)}</b></div></div>
+        ${critHTML(sc)}<div class="notice"><b>Next time:</b> ${esc(sc.feedback)}</div>`
+      : `<div class="small muted">Not scored yet. Add the screenshot or the opener, then tap Score it.</div>`}
+    </div>`;
+  $('#edit').innerHTML = `
+    <div class="ed-head"><div><div class="small muted">${ed.kind === 'dm' ? 'Contact' : 'Lead'}</div><a href="${igUrl(x.handle)}" class="ig ed-name">@${esc(x.handle)}</a></div>
+      <button class="icon-x" data-act="edclose" aria-label="Close">✕</button></div>
+    <div class="ed-body">
+      ${scoring}
+      ${dmFields}${leadFields}
+      <label class="f">Notes<textarea data-f="notes" rows="3" placeholder="Anything worth remembering about them">${val('notes', x.notes ?? x.note)}</textarea></label>
+    </div>
+    <div class="ed-foot">
+      ${ed.confirmDelete
+        ? `<span class="small" style="color:var(--bad)">Delete @${esc(x.handle)} for good?</span><button class="sm danger" data-act="eddelete">Yes, delete</button><button class="sm" data-act="edkeep">Keep</button>`
+        : `<button class="sm ghost-danger" data-act="edaskdelete">Delete contact</button><span style="flex:1"></span><button data-act="edclose">Cancel</button><button class="primary" data-act="edsave" ${ed.saving ? 'disabled' : ''}>${ed.saving ? 'Saving…' : 'Save'}</button>`}
+    </div>`;
+}
+function closeEdit(){ ed = null; const d = $('#edit'); if(d?.open) d.close(); }
+$('#edit')?.addEventListener('close', () => { ed = null; });
+function setEdShot(file){
+  if(!ed || !file || !file.type.startsWith('image/')) return;
+  const keep = editVals();
+  if(ed.shotUrl) URL.revokeObjectURL(ed.shotUrl);
+  ed.shot = file; ed.shotUrl = URL.createObjectURL(file); renderEdit(keep);
+}
+async function saveEdit(){
+  const v = editVals();
+  const x = (ed.kind === 'dm' ? dms : leads).find(y => y.handle === ed.h); if(!x) return;
+  const patch = { notes:(v.notes || '').trim() };
+  for(const k of ['followers','avgLikes','avgComments']) if(v[k] !== undefined) patch[k] = num(v[k]);
+  if(patch.followers !== undefined){ const er = engagement(patch); patch.er = er; }
+  if(ed.kind === 'dm'){
+    Object.assign(patch, { channel:ed.channel, opener:(v.opener || '').trim(), loom:(v.loom || '').trim() });
+    if(v.status && v.status !== x.status){
+      patch.status = v.status;
+      const now = new Date().toISOString();
+      if(['replied','booked'].includes(v.status) && !x.repliedAt) patch.repliedAt = now;
+      if(v.status === 'booked' && !x.bookedAt) patch.bookedAt = now;
+      if(v.status === 'lost') patch.lostAt = now;
+      if(v.status === 'later') patch.followUpOn = new Date(Date.now() + 30*DAY).toISOString();
+    }
+    if(v.bookedFor){
+      const when = new Date(v.bookedFor);
+      if(isNaN(when) || when < Date.now() - 365*864e5 || when > Date.now() + 365*864e5){ toast('That call date looks wrong. Check the year and day.'); return; }
+      patch.bookedFor = when.toISOString();
+    }
+  }
+  ed.saving = true; renderEdit(v);
+  try{
+    if(ed.shot && assets){ const a = await assets.upload(ed.shot); patch.shotId = a.id; patch.shotUrl = a.url; }
+    await store.collection(ed.kind === 'dm' ? 'dms' : 'leads').doc(ed.h).update(patch);
+    const at = $('#edit [data-act=edsave]')?.getBoundingClientRect();
+    toast(`@${ed.h} saved`); closeEdit(); if(at) sparkle({ getBoundingClientRect:() => at }, 12);
+  }catch(e){ ed.saving = false; renderEdit(v); toast("Couldn't save. Try again."); }
+}
+async function scoreFromEdit(){
+  const v = editVals(), x = dms.find(y => y.handle === ed.h); if(!x || !sample) return;
+  let img = ed.shot;
+  if(!img && x.shotId && canImages){ try{ img = await (await fetch(x.shotUrl || '/_blob/' + x.shotId)).blob(); }catch(e){ img = null; } }
+  const doc = { ...x, channel:ed.channel, opener:(v.opener || x.opener || '').trim(), loom:(v.loom ?? x.loom ?? '').trim(),
+    followers:num(v.followers) ?? x.followers, avgLikes:num(v.avgLikes) ?? x.avgLikes, avgComments:num(v.avgComments) ?? x.avgComments };
+  doc.er = engagement(doc);
+  if(!img && !doc.opener){ toast('Add the screenshot or the opener first'); return; }
+  ed.scoring = true; renderEdit(v);
+  try{
+    const res = await scoreDM(doc, img);
+    if(!res){ throw 0; }
+    const patch = { score:res.score };
+    if(!doc.opener && res.openerText) patch.opener = res.openerText;
+    await store.collection('dms').doc(ed.h).update(patch);
+    if(patch.opener) v.opener = patch.opener;
+    toast(`Scored ${res.score.overall}/10`);
+  }catch(e){ toast(e?.code === 'not_granted' ? 'Allow Claude to score to use this' : "Couldn't score it. Try again."); }
+  if(ed){ ed.scoring = false; setTimeout(() => renderEdit(v), 50); }
+}
+async function deleteFromEdit(){
+  const h = ed.h, coll = ed.kind === 'dm' ? 'dms' : 'leads';
+  try{ await store.collection(coll).doc(h).delete(); closeEdit(); toast(`@${h} deleted`); }
+  catch(e){ toast("Couldn't delete. Try again."); }
+}
+
 /* ---------- Winning messages ---------- */
 let suggestions = null, suggesting = false, copyables = [];
 const cleanOpener = t => (t || '').replace(/https?:\/\/\S*loom\S*/gi, '[Loom link]').trim();
@@ -748,8 +889,9 @@ function setShot(file){
 }
 
 async function scoreDM(doc, shot){
-  if(!sample || !shot || !canImages) return null;
-  const prompt = `You score cold outreach for an agency owner. Each DM is sent via ${doc.channel} with a personalised Loom video. The attached screenshot shows the conversation.
+  const useShot = !!(shot && canImages);
+  if(!sample || (!useShot && !doc.opener)) return null;
+  const prompt = `You score cold outreach for an agency owner. Each DM is sent via ${doc.channel} with a personalised Loom video. ${useShot ? 'The attached screenshot shows the conversation.' : `The opener was:\n"""${String(doc.opener).slice(0,3000)}"""`}
 
 Prospect: @${doc.handle}. Followers: ${doc.followers ?? 'unknown'}. Avg likes: ${doc.avgLikes ?? 'unknown'}. Avg comments: ${doc.avgComments ?? 'unknown'}. Engagement rate: ${doc.er != null ? (doc.er*100).toFixed(2)+'%' : 'unknown'}. Weigh how hard this prospect is to reach given their audience size and engagement.
 
@@ -758,11 +900,11 @@ ${RUBRIC}
 Loom transcript:
 """${(doc.loom || '(none)').slice(0, 12000)}"""
 
-Also check the screenshot for a reply: any message from the prospect after the sender's opener.
+${useShot ? "Also check the screenshot for a reply: any message from the prospect after the sender's opener." : 'There is no screenshot, so set reply.replied to false.'}
 
 Reply with only JSON:
 {"openerText": "the sender's opener, word for word", "criteria": {"human":1-10,"personal":1-10,"value":1-10,"lowNo":1-10,"status":1-10,"clarity":1-10,"loom":1-10}, "overall": 1-10, "style": "2-4 word label for the opener's approach", "feedback": "the single most important change for next time, one sentence", "reply": {"replied": true|false, "text": "the prospect's reply, word for word", "sentiment": "positive|neutral|negative", "booked": true|false}}`;
-  const r = await sample.json(prompt, { modelTier:'default', images:[shot] });
+  const r = await sample.json(prompt, useShot ? { modelTier:'default', images:[shot] } : { modelTier:'default' });
   if(!r || !clamp10(r.overall)) return null;
   const criteria = {};
   for(const [k] of CRITERIA) criteria[k] = clamp10(r.criteria?.[k]);
@@ -898,7 +1040,7 @@ function boardHTML(){
       : `<span>${new Date(x.sentAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})} · ${esc(x.channel || 'Instagram')}</span>`;
     const form = kind === 'dm' && booking === x.handle ? `<div class="book"><input type="datetime-local" min="${local(new Date().toISOString()).slice(0,10)}T00:00" value="${x.bookedFor ? local(x.bookedFor) : ''}"><button class="sm primary" data-act="booksave" data-h="${esc(x.handle)}">Save</button><button class="sm" data-act="bookcancel">Cancel</button></div>` : '';
     return `<div class="kcard" draggable="true" data-card="${kind}:${esc(x.handle)}">
-      <a href="${igUrl(x.handle)}" class="ig" title="Open @${esc(x.handle)} on Instagram">@${esc(x.handle)}</a>
+      <div class="k-top"><a href="${igUrl(x.handle)}" class="ig" title="Open @${esc(x.handle)} on Instagram">@${esc(x.handle)}</a><button class="k-edit" data-act="edopen" data-k="${kind}" data-h="${esc(x.handle)}" aria-label="Edit @${esc(x.handle)}">Edit</button></div>
       <div class="meta">${extra}</div>
       ${form}${moveSel(kind, x.handle, colKey)}
     </div>`;
@@ -1013,6 +1155,7 @@ function renderLeads(){
         <div class="row" style="gap:6px;margin-top:3px">${engPill(l)}<span>${l.followers ? compact(l.followers) + ' followers · ' : ''}Added ${new Date(l.addedAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})}${l.note ? ' · ' + esc(l.note) : ''}</span></div>
       </div>
       <button class="sm ig-btn" data-act="copyig" data-h="${esc(l.handle)}">Copy link</button>
+      <button class="sm" data-act="edopen" data-k="lead" data-h="${esc(l.handle)}">Edit</button>
       <button class="sm" data-act="leaddm" data-h="${esc(l.handle)}">DM now</button>
       <button class="x" data-act="leaddel" data-h="${esc(l.handle)}" aria-label="Remove @${esc(l.handle)}">✕</button>
     </div>`).join('')}</div>`
@@ -1176,7 +1319,7 @@ function renderTrack(){
       <div class="dm-main">
         <div class="who"><a href="${igUrl(d.handle)}" class="ig" title="Open @${h} on Instagram">@${h}</a>
           <div class="small muted">${new Date(d.sentAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})} · ${esc(d.channel || 'Instagram')}${d.followers ? ' · ' + compact(d.followers) + ' followers' : ''}</div>${d.engagement ? `<div style="margin-top:4px">${engPill(d)}</div>` : ''}</div>
-        ${status}${next}
+        ${status}${next}<button class="sm" data-act="edopen" data-k="dm" data-h="${h}">Edit</button>
       </div>${form}
       <details class="more"><summary>More</summary>
         <div class="row" style="margin-top:8px">${moreBtns}</div>
@@ -1241,6 +1384,14 @@ document.addEventListener('click', async e => {
     case 'sub': sub = b.dataset.s; renderTrack(); break;
     case 'setlater': { const at = b.getBoundingClientRect(); moveTo('dm', b.dataset.h, 'later').then(ok => { if(ok) sparkle({ getBoundingClientRect:() => at }, 10); renderTrack(); }); break; }
     case 'setlost': { const at = b.getBoundingClientRect(); moveTo('dm', b.dataset.h, 'lost').then(ok => { if(ok) sparkle({ getBoundingClientRect:() => at }, 10); renderTrack(); }); break; }
+    case 'edopen': openEdit(b.dataset.k, b.dataset.h); break;
+    case 'edclose': closeEdit(); break;
+    case 'edchannel': { const keep = editVals(); ed.channel = b.dataset.c; renderEdit(keep); break; }
+    case 'edsave': saveEdit(); break;
+    case 'edscore': scoreFromEdit(); break;
+    case 'edaskdelete': { const keep = editVals(); ed.confirmDelete = true; renderEdit(keep); break; }
+    case 'edkeep': { const keep = editVals(); ed.confirmDelete = false; renderEdit(keep); break; }
+    case 'eddelete': deleteFromEdit(); break;
     case 'copytext': { const t = copyables[+b.dataset.i]; if(t != null) toast(await copyText(t) ? 'Copied. Swap in their name and your Loom' : 'Select and copy it manually'); break; }
     case 'suggest': suggestOpeners(); break;
     case 'copyig': { const u = igUrl(b.dataset.h); toast(await copyText(u) ? 'Link copied. Paste it in a new tab' : u); break; }
@@ -1310,6 +1461,8 @@ document.addEventListener('input', e => {
 document.addEventListener('change', e => {
   if(e.target.id === 'f_shot') setShot(e.target.files[0]);
   else if(e.target.id === 'f_fushot') setFuShot(e.target.files[0]);
+  else if(e.target.id === 'ed_shot') setEdShot(e.target.files[0]);
+  else if(e.target.dataset.f === 'status' && ed){ renderEdit(editVals()); }
   else if(e.target.dataset.reply){ checkReply(e.target.dataset.reply, e.target.files[0]); e.target.value = ''; }
   else if(e.target.dataset.move && e.target.value){
     const [kind, h] = e.target.dataset.move.split(':'), col = e.target.value, at = e.target.getBoundingClientRect();
@@ -1340,7 +1493,7 @@ document.addEventListener('drop', e => {
   e.preventDefault(); t.classList.remove('over');
   const f = [...(e.dataTransfer?.files || [])].find(f => f.type.startsWith('image/'));
   if(!f){ toast('Drop an image file'); return; }
-  if(t.dataset.drop === 'flow') setShot(f); else if(t.dataset.drop === 'fu') setFuShot(f); else checkReply(t.dataset.drop, f);
+  if(t.dataset.drop === 'flow') setShot(f); else if(t.dataset.drop === 'fu') setFuShot(f); else if(t.dataset.drop === 'edit') setEdShot(f); else checkReply(t.dataset.drop, f);
 });
 document.addEventListener('paste', e => {
   const f = [...(e.clipboardData?.files || [])].find(f => f.type.startsWith('image/'));
