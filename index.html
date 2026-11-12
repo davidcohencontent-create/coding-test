@@ -46,6 +46,10 @@ label.f{display:grid;gap:4px;font-size:13px;color:var(--muted)}
 h2{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin:6px 0 -8px;font-weight:600}
 /* daily goal */
 .goal{display:grid;gap:10px}
+.goals{display:grid;grid-template-columns:3fr 2fr;gap:12px}
+.goals>*{min-width:0}
+@media (max-width:640px){ .goals{grid-template-columns:1fr} }
+.goal.calls .slots i{height:8px}
 .goal .n{font-size:34px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}
 .goal .n small{font-size:16px;color:var(--muted);font-weight:500}
 .slots{display:grid;grid-template-columns:repeat(var(--goal,5),1fr);gap:4px}
@@ -280,17 +284,18 @@ th{color:var(--muted)}
 /* board (GHL-style pipeline) */
 .filters{display:grid;gap:8px}
 .board-wrap{width:min(1640px,calc(100vw - 48px));margin-left:calc(50% - min(820px, 50vw - 24px))}
-.board{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;align-items:start}
+.board{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:8px;align-items:start}
+@media (max-width:1400px){ .board{grid-template-columns:repeat(5,minmax(0,1fr))} }
 @media (max-width:1100px){ .board{grid-template-columns:repeat(3,minmax(0,1fr))} }
 @media (max-width:760px){ .board-wrap{width:auto;margin-left:0} .board{grid-template-columns:1fr} }
 .col{background:var(--soft);border-radius:18px;padding:10px;display:grid;gap:8px;align-content:start;scroll-snap-align:start;min-height:140px;transition:box-shadow .2s,background .2s}
 .col.over{background:#eef8fc;box-shadow:0 0 0 2px var(--accent) inset}
 .col-h{display:grid;gap:2px;padding:2px 4px 6px}
-.col-h .t{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px;min-width:0}
+.col-h .t{display:flex;align-items:center;gap:6px;font-weight:600;font-size:13px;min-width:0;line-height:1.25}
 .col-h .t i{width:9px;height:9px;border-radius:50%;flex:none}
 .col-h .t b{margin-left:auto;font-weight:600;font-size:12px;color:var(--muted)}
 .col-h small{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
-.kcard{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 12px;display:grid;gap:6px;cursor:grab;transition:transform .15s,box-shadow .2s}
+.kcard{background:#fff;border:1px solid var(--line);border-radius:12px;padding:9px 10px;display:grid;gap:6px;cursor:grab;transition:transform .15s,box-shadow .2s}
 .kcard:hover{box-shadow:0 6px 18px -10px rgba(0,0,0,.25)}
 .kcard.dragging{opacity:.45;transform:rotate(-2deg)}
 .kcard a{color:var(--ink);font-weight:600;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -343,7 +348,7 @@ th{color:var(--muted)}
 
 <main>
   <section id="start">
-    <div class="card goal" id="goal"></div>
+    <div class="goals"><div class="card goal" id="goal"></div><div class="card goal calls" id="callgoal"></div></div>
     <div id="flow"></div>
     <div class="glance" id="glance"></div>
     <div class="card wins" id="wins"></div>
@@ -357,10 +362,10 @@ th{color:var(--muted)}
 <script>
 /* Each DM is one document in "dms", keyed by IG handle:
    { handle, url, followers, avgLikes, avgComments, er, channel, shotId, opener (read from the screenshot), loom,
-     sentAt, day, status: sent|replied|booked|later|lost, followUpOn (for later), repliedAt, bookedFor, seen, followedUpAt, reply:{text, sentiment},
+     sentAt, day, status: sent|fu1|fu2|fu3|replied|booked|later|lost, bookedAt, followUpOn (for later), repliedAt, bookedFor, seen, followedUpAt, reply:{text, sentiment},
      followUps:[{at, text, loom, shotId}], offer: accelerator, lostAt (status lost = not interested),
      score:{overall, criteria:{human, personal, value, lowNo, status, clarity, loom}, style, feedback} } */
-const GOAL = 15, FOLLOW_UP_AFTER = 3, TOO_LATE = 7, DAY = 864e5;
+const GOAL = 20, CALL_GOAL = 4, FOLLOW_UP_AFTER = 3, TOO_LATE = 7, DAY = 864e5;
 const HALF = Math.ceil(GOAL / 2); // calendar shading: halfway there
 
 let store = null, sample = null, assets = null, canImages = false, dms = [], loaded = false;
@@ -432,7 +437,7 @@ function confetti(n = 70){
   }
 }
 const bump = el => { if(!el) return; el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); };
-let lastToday = null; // DMs today at the last render, to celebrate the moment the goal is hit
+let lastToday = null, lastCalls = null; // DMs today at the last render, to celebrate the moment the goal is hit
 
 function toast(t){ const el=$('#toast'); el.textContent=t; el.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove('show'),2200); }
 
@@ -472,11 +477,14 @@ function tier(er){
 const fmtCall = iso => new Date(iso).toLocaleString(undefined, { weekday:'short', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
 const upcomingCalls = () => dms.filter(d => d.status === 'booked' && d.bookedFor && new Date(d.bookedFor) > Date.now() - 2*3600e3)
   .sort((a,b) => a.bookedFor.localeCompare(b.bookedFor));
-const STAGES = [['all','All'],['sent','Contacted'],['replied','Responded'],['booked','Booked call'],['later','In 30 days'],['lost','Not interested']];
+const STAGES = [['all','All'],['sent','Contacted'],['fu1','Follow up 1'],['fu2','Follow up 2'],['fu3','Follow up 3'],['replied','Responded'],['booked','Booked call'],['later','In 30 days'],['lost','Not interested']];
 // Board columns, in pipeline order. "lead" is a queued profile; the rest are DM statuses.
 const COLS = [
   { k:'lead',    label:'Lead',           color:'#cfe8f3' },
   { k:'sent',    label:'Contacted',      color:'#7cc3e0' },
+  { k:'fu1',     label:'Follow Up 1',    color:'#5fb3d8' },
+  { k:'fu2',     label:'Follow Up 2',    color:'#3fa2cf' },
+  { k:'fu3',     label:'Follow Up 3',    color:'#2190c4' },
   { k:'replied', label:'Responded',      color:'#0593c6' },
   { k:'booked',  label:'Booked Call',    color:'#d83995' },
   { k:'later',   label:'Follow up in 30 days', color:'#f3a6cf' },
@@ -484,7 +492,11 @@ const COLS = [
 ];
 // Someone counts as having responded if they replied at any point, even if they later said no.
 const responded = d => ['replied','booked'].includes(d.status) || (['lost','later'].includes(d.status) && !!d.repliedAt);
-let stage = 'all';   // which stage the All DMs list shows
+let stage = 'all';
+// Still waiting for a first reply: contacted, or chased with follow-ups 1-3.
+const WAITING = ['sent','fu1','fu2','fu3'];
+const waiting = d => WAITING.includes(d.status);
+const FU_STEPS = { sent:'fu1', fu1:'fu2', fu2:'fu3' }; // where a logged follow-up moves someone   // which stage the All DMs list shows
 let booking = null; // handle whose booking form is open
 let leads = [];      // profiles waiting for a first DM (collection "leads", keyed by handle)
 let fuFlow = null;  // follow-up being logged: { handle, step, shot, shotUrl, loom, saving }
@@ -497,12 +509,16 @@ function followState(d){
     if(!on) return null;
     return on <= Date.now() ? { k:'due', label:'30-day follow-up due' } : { k:'wait', label:`Follow up ${on.toLocaleDateString(undefined,{month:'short',day:'numeric'})}` };
   }
-  if(d.status !== 'sent') return null;
-  if(d.followedUpAt) return { k:'done', label:'Followed up' };
-  const days = daysSince(d.sentAt);
-  if(days >= TOO_LATE) return { k:'late', label:'Too late', days };
-  if(days >= FOLLOW_UP_AFTER) return { k:'due', label:`Follow up · ${TOO_LATE-days}d left`, days };
-  return { k:'wait', label:`Follow up in ${FOLLOW_UP_AFTER-days}d`, days };
+  if(!waiting(d)) return null;
+  if(d.status === 'fu3') return { k:'done', label:'All 3 follow-ups sent' };
+  const nextN = { sent:1, fu1:2, fu2:3 }[d.status];
+  // Older DMs logged a follow-up without moving column: treat them as Follow Up 1 for timing.
+  const from = d.status === 'sent' && d.followedUpAt ? null : (d.status === 'sent' ? d.sentAt : d.followedUpAt || d.sentAt);
+  if(!from) return { k:'done', label:'Followed up' };
+  const days = daysSince(from);
+  if(days >= TOO_LATE) return { k:'late', label:`Follow up ${nextN} overdue`, days };
+  if(days >= FOLLOW_UP_AFTER) return { k:'due', label:`Follow up ${nextN} · ${TOO_LATE-days}d left`, days };
+  return { k:'wait', label:`Follow up ${nextN} in ${FOLLOW_UP_AFTER-days}d`, days };
 }
 
 /* ---------- Start screen ---------- */
@@ -570,7 +586,7 @@ function renderWins(){
 async function suggestOpeners(){
   if(!sample || suggesting) return;
   const good = dms.filter(d => d.opener && responded(d)).map(d => ({ d, o:outcome(d) })).sort((a,b) => b.o.pts - a.o.pts).slice(0, 6);
-  const bad = dms.filter(d => d.opener && d.status === 'sent' && !d.seen).slice(0, 6);
+  const bad = dms.filter(d => d.opener && waiting(d) && !d.seen).slice(0, 6);
   suggesting = true; renderWins();
   try{
     const r = await sample.json(`You write cold outreach openers for an agency owner who sells a 5.000€/month Accelerator (organic content and funnels that sell). Each opener is sent with a short personalised Loom video.
@@ -618,6 +634,19 @@ function renderGoal(){
     </div>
     <div class="slots ${n>=GOAL?'done':''}" style="--goal:${GOAL}">${Array.from({length:GOAL},(_,i)=>`<i class="${i<n?'on':''}"></i>`).join('')}</div>
     <div class="small muted">Daily goal ${GOAL} DMs · resets at midnight</div>`;
+  // Calls booked this week (Monday to Sunday), by the day they were booked.
+  const monday = addDays(today, -((today.getDay() + 6) % 7)); monday.setHours(0,0,0,0);
+  const callsWeek = dms.filter(d => d.status === 'booked' && (d.bookedAt || d.bookedFor) && new Date(d.bookedAt || d.bookedFor) >= monday).length;
+  const callsHit = lastCalls !== null && lastCalls < CALL_GOAL && callsWeek >= CALL_GOAL;
+  lastCalls = callsWeek;
+  $('#callgoal').innerHTML = `
+    <div class="row" style="justify-content:space-between;align-items:flex-end">
+      <div><div class="small muted">Calls booked · this week</div><div class="n">${callsWeek}<small> / ${CALL_GOAL}</small></div></div>
+      <div class="small ${callsWeek>=CALL_GOAL?'':'muted'}" style="${callsWeek>=CALL_GOAL?'color:var(--good);font-weight:600':''}">${callsWeek>=CALL_GOAL ? 'Goal hit ✦' : `${CALL_GOAL-callsWeek} to go`}</div>
+    </div>
+    <div class="slots ${callsWeek>=CALL_GOAL?'done':''}" style="--goal:${CALL_GOAL}">${Array.from({length:CALL_GOAL},(_,i)=>`<i class="${i<callsWeek?'on':''}"></i>`).join('')}</div>
+    <div class="small muted">Weekly goal ${CALL_GOAL} calls · resets Monday</div>`;
+  if(callsHit){ confetti(90); setTimeout(() => toast(`${CALL_GOAL} calls booked this week ✦`), 400); }
   const nc = upcomingCalls()[0];
   $('#glance').innerHTML = `
     <button class="tile" data-tab="track" data-sub="pipeline"><span>Pipeline</span><b class="grad-text">${eur(pipeline().total)}</b><small>per month potential</small></button>
@@ -758,7 +787,7 @@ Reply with only JSON: {"reply": {"replied": true|false, "text": "their latest re
     const patch = {};
     if(assets){ try{ const a = await assets.upload(file); patch.replyShotId = a.id; patch.replyShotUrl = a.url; }catch(e){} }
     if(reply){
-      Object.assign(patch, { status: reply.booked ? 'booked' : 'replied', repliedAt: d.repliedAt || new Date().toISOString(), reply:{ text:reply.text, sentiment:reply.sentiment } });
+      Object.assign(patch, { status: reply.booked ? 'booked' : 'replied', ...(reply.booked ? { bookedAt:new Date().toISOString() } : {}), repliedAt: d.repliedAt || new Date().toISOString(), reply:{ text:reply.text, sentiment:reply.sentiment } });
     }
     if(Object.keys(patch).length) await store.collection('dms').doc(handle).update(patch);
     toast(reply ? (reply.booked ? `@${handle} booked a call` : `@${handle} replied`) : `No reply from @${handle} in that screenshot`);
@@ -801,7 +830,7 @@ async function save(){
     const res = await scoreDM(doc, shot);
     if(res){
       const patch = { score:res.score, opener:res.openerText };
-      if(res.reply) Object.assign(patch, { status: res.reply.booked ? 'booked' : 'replied', repliedAt:new Date().toISOString(), reply:{ text:res.reply.text, sentiment:res.reply.sentiment } });
+      if(res.reply) Object.assign(patch, { status: res.reply.booked ? 'booked' : 'replied', ...(res.reply.booked ? { bookedAt:new Date().toISOString() } : {}), repliedAt:new Date().toISOString(), reply:{ text:res.reply.text, sentiment:res.reply.sentiment } });
       await store.collection('dms').doc(handle).update(patch);
     }
     if(flow && flow.result && flow.result.handle === handle){ Object.assign(flow.result, res ? { score:res.score, reply:res.reply } : {}); flow.scoring = false; renderResult(); }
@@ -841,7 +870,7 @@ const PIPE_STAGES = [
 ];
 function pipeline(){
   const price = x => OFFERS[offerOf(x)].price;
-  const groups = { queue:pendingLeads(), sent:dms.filter(d => d.status === 'sent'), replied:dms.filter(d => d.status === 'replied'), later:dms.filter(d => d.status === 'later'), booked:dms.filter(d => d.status === 'booked') };
+  const groups = { queue:pendingLeads(), sent:dms.filter(waiting), replied:dms.filter(d => d.status === 'replied'), later:dms.filter(d => d.status === 'later'), booked:dms.filter(d => d.status === 'booked') };
   const rows = PIPE_STAGES.map(st => ({ ...st, n:groups[st.k].length, value:groups[st.k].reduce((t,x) => t + price(x), 0) }));
   return { rows, total:rows.reduce((t,r) => t + r.value, 0) };
 }
@@ -898,6 +927,8 @@ async function moveTo(kind, h, col){
       if(col === 'replied' || col === 'booked') doc.repliedAt = now;
       if(col === 'lost') doc.lostAt = now;
       if(col === 'later') doc.followUpOn = new Date(Date.now() + 30*DAY).toISOString();
+      if(col.startsWith('fu')){ doc.followedUpAt = now; doc.followUps = Array.from({ length:+col.slice(2) }, () => ({ at:now, text:'', board:true })); }
+      if(col === 'booked') doc.bookedAt = now;
       await store.collection('dms').doc(h).set(doc);
       store.collection('leads').doc(h).delete().catch(() => {});
     } else {
@@ -906,6 +937,12 @@ async function moveTo(kind, h, col){
       if((col === 'replied' || col === 'booked') && !d.repliedAt) patch.repliedAt = now;
       if(col === 'lost') patch.lostAt = now;
       if(col === 'later') patch.followUpOn = new Date(Date.now() + 30*DAY).toISOString();
+      if(col === 'booked' && !d.bookedAt) patch.bookedAt = now;
+      if(col.startsWith('fu')){
+        const want = +col.slice(2), have = followUpsOf(d).filter(f => !f.legacy);
+        patch.followedUpAt = now;
+        if(have.length < want) patch.followUps = have.concat(Array.from({ length:want - have.length }, () => ({ at:now, text:'', board:true })));
+      }
       await store.collection('dms').doc(h).update(patch);
     }
   }catch(e){ toast("Couldn't move. Try again."); return false; }
@@ -1044,7 +1081,7 @@ function followUpHistory(){
   if(!items.length) return `<div class="card empty small">No follow-ups logged yet. Tap <b>Log follow-up</b> on a DM to add one, with or without a Loom.</div>`;
   items.sort((a,b) => b.f.at.localeCompare(a.f.at));
   // A follow-up "worked" if the reply came in after it.
-  const worked = x => x.d.status !== 'sent' && x.d.repliedAt && x.d.repliedAt > x.f.at;
+  const worked = x => !waiting(x.d) && x.d.repliedAt && x.d.repliedAt > x.f.at;
   const withLoom = items.filter(x => x.f.loom).length, wins = items.filter(worked).length;
   return `<div class="small muted">${items.length} follow-up${items.length===1?'':'s'} · ${wins} got a reply after (${pct(wins, items.length)}) · ${withLoom} with a Loom</div>
   <div class="card list">${items.map(x => `<div class="fuitem">
@@ -1088,11 +1125,12 @@ Reply with only JSON: {"text": "the follow-up, word for word", "reply": {"replie
   }
   const list = (d.followUps || (d.followedUpAt ? [{ at:d.followedUpAt, text:'' }] : [])).concat(entry);
   const patch = { followUps:list, followedUpAt:now };
-  if(reply && d.status === 'sent') Object.assign(patch, { status: reply.booked ? 'booked' : 'replied', repliedAt:now, reply:{ text:reply.text, sentiment:reply.sentiment } });
+  if(FU_STEPS[d.status]) patch.status = FU_STEPS[d.status];
+  if(reply && waiting(d)) Object.assign(patch, { status: reply.booked ? 'booked' : 'replied', ...(reply.booked ? { bookedAt:new Date().toISOString() } : {}), repliedAt:now, reply:{ text:reply.text, sentiment:reply.sentiment } });
   try{
     await store.collection('dms').doc(d.handle).update(patch);
     fuFlow = null; renderTrack(); sparkle($('#track .stats'), 16);
-    toast(reply && d.status === 'sent' ? `Follow-up logged · @${d.handle} replied` : `Follow-up #${list.length} logged for @${d.handle}`);
+    toast(reply && waiting(d) ? `Follow-up logged · @${d.handle} replied` : patch.status?.startsWith('fu') ? `@${d.handle} → Follow Up ${patch.status.slice(2)}` : `Follow-up #${list.length} logged for @${d.handle}`);
   }catch(e){ fuFlow.saving = false; renderTrack(); toast("Couldn't save. Try again."); }
 }
 
@@ -1119,21 +1157,22 @@ function renderTrack(){
     const status = d.status === 'booked' ? `<span class="pill solid">Booked${d.bookedFor ? ' · ' + esc(fmtCall(d.bookedFor)) : ''}</span>`
       : d.status === 'replied' ? '<span class="pill good">Responded</span>'
       : d.status === 'lost' ? '<span class="pill bad">Not interested</span>'
+      : d.status.startsWith('fu') && f?.k === 'done' ? `<span class="pill">Follow up ${d.status.slice(2)}</span>`
       : d.status === 'later' ? `<span class="pill ${f?.k==='due'?'fu':'fu-soft'}">${f ? f.label : 'In 30 days'}</span>`
       : f ? `<span class="pill ${f.k==='due'?'fu':f.k==='late'?'bad':f.k==='wait'?'fu-soft':''}">${f.label}</span>`
       : (d.seen ? '<span class="pill">Seen</span>' : '<span class="pill">Contacted</span>');
-    const next = d.status === 'sent' ? `<button class="sm primary" data-act="replied" data-h="${h}">Responded</button>`
+    const next = waiting(d) ? `<button class="sm primary" data-act="replied" data-h="${h}">Responded</button>`
       : d.status === 'replied' ? `<button class="sm primary" data-act="bookopen" data-h="${h}">Book call</button>`
       : d.status === 'booked' ? `<button class="sm" data-act="bookopen" data-h="${h}">Change time</button>` : '';
     const moreBtns = [
-      d.status !== 'booked' ? `<button class="sm" data-act="fuopen" data-h="${h}">Log follow-up${fuN ? ` (${fuN})` : ''}</button>` : '',
-      d.status === 'sent' && canImages ? `<label class="btnlike">Check for reply<input type="file" accept="image/*" data-reply="${h}" hidden></label>` : '',
-      ['sent','lost','later'].includes(d.status) ? `<button class="sm" data-act="bookopen" data-h="${h}">Book call</button>` : '',
+      d.status !== 'booked' ? `<button class="sm" data-act="fuopen" data-h="${h}">${FU_STEPS[d.status] ? `Log follow-up ${FU_STEPS[d.status].slice(2)}` : `Log follow-up${fuN ? ` (${fuN})` : ''}`}</button>` : '',
+      waiting(d) && canImages ? `<label class="btnlike">Check for reply<input type="file" accept="image/*" data-reply="${h}" hidden></label>` : '',
+      [...WAITING,'lost','later'].includes(d.status) ? `<button class="sm" data-act="bookopen" data-h="${h}">Book call</button>` : '',
       d.status !== 'later' && d.status !== 'booked' ? `<button class="sm" data-act="setlater" data-h="${h}">Follow up in 30 days</button>` : '',
       d.status !== 'lost' ? `<button class="sm" data-act="setlost" data-h="${h}">Not interested</button>` : '',
     ].join('');
     const form = booking === d.handle ? `<div class="book"><input type="datetime-local" min="${local(new Date().toISOString()).slice(0,10)}T00:00" value="${d.bookedFor ? local(d.bookedFor) : ''}"><button class="sm primary" data-act="booksave" data-h="${h}">Save</button><button class="sm" data-act="bookcancel">Cancel</button></div>` : '';
-    return `<div class="dm"${d.status === 'sent' && canImages ? ` data-drop="${h}"` : ''}>
+    return `<div class="dm"${waiting(d) && canImages ? ` data-drop="${h}"` : ''}>
       <div class="dm-main">
         <div class="who"><a href="${igUrl(d.handle)}" class="ig" title="Open @${h} on Instagram">@${h}</a>
           <div class="small muted">${new Date(d.sentAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})} · ${esc(d.channel || 'Instagram')}${d.followers ? ' · ' + compact(d.followers) + ' followers' : ''}</div>${d.engagement ? `<div style="margin-top:4px">${engPill(d)}</div>` : ''}</div>
@@ -1240,7 +1279,7 @@ document.addEventListener('click', async e => {
       if(isNaN(when) || when < Date.now() - 3600e3 || when > Date.now() + 365*864e5){ toast('That date looks wrong. Check the year and day.'); return; }
       b.disabled = true;
       try{
-        await store.collection('dms').doc(h).update({ status:'booked', bookedFor:when.toISOString(), repliedAt:d?.repliedAt || new Date().toISOString() });
+        await store.collection('dms').doc(h).update({ status:'booked', bookedFor:when.toISOString(), repliedAt:d?.repliedAt || new Date().toISOString(), ...(d?.bookedAt ? {} : { bookedAt:new Date().toISOString() }) });
         booking = null; toast(`Call booked with @${h} ✦`); confetti(50);
       }catch(err){ b.disabled = false; toast("Couldn't save. Try again."); }
       break;
