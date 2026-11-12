@@ -477,15 +477,15 @@ function tier(er){
 const fmtCall = iso => new Date(iso).toLocaleString(undefined, { weekday:'short', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
 const upcomingCalls = () => dms.filter(d => d.status === 'booked' && d.bookedFor && new Date(d.bookedFor) > Date.now() - 2*3600e3)
   .sort((a,b) => a.bookedFor.localeCompare(b.bookedFor));
-const STAGES = [['all','All'],['sent','Contacted'],['fu1','Follow up 1'],['fu2','Follow up 2'],['fu3','Follow up 3'],['replied','Responded'],['booked','Booked call'],['later','In 30 days'],['lost','Not interested']];
+const STAGES = [['all','All'],['sent','Contacted'],['replied','Responded'],['fu1','Follow up 1'],['fu2','Follow up 2'],['fu3','Follow up 3'],['booked','Booked call'],['later','In 30 days'],['lost','Not interested']];
 // Board columns, in pipeline order. "lead" is a queued profile; the rest are DM statuses.
 const COLS = [
   { k:'lead',    label:'Lead',           color:'#cfe8f3' },
   { k:'sent',    label:'Contacted',      color:'#7cc3e0' },
+  { k:'replied', label:'Responded',      color:'#0593c6' },
   { k:'fu1',     label:'Follow Up 1',    color:'#5fb3d8' },
   { k:'fu2',     label:'Follow Up 2',    color:'#3fa2cf' },
   { k:'fu3',     label:'Follow Up 3',    color:'#2190c4' },
-  { k:'replied', label:'Responded',      color:'#0593c6' },
   { k:'booked',  label:'Booked Call',    color:'#d83995' },
   { k:'later',   label:'Follow up in 30 days', color:'#f3a6cf' },
   { k:'lost',    label:'Not Interested', color:'#b9b9b9' },
