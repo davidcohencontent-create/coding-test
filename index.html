@@ -86,15 +86,6 @@ h2{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--mute
 .btnlike{display:inline-block;font-size:12px;padding:4px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);cursor:pointer}
 .btnlike:hover{border-color:var(--muted)}
 .fu-h{color:var(--fu)}
-.seg2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.seg2 button{display:grid;gap:2px;text-align:left;padding:10px 12px;align-content:start}
-.seg2 button b{font-size:14px}
-.seg2 button span{font-size:13px;font-variant-numeric:tabular-nums}
-.seg2 button small{font-size:11px;color:var(--muted)}
-.seg2 button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.seg2 button.on small{color:inherit;opacity:.65}
-.pill.offer{background:none;border:1px solid #333;color:var(--ink);font-weight:600;cursor:pointer;font-family:inherit}
-.pill.offer.academy{border-color:#555;color:var(--muted)}
 .stat small{display:block;font-size:11px;color:var(--muted);margin-top:2px}
 nav .lc{display:inline-block;min-width:18px;padding:0 5px;margin-left:4px;border-radius:999px;background:var(--soft);color:var(--ink);font-size:11px;font-weight:700;line-height:18px;text-align:center}
 nav button.on .lc{background:var(--bg);color:var(--ink)}
@@ -197,11 +188,7 @@ button:hover .arrow{transform:translate(2px,-2px)}
 @keyframes breathe{0%,100%{box-shadow:0 10px 24px -10px rgba(5,147,198,.7),0 12px 26px -14px rgba(216,57,149,.6)}50%{box-shadow:0 16px 36px -8px rgba(5,147,198,.85),0 18px 40px -10px rgba(216,57,149,.85),0 0 0 6px rgba(5,147,198,.10)}}
 
 /* segmented pickers */
-.seg button,.seg2 button{border-radius:14px;background:var(--soft);border-color:transparent}
-.seg button.on,.seg2 button.on{background:#fff;color:var(--ink);border-color:var(--ink);box-shadow:0 0 0 1px var(--ink) inset}
-.seg2 button.on small{color:var(--muted);opacity:1}
-.seg2 button.on b::after{content:' ✓';color:var(--accent)}
-
+.seg button,.seg button.on,
 /* goal + consistency */
 .goal .n{font-family:var(--serif);font-weight:400;font-size:56px}
 .slots i{height:8px;border-radius:4px;background:var(--soft);transition:background .4s}
@@ -234,9 +221,6 @@ button:hover .arrow{transform:translate(2px,-2px)}
 .pill{border-radius:6px;font-weight:600;font-size:11px;padding:2px 8px;background:var(--soft);color:var(--muted)}
 .pill.good{background:#e6f6ec;color:var(--good)} .pill.solid{background:var(--good);color:#fff}
 .pill.fu{background:var(--fu);color:#fff} .pill.fu-soft{background:#fbe6f1;color:var(--fu)} .pill.bad{background:#fbe9e9;color:var(--bad)}
-.pill.offer{border:0;background:#e3f3fa;color:#04698f;border-radius:6px}
-.pill.offer.academy{background:#fbe6f1;color:#b02a78}
-.pill.offer:hover{transform:none;filter:brightness(.97)}
 .crit i b{background:var(--grad)}
 .dm,.lead,.rank,.fuitem,.call{border-bottom-color:var(--line)}
 .dm a,.lead .who a{color:var(--ink)}
@@ -256,6 +240,32 @@ th{color:var(--muted)}
 .potential span{font-size:12px;color:#40506a}
 
 /* celebration */
+/* calm layout: sections, tiles, rows */
+.subnav{display:flex;gap:2px;background:var(--soft);border-radius:999px;padding:4px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 57px);z-index:4}
+.subnav button{flex:1;border:0;background:none;border-radius:999px;padding:8px 6px;font-size:13px;font-weight:500;color:var(--muted);white-space:nowrap}
+.subnav button:hover{transform:none;color:var(--ink)}
+.subnav button.on{background:#fff;color:var(--ink);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.subnav .count{display:inline-block;min-width:16px;margin-left:5px;padding:0 4px;border-radius:999px;background:var(--pink);color:#fff;font-size:10px;font-weight:700;line-height:16px}
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:6px}
+.sec-h h2{margin:0}
+.glance{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{display:grid;gap:2px;text-align:left;border-radius:18px;background:var(--soft);border:1px solid transparent;padding:14px 16px;align-content:start;min-width:0}
+.tile:hover{border-color:var(--line);transform:translateY(-1px)}
+.tile span{font-size:12px;color:var(--muted)}
+.tile b{font-family:var(--serif);font-weight:400;font-size:28px;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tile small{font-size:12px;color:var(--muted)}
+.grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.dm{padding:14px 16px}
+.dm-main{display:flex;align-items:center;gap:10px}
+.dm-main .who{flex:1;min-width:0}
+.dm-main .who a{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.more{margin-top:6px}
+.more summary{list-style:none;display:inline-block;cursor:pointer;font-size:12px;color:var(--muted);padding:2px 0}
+.more summary::-webkit-details-marker{display:none}
+.more summary::after{content:' ▾'}
+.more[open] summary::after{content:' ▴'}
+.stats{grid-template-columns:repeat(2,1fr)}
+@media (max-width:420px){ .dm-main{flex-wrap:wrap} .dm-main .who{flex-basis:100%} .glance .tile b{font-size:24px} }
 /* board (GHL-style pipeline) */
 .filters{display:grid;gap:8px}
 .board-wrap{overflow-x:auto;width:min(1280px,calc(100vw - 32px));margin-left:calc(50% - min(640px, 50vw - 16px));padding:2px 0 10px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
@@ -284,13 +294,13 @@ th{color:var(--muted)}
 .stack{display:flex;height:14px;border-radius:999px;overflow:hidden;background:var(--soft);gap:2px}
 .stack i{display:block;height:100%;min-width:4px;transition:flex-grow .6s cubic-bezier(.2,.7,.3,1)}
 .pipe .rows{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.pipe .rows.r5{grid-template-columns:repeat(5,1fr)}
+@media (max-width:560px){ .pipe .rows.r5{grid-template-columns:repeat(3,1fr)} }
 .pipe .rows div{display:grid;gap:2px;min-width:0}
 .pipe .rows span{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px}
 .pipe .rows span i{width:8px;height:8px;border-radius:2px;flex:none}
 .pipe .rows b{font-size:15px;font-variant-numeric:tabular-nums;white-space:nowrap}
 .pipe .rows em{font-style:normal;font-size:11px;color:var(--muted)}
-.pipe-mini{display:flex;gap:8px;align-items:baseline;justify-content:flex-start;flex-wrap:wrap;padding:12px 14px;border-radius:14px;background:linear-gradient(120deg,#e3f3fa,#f9e6f1);font-size:13px;color:#40506a}
-.pipe-mini b{font-family:var(--serif);font-weight:400;font-size:26px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 @media (max-width:420px){ .pipe .rows{grid-template-columns:1fr 1fr} }
 .spark.p{color:var(--pink);text-shadow:0 0 8px rgba(216,57,149,.6)}
 .spark{position:fixed;z-index:60;pointer-events:none;font-size:14px;color:var(--accent);text-shadow:0 0 8px rgba(5,147,198,.6);animation:spark .9s cubic-bezier(.2,.7,.3,1) forwards}
@@ -323,6 +333,7 @@ th{color:var(--muted)}
   <section id="start">
     <div class="card goal" id="goal"></div>
     <div id="flow"></div>
+    <div class="glance" id="glance"></div>
     <div class="card cons" id="cons"></div>
   </section>
   <section id="leads" hidden></section>
@@ -333,8 +344,8 @@ th{color:var(--muted)}
 <script>
 /* Each DM is one document in "dms", keyed by IG handle:
    { handle, url, followers, avgLikes, avgComments, er, channel, shotId, opener (read from the screenshot), loom,
-     sentAt, day, status: sent|replied|booked|lost, repliedAt, bookedFor, seen, followedUpAt, reply:{text, sentiment},
-     followUps:[{at, text, loom, shotId}], offer: accelerator|academy, lostAt (status lost = not interested),
+     sentAt, day, status: sent|replied|booked|later|lost, followUpOn (for later), repliedAt, bookedFor, seen, followedUpAt, reply:{text, sentiment},
+     followUps:[{at, text, loom, shotId}], offer: accelerator, lostAt (status lost = not interested),
      score:{overall, criteria:{human, personal, value, lowNo, status, clarity, loom}, style, feedback} } */
 const GOAL = 5, FOLLOW_UP_AFTER = 3, TOO_LATE = 7, DAY = 864e5;
 
@@ -343,18 +354,9 @@ const CHANNELS = ['Instagram','WhatsApp','Email'];
 // What each prospect is being pitched. Prices are per month.
 const OFFERS = {
   accelerator: { name:'Accelerator', price:5000, note:'' },
-  academy:     { name:'Academy',     price:997,  note:'Group consulting calls · Whop' },
 };
-const OFFER_KEYS = Object.keys(OFFERS);
 const eur = n => Math.round(n).toLocaleString('de-DE') + '€';
-const offerOf = d => OFFERS[d?.offer] ? d.offer : 'accelerator'; // everything before offers existed was Accelerator
-const offerTag = k => `${OFFERS[k].name} · ${eur(OFFERS[k].price)}/mo`;
-const offerPill = (k, act, h) => `<button class="pill offer ${k}" data-act="${act}" data-h="${esc(h)}" title="Tap to switch offer">${esc(offerTag(k))}</button>`;
-function offerSeg(sel, act){
-  return `<div class="seg2">${OFFER_KEYS.map(k => `<button class="${sel===k?'on':''}" data-act="${act}" data-o="${k}">
-    <b>${OFFERS[k].name}</b><span>${eur(OFFERS[k].price)} / month</span>${OFFERS[k].note ? `<small>${OFFERS[k].note}</small>` : ''}</button>`).join('')}</div>`;
-}
-const nextOffer = k => OFFER_KEYS[(OFFER_KEYS.indexOf(k) + 1) % OFFER_KEYS.length];
+const offerOf = d => OFFERS[d?.offer] ? d.offer : 'accelerator'; // the Accelerator is the only offer
 // Distilled from David's sales-training notes. Every DM is scored against these.
 const CRITERIA = [
   ['human',    'Human, not automated'],
@@ -438,27 +440,31 @@ function tier(er){
 const fmtCall = iso => new Date(iso).toLocaleString(undefined, { weekday:'short', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
 const upcomingCalls = () => dms.filter(d => d.status === 'booked' && d.bookedFor && new Date(d.bookedFor) > Date.now() - 2*3600e3)
   .sort((a,b) => a.bookedFor.localeCompare(b.bookedFor));
-const STAGES = [['all','All'],['sent','Contacted'],['replied','Responded'],['booked','Booked call'],['lost','Not interested']];
+const STAGES = [['all','All'],['sent','Contacted'],['replied','Responded'],['booked','Booked call'],['later','In 30 days'],['lost','Not interested']];
 // Board columns, in pipeline order. "lead" is a queued profile; the rest are DM statuses.
 const COLS = [
   { k:'lead',    label:'Lead',           color:'#cfe8f3' },
   { k:'sent',    label:'Contacted',      color:'#7cc3e0' },
   { k:'replied', label:'Responded',      color:'#0593c6' },
   { k:'booked',  label:'Booked Call',    color:'#d83995' },
+  { k:'later',   label:'Follow up in 30 days', color:'#f3a6cf' },
   { k:'lost',    label:'Not Interested', color:'#b9b9b9' },
 ];
-let offerFilter = 'all'; // all | accelerator | academy, applies to board and list
 // Someone counts as having responded if they replied at any point, even if they later said no.
-const responded = d => ['replied','booked'].includes(d.status) || (d.status === 'lost' && !!d.repliedAt);
+const responded = d => ['replied','booked'].includes(d.status) || (['lost','later'].includes(d.status) && !!d.repliedAt);
 let stage = 'all';   // which stage the All DMs list shows
 let booking = null; // handle whose booking form is open
-let leadOffer = 'accelerator'; // offer picked for the next batch of pasted profiles
 let leads = [];      // profiles waiting for a first DM (collection "leads", keyed by handle)
 let fuFlow = null;  // follow-up being logged: { handle, step, shot, shotUrl, loom, saving }
 // Every logged follow-up, oldest first. Older DMs only have followedUpAt, so count that as one.
 const followUpsOf = d => d.followUps?.length ? d.followUps : d.followedUpAt ? [{ at:d.followedUpAt, text:'', legacy:true }] : [];
 // Where a DM stands on follow-up: none needed, waiting, due, too late.
 function followState(d){
+  if(d.status === 'later'){
+    const on = d.followUpOn ? new Date(d.followUpOn) : null;
+    if(!on) return null;
+    return on <= Date.now() ? { k:'due', label:'30-day follow-up due' } : { k:'wait', label:`Follow up ${on.toLocaleDateString(undefined,{month:'short',day:'numeric'})}` };
+  }
   if(d.status !== 'sent') return null;
   if(d.followedUpAt) return { k:'done', label:'Followed up' };
   const days = daysSince(d.sentAt);
@@ -527,9 +533,11 @@ function renderGoal(){
       <div class="small ${n>=GOAL?'':'muted'}" style="${n>=GOAL?'color:var(--good);font-weight:600':''}">${n>=GOAL ? 'Goal hit ✦' : n ? `${GOAL-n} to go. Keep the streak alive` : `${GOAL} to go`}</div>
     </div>
     <div class="slots ${n>=GOAL?'done':''}">${Array.from({length:GOAL},(_,i)=>`<i class="${i<n?'on':''}"></i>`).join('')}</div>
-    <div class="small muted">Resets to 0 at midnight.</div>
-    ${pipeline().total ? `<div class="pipe-mini"><span>Pipeline</span><b>${eur(pipeline().total)}</b><span>/ month potential</span></div>` : ''}
-    ${upcomingCalls()[0] ? `<div class="next-call"><span class="pill solid">Next call</span><b>@${esc(upcomingCalls()[0].handle)}</b><span class="muted">${esc(fmtCall(upcomingCalls()[0].bookedFor))} · ${esc(offerTag(offerOf(upcomingCalls()[0])))}</span></div>` : ''}`;
+    <div class="small muted">Daily goal ${GOAL} DMs · resets at midnight</div>`;
+  const nc = upcomingCalls()[0];
+  $('#glance').innerHTML = `
+    <button class="tile" data-tab="track" data-sub="pipeline"><span>Pipeline</span><b class="grad-text">${eur(pipeline().total)}</b><small>per month potential</small></button>
+    <button class="tile" data-tab="track" data-sub="pipeline"><span>Next call</span>${nc ? `<b>@${esc(nc.handle)}</b><small>${esc(fmtCall(nc.bookedFor))}</small>` : `<b class="muted">None yet</b><small>Book one from Tracking</small>`}</button>`;
   $('#cons').innerHTML = `
       <h2 style="margin:0"><i>Consistency</i></h2>
       <div class="nums">
@@ -561,8 +569,7 @@ function renderFlow(){
     const er = engagement(d), t = tier(er);
     body = `
       <label class="f">Instagram profile link<input id="f_url" value="${esc(d.url)}" placeholder="https://instagram.com/username" autocomplete="off"></label>
-      <div class="small muted">Offer</div>
-      ${offerSeg(d.offer || 'accelerator', 'offerpick')}
+
       <div class="small muted">Profile engagement (check their last 3 posts)</div>
       <div class="grid3">
         <label class="f">Followers<input id="f_followers" inputmode="decimal" value="${esc(d.followers)}" placeholder="12.4k"></label>
@@ -737,27 +744,17 @@ function group(keyFn, order){
   return order ? order.map(k => g[k]).filter(Boolean) : rows.sort((a,b) => b.sent - a.sent);
 }
 
-function offerTable(){
-  const rows = OFFER_KEYS.map(k => {
-    const ds = dms.filter(d => offerOf(d) === k), b = ds.filter(d => d.status === 'booked').length;
-    return { k, sent:ds.length, replies:ds.filter(responded).length, booked:b, value:b * OFFERS[k].price };
-  });
-  return `<div class="card list" style="overflow-x:auto"><table>
-    <tr><th>Offer</th><th class="num">Sent</th><th class="num">Reply rate</th><th class="num">Booked</th><th class="num">Value/mo</th></tr>
-    ${rows.map(r => `<tr><td><b>${OFFERS[r.k].name}</b><div class="small muted">${eur(OFFERS[r.k].price)} / month</div></td><td class="num">${r.sent}</td><td class="num">${pct(r.replies,r.sent)}</td><td class="num">${r.booked}</td><td class="num"><b>${eur(r.value)}</b></td></tr>`).join('')}
-  </table></div>`;
-}
-
 // Every euro in play, per month: queued profiles plus every DM by stage, priced by its offer.
 const PIPE_STAGES = [
   { k:'queue',   label:'To contact', color:'#cfe8f3' },
   { k:'sent',    label:'Waiting',    color:'#7cc3e0' },
   { k:'replied', label:'Replied',    color:'#0593c6' },
+  { k:'later',   label:'In 30 days', color:'#f3a6cf' },
   { k:'booked',  label:'Booked',     color:'#d83995' },
 ];
 function pipeline(){
   const price = x => OFFERS[offerOf(x)].price;
-  const groups = { queue:pendingLeads(), sent:dms.filter(d => d.status === 'sent'), replied:dms.filter(d => d.status === 'replied'), booked:dms.filter(d => d.status === 'booked') };
+  const groups = { queue:pendingLeads(), sent:dms.filter(d => d.status === 'sent'), replied:dms.filter(d => d.status === 'replied'), later:dms.filter(d => d.status === 'later'), booked:dms.filter(d => d.status === 'booked') };
   const rows = PIPE_STAGES.map(st => ({ ...st, n:groups[st.k].length, value:groups[st.k].reduce((t,x) => t + price(x), 0) }));
   return { rows, total:rows.reduce((t,r) => t + r.value, 0) };
 }
@@ -768,12 +765,11 @@ function pipelineCard(){
       <div><h2 style="margin:0 0 6px">Pipeline</h2><div class="total">${eur(total)}<small> / month potential</small></div></div>
     </div>
     <div class="stack">${rows.filter(r => r.value).map(r => `<i style="flex-grow:${r.value};background:${r.color}" title="${r.label}: ${eur(r.value)}"></i>`).join('')}</div>
-    <div class="rows">${rows.map(r => `<div><span><i style="background:${r.color}"></i>${r.label}</span><b>${eur(r.value)}</b><em>${r.n} ${r.n===1?'person':'people'}</em></div>`).join('')}</div>
+    <div class="rows r5">${rows.map(r => `<div><span><i style="background:${r.color}"></i>${r.label}</span><b>${eur(r.value)}</b><em>${r.n} ${r.n===1?'person':'people'}</em></div>`).join('')}</div>
   </div>`;
 }
 
 function boardHTML(){
-  const keep = x => offerFilter === 'all' || offerOf(x) === offerFilter;
   const pad = n => String(n).padStart(2,'0');
   const local = iso => { const x = new Date(iso); return `${x.getFullYear()}-${pad(x.getMonth()+1)}-${pad(x.getDate())}T${pad(x.getHours())}:${pad(x.getMinutes())}`; };
   const moveSel = (kind, h, cur) => `<select data-move="${kind}:${esc(h)}" aria-label="Move @${esc(h)}"><option value="">Move to…</option>${COLS.filter(c => c.k !== cur && !(kind === 'dm' && c.k === 'lead')).map(c => `<option value="${c.k}">${c.label}</option>`).join('')}</select>`;
@@ -781,17 +777,18 @@ function boardHTML(){
     const f = kind === 'dm' ? followState(x) : null;
     const extra = kind === 'lead' ? `<span>Added ${new Date(x.addedAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})}</span>`
       : colKey === 'booked' ? (x.bookedFor ? `<span style="color:var(--pink);font-weight:600">${esc(fmtCall(x.bookedFor))}</span>` : `<button class="sm" data-act="bookopen" data-h="${esc(x.handle)}">Set call time</button>`)
+      : colKey === 'later' ? `<span class="pill ${f?.k==='due' ? 'fu' : 'fu-soft'}">${f?.k==='due' ? 'Follow up now' : 'Follow up ' + new Date(x.followUpOn || Date.now()).toLocaleDateString(undefined,{month:'short',day:'numeric'})}</span>`
       : f && f.k !== 'done' ? `<span class="pill ${f.k==='due'?'fu':f.k==='late'?'bad':'fu-soft'}">${f.label}</span>`
       : `<span>${new Date(x.sentAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})} · ${esc(x.channel || 'Instagram')}</span>`;
     const form = kind === 'dm' && booking === x.handle ? `<div class="book"><input type="datetime-local" min="${local(new Date().toISOString()).slice(0,10)}T00:00" value="${x.bookedFor ? local(x.bookedFor) : ''}"><button class="sm primary" data-act="booksave" data-h="${esc(x.handle)}">Save</button><button class="sm" data-act="bookcancel">Cancel</button></div>` : '';
     return `<div class="kcard" draggable="true" data-card="${kind}:${esc(x.handle)}">
       <a href="https://instagram.com/${encodeURIComponent(x.handle)}" target="_blank" rel="noopener">@${esc(x.handle)}</a>
-      <div class="meta">${offerPill(offerOf(x), kind === 'lead' ? 'leadoffertoggle' : 'dmoffertoggle', x.handle)}${extra}</div>
+      <div class="meta">${extra}</div>
       ${form}${moveSel(kind, x.handle, colKey)}
     </div>`;
   };
   const cols = COLS.map(c => {
-    const items = c.k === 'lead' ? pendingLeads().filter(keep).map(l => ['lead', l]) : dms.filter(d => d.status === c.k && keep(d)).sort((a,b) => (b.sentAt||'').localeCompare(a.sentAt||'')).map(d => ['dm', d]);
+    const items = c.k === 'lead' ? pendingLeads().map(l => ['lead', l]) : dms.filter(d => d.status === c.k).sort((a,b) => (b.sentAt||'').localeCompare(a.sentAt||'')).map(d => ['dm', d]);
     const value = c.k === 'lost' ? null : items.reduce((t,[,x]) => t + OFFERS[offerOf(x)].price, 0);
     return `<div class="col" data-col="${c.k}">
       <div class="col-h"><div class="t"><i style="background:${c.color}"></i>${c.label}<b>${items.length}</b></div><small>${value == null ? 'Out of the pipeline' : eur(value) + ' / month'}</small></div>
@@ -813,6 +810,7 @@ async function moveTo(kind, h, col){
       const doc = { handle:h, url:`https://instagram.com/${h}`, offer:offerOf(l), channel:lastCh || 'Instagram', opener:'', loom:'', sentAt:now, day:localDay(), status:col, movedOnBoard:true };
       if(col === 'replied' || col === 'booked') doc.repliedAt = now;
       if(col === 'lost') doc.lostAt = now;
+      if(col === 'later') doc.followUpOn = new Date(Date.now() + 30*DAY).toISOString();
       await store.collection('dms').doc(h).set(doc);
       store.collection('leads').doc(h).delete().catch(() => {});
     } else {
@@ -820,11 +818,13 @@ async function moveTo(kind, h, col){
       const patch = { status:col };
       if((col === 'replied' || col === 'booked') && !d.repliedAt) patch.repliedAt = now;
       if(col === 'lost') patch.lostAt = now;
+      if(col === 'later') patch.followUpOn = new Date(Date.now() + 30*DAY).toISOString();
       await store.collection('dms').doc(h).update(patch);
     }
   }catch(e){ toast("Couldn't move. Try again."); return false; }
   const label = COLS.find(c => c.k === col).label;
   if(col === 'booked'){ toast(`@${h} → Booked Call ✦ Set the call time on the card`); booking = h; confetti(40); }
+  else if(col === 'later') toast(`@${h} → follow up on ${new Date(Date.now() + 30*DAY).toLocaleDateString(undefined,{month:'short',day:'numeric'})}`);
   else toast(`@${h} → ${label}`);
   return true;
 }
@@ -837,6 +837,7 @@ function outcome(d){
     return s === 'positive' ? { pts:3, label:'Warm reply', cls:'good' } : s === 'negative' ? { pts:1, label:'Cold reply', cls:'bad' } : { pts:2, label:'Replied', cls:'good' };
   }
   if(d.status === 'lost') return { pts: d.repliedAt ? 1 : 0, label:'Not interested', cls:'bad' };
+  if(d.status === 'later') return { pts: d.repliedAt ? 2 : 0.5, label:'In 30 days', cls:'fu-soft' };
   if(d.seen) return { pts:0.5, label:'Seen', cls:'' };
   return { pts:0, label:'No reply', cls:'' };
 }
@@ -848,7 +849,7 @@ function openerRanking(){
       <span class="pos">${i+1}</span>
       <div style="min-width:0;flex:1">
         <div class="txt">${esc(d.opener.replace(/https?:\/\/\S+/g,'[Loom]'))}</div>
-        <div class="small muted">@${esc(d.handle)} · ${esc(d.channel || 'Instagram')} · ${esc(OFFERS[offerOf(d)].name)}</div>
+        <div class="small muted">@${esc(d.handle)} · ${esc(d.channel || 'Instagram')}</div>
       </div>
       <span class="pill ${o.cls}">${o.label}</span>
     </div>`).join('')}</div>`;
@@ -870,8 +871,7 @@ function renderLeads(){
   <div class="card" style="display:grid;gap:10px">
     <label class="f" for="leadPaste">Paste Instagram profile links, one per line</label>
     <textarea id="leadPaste" rows="4" placeholder="https://instagram.com/someone&#10;@another.account">${esc(draft)}</textarea>
-    <div class="small muted">Offer for these profiles</div>
-    ${offerSeg(leadOffer, 'leadofferpick')}
+
     <div class="row" style="justify-content:space-between">
       <span class="small muted">Profiles you've already DMed are skipped.</span>
       <button class="primary go" data-act="leadadd">Add to pipeline ✦</button>
@@ -880,13 +880,13 @@ function renderLeads(){
   ${pend.length ? `<div class="potential"><div><b>${eur(pend.reduce((t,l) => t + OFFERS[offerOf(l)].price, 0))}</b><span> / month in your queue</span></div><span>Every profile you DM is a shot at it. ${pend.length} waiting.</span></div>` : ''}
   <div class="row" style="justify-content:space-between">
     <div><h2 style="margin:0">Pending to <i>contact</i></h2>
-      <div class="small muted" style="margin-top:4px">${pend.length} waiting${pend.length ? ` · ${OFFER_KEYS.map(k => `${pend.filter(l => offerOf(l)===k).length} ${OFFERS[k].name}`).join(' · ')}` : ''}</div></div>
+      <div class="small muted" style="margin-top:4px">${pend.length} waiting, oldest first</div></div>
     ${pend.length ? `<button class="primary go" data-act="leadnext">DM the next one<span class="arrow">↗</span></button>` : ''}
   </div>
   ${pend.length ? `<div class="card list">${pend.map(l => `<div class="lead">
       <div class="who">
         <a href="https://instagram.com/${encodeURIComponent(l.handle)}" target="_blank" rel="noopener">@${esc(l.handle)}</a>
-        <div class="row" style="gap:6px;margin-top:2px">${offerPill(offerOf(l), 'leadoffertoggle', l.handle)}<span>Added ${new Date(l.addedAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})}${l.note ? ' · ' + esc(l.note) : ''}</span></div>
+        <div>Added ${new Date(l.addedAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})}${l.note ? ' · ' + esc(l.note) : ''}</div>
       </div>
       <button class="sm" data-act="leaddm" data-h="${esc(l.handle)}">DM now</button>
       <button class="x" data-act="leaddel" data-h="${esc(l.handle)}" aria-label="Remove @${esc(l.handle)}">✕</button>
@@ -912,13 +912,13 @@ async function addLeads(text){
     if(!h){ bad++; continue; }
     if(c.has(h) || have.has(h) || seen.has(h)){ skipped++; continue; }
     seen.add(h);
-    try{ await store.collection('leads').doc(h).set({ handle:h, url:`https://instagram.com/${h}`, addedAt:now, offer:leadOffer }); added++; }
+    try{ await store.collection('leads').doc(h).set({ handle:h, url:`https://instagram.com/${h}`, addedAt:now, offer:'accelerator' }); added++; }
     catch(e){ toast("Couldn't save. Try again."); return; }
   }
   const box = $('#leadPaste'); if(box) box.value = '';
   renderLeads();
   if(added){ sparkle($('[data-act=leadadd]'), 18); bump($('#leadCount')); }
-  toast(`Added ${added} to ${OFFERS[leadOffer].name}` + (skipped ? ` · ${skipped} already in your list or DMed` : '') + (bad ? ` · ${bad} not a profile link` : ''));
+  toast(`Added ${added}` + (skipped ? ` · ${skipped} already in your list or DMed` : '') + (bad ? ` · ${bad} not a profile link` : ''));
 }
 
 // Open the DM steps on Start with this profile filled in.
@@ -1008,47 +1008,52 @@ Reply with only JSON: {"text": "the follow-up, word for word", "reply": {"replie
   }catch(e){ fuFlow.saving = false; renderTrack(); toast("Couldn't save. Try again."); }
 }
 
+const SUBS = [['pipeline','Pipeline'],['followups','Follow-ups'],['dms','DMs'],['insights','Insights']];
+let sub = 'pipeline';
+
 function renderTrack(){
   const el = $('#track');
   const due = dms.filter(d => followState(d)?.k === 'due').sort((a,b) => a.sentAt.localeCompare(b.sentAt));
   $('#fuCount').innerHTML = due.length ? `<span class="count">${due.length}</span>` : '';
   if(tab !== 'track') return;
   if(!store){ el.innerHTML = `<div class="notice">${loaded ? 'Open this page in Claude to see your tracking.' : 'Connecting…'}</div>`; return; }
-  if(!dms.length){ el.innerHTML = `<div class="card empty">No DMs yet. Go to Start and log your first one.</div>`; return; }
+  if(!dms.length && !leads.length){ el.innerHTML = `<div class="card empty">No DMs yet. Go to Start and log your first one.</div>`; return; }
 
   const sent = dms.length, replies = dms.filter(responded).length, booked = dms.filter(d => d.status === 'booked').length;
   const late = dms.filter(d => followState(d)?.k === 'late').length;
-  const bookedValue = dms.filter(d => d.status === 'booked').reduce((t,d) => t + OFFERS[offerOf(d)].price, 0);
   const all = dms.slice().sort((a,b) => b.sentAt.localeCompare(a.sentAt));
-  const listed = all.filter(d => offerFilter === 'all' || offerOf(d) === offerFilter);
-  const offerViews = `<div class="views">${[['all','All offers'], ...OFFER_KEYS.map(k => [k, OFFERS[k].name])].map(([k,l]) => `<button class="${offerFilter===k?'on':''}" data-act="offerfilter" data-o="${k}">${l}</button>`).join('')}</div>`;
+  const pad = n => String(n).padStart(2,'0');
+  const local = iso => { const x = new Date(iso); return `${x.getFullYear()}-${pad(x.getMonth()+1)}-${pad(x.getDate())}T${pad(x.getHours())}:${pad(x.getMinutes())}`; };
 
+  // One row per DM: who, where they stand, the one next step, and everything else under More.
   const row = d => {
-    const f = followState(d);
-    const status = d.status === 'booked' ? `<span class="pill solid">Booked${d.bookedFor ? ' · ' + esc(fmtCall(d.bookedFor)) : ''}</span>` : d.status === 'replied' ? '<span class="pill good">Replied</span>' : d.status === 'lost' ? '<span class="pill bad">Not interested</span>' : (d.seen ? '<span class="pill">Seen</span>' : '');
-    const fu = f ? `<span class="pill ${f.k==='due'?'fu':f.k==='late'?'bad':f.k==='wait'?'fu-soft':''}">${f.label}</span>` : '';
-    const h = esc(d.handle);
-    const fuN = followUpsOf(d).length;
-    const fuBtn = d.status !== 'booked' ? `<button class="sm" data-act="fuopen" data-h="${h}" style="${f?.k==='due' ? 'border-color:var(--fu);color:var(--fu)' : ''}">Log follow-up${fuN ? ` (${fuN})` : ''}</button>` : '';
-    const btns = d.status === 'sent'
-      ? fuBtn
-        + `<button class="sm primary" data-act="replied" data-h="${h}">Responded</button>`
-        + (canImages ? `<label class="btnlike">Check for reply<input type="file" accept="image/*" data-reply="${h}" hidden></label>` : '')
-      : fuBtn;
-    const bookBtn = `<button class="sm${d.status === 'replied' ? ' primary' : ''}" data-act="bookopen" data-h="${h}">${d.status === 'booked' ? 'Change call time' : 'Book call'}</button>`;
-    const pad = n => String(n).padStart(2,'0');
-    const local = iso => { const x = new Date(iso); return `${x.getFullYear()}-${pad(x.getMonth()+1)}-${pad(x.getDate())}T${pad(x.getHours())}:${pad(x.getMinutes())}`; };
+    const f = followState(d), h = esc(d.handle), fuN = followUpsOf(d).length;
+    const status = d.status === 'booked' ? `<span class="pill solid">Booked${d.bookedFor ? ' · ' + esc(fmtCall(d.bookedFor)) : ''}</span>`
+      : d.status === 'replied' ? '<span class="pill good">Responded</span>'
+      : d.status === 'lost' ? '<span class="pill bad">Not interested</span>'
+      : d.status === 'later' ? `<span class="pill ${f?.k==='due'?'fu':'fu-soft'}">${f ? f.label : 'In 30 days'}</span>`
+      : f ? `<span class="pill ${f.k==='due'?'fu':f.k==='late'?'bad':f.k==='wait'?'fu-soft':''}">${f.label}</span>`
+      : (d.seen ? '<span class="pill">Seen</span>' : '<span class="pill">Contacted</span>');
+    const next = d.status === 'sent' ? `<button class="sm primary" data-act="replied" data-h="${h}">Responded</button>`
+      : d.status === 'replied' ? `<button class="sm primary" data-act="bookopen" data-h="${h}">Book call</button>`
+      : d.status === 'booked' ? `<button class="sm" data-act="bookopen" data-h="${h}">Change time</button>` : '';
+    const moreBtns = [
+      d.status !== 'booked' ? `<button class="sm" data-act="fuopen" data-h="${h}">Log follow-up${fuN ? ` (${fuN})` : ''}</button>` : '',
+      d.status === 'sent' && canImages ? `<label class="btnlike">Check for reply<input type="file" accept="image/*" data-reply="${h}" hidden></label>` : '',
+      ['sent','lost','later'].includes(d.status) ? `<button class="sm" data-act="bookopen" data-h="${h}">Book call</button>` : '',
+      d.status !== 'later' && d.status !== 'booked' ? `<button class="sm" data-act="setlater" data-h="${h}">Follow up in 30 days</button>` : '',
+      d.status !== 'lost' ? `<button class="sm" data-act="setlost" data-h="${h}">Not interested</button>` : '',
+    ].join('');
     const form = booking === d.handle ? `<div class="book"><input type="datetime-local" min="${local(new Date().toISOString()).slice(0,10)}T00:00" value="${d.bookedFor ? local(d.bookedFor) : ''}"><button class="sm primary" data-act="booksave" data-h="${h}">Save</button><button class="sm" data-act="bookcancel">Cancel</button></div>` : '';
     return `<div class="dm"${d.status === 'sent' && canImages ? ` data-drop="${h}"` : ''}>
-      <div class="top">
-        <a href="${esc(d.url)}" target="_blank" rel="noopener">@${esc(d.handle)}</a>
-        <span class="small muted">${new Date(d.sentAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})}${d.channel ? ' · '+esc(d.channel) : ''}${tier(d.er) ? ' · '+tier(d.er)+' eng.' : ''}</span>
-        ${offerPill(offerOf(d), 'dmoffertoggle', d.handle)}
-        <span style="flex:1"></span>${status}${fu}
-      </div>
-      <div class="row" style="margin-top:8px">${btns}${bookBtn}</div>${form}
-      <details><summary>Message, Loom & notes</summary>
-        ${d.shotId ? `<img src="${esc(d.shotUrl || '/_blob/'+d.shotId)}" alt="Message screenshot" style="margin-top:6px" loading="lazy">` : ''}
+      <div class="dm-main">
+        <div class="who"><a href="${esc(d.url)}" target="_blank" rel="noopener">@${h}</a>
+          <div class="small muted">${new Date(d.sentAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})} · ${esc(d.channel || 'Instagram')}</div></div>
+        ${status}${next}
+      </div>${form}
+      <details class="more"><summary>More</summary>
+        <div class="row" style="margin-top:8px">${moreBtns}</div>
+        ${d.shotId ? `<img src="${esc(d.shotUrl || '/_blob/'+d.shotId)}" alt="Message screenshot" style="margin-top:10px" loading="lazy">` : ''}
         ${d.opener ? `<pre>${esc(d.opener)}</pre>` : ''}
         ${d.reply ? `<div class="small" style="margin-top:6px"><span class="pill ${d.reply.sentiment==='positive'?'good':d.reply.sentiment==='negative'?'bad':''}">Reply · ${esc(d.reply.sentiment)}</span> ${esc(d.reply.text)}</div>` : ''}
         ${d.score?.feedback ? `<div class="small" style="margin:8px 0"><b>Next time:</b> ${esc(d.score.feedback)}</div>` : ''}
@@ -1057,55 +1062,47 @@ function renderTrack(){
     </div>`;
   };
 
+  const sections = {
+    pipeline: () => `
+      ${pipelineCard()}
+      ${upcomingCalls().length ? `<div class="card list">${upcomingCalls().map(d => `<div class="call"><span class="pill solid">Call</span><span class="when">${esc(fmtCall(d.bookedFor))}</span><a href="${esc(d.url)}" target="_blank" rel="noopener" style="color:var(--ink);font-weight:600;text-decoration:none">@${esc(d.handle)}</a></div>`).join('')}</div>` : ''}
+      <div class="sec-h"><h2>Board</h2><span class="small muted">Drag a card, or use Move to…</span></div>
+      ${boardHTML()}`,
+    followups: () => `
+      <div class="sec-h"><h2 class="fu-h">Due <i>now</i></h2><span class="small muted">${FOLLOW_UP_AFTER}+ days without a reply, and 30-day follow-ups on their date</span></div>
+      ${due.length ? `<div class="card list">${due.map(row).join('')}</div>` : `<div class="card empty small">Nothing due. You're on top of it.</div>`}
+      <div class="sec-h"><h2>History</h2></div>
+      ${followUpHistory()}`,
+    dms: () => {
+      const shown = stage === 'all' ? all : all.filter(d => d.status === stage);
+      return `
+      <div class="views">${STAGES.map(([k,l]) => `<button class="${stage===k?'on':''}" data-act="stage" data-s="${k}">${l}<b>${(k==='all' ? all : all.filter(d => d.status===k)).length}</b></button>`).join('')}</div>
+      ${shown.length ? `<div class="card list">${shown.map(row).join('')}</div>` : `<div class="card empty small">Nobody here yet.</div>`}`;
+    },
+    insights: () => `
+      <div class="stats">
+        <div class="stat"><span>DMs sent</span><b>${sent}</b></div>
+        <div class="stat hero"><span>Response rate</span><b>${pct(replies,sent)}</b><small>${replies} replied</small></div>
+        <div class="stat"><span>Calls booked</span><b>${booked}</b><small>${pct(booked,sent)} of DMs</small></div>
+        <div class="stat"><span>Missed follow-ups</span><b style="${late?'color:var(--bad)':''}">${late}</b></div>
+      </div>
+      <div class="sec-h"><h2>Opener <i>ranking</i></h2></div>
+      ${openerRanking()}
+      <div class="sec-h"><h2>What gets <i>replies</i></h2></div>
+      ${bucketTable('Channel', group(d => d.channel || 'Instagram', CHANNELS))}
+      ${bucketTable('Profile engagement', group(d => tier(d.er), ['High','Medium','Low']))}`,
+  };
+
   el.innerHTML = `
   ${fuCardHTML()}
-  ${pipelineCard()}
-
-  <div class="row" style="justify-content:space-between;align-items:flex-end"><h2 style="margin:0">Pipeline <i>board</i></h2><span class="small muted">Drag cards, or use Move to…</span></div>
-  ${offerViews}
-  ${boardHTML()}
-  <div class="stats">
-    <div class="stat"><span>DMs sent</span><b>${sent}</b></div>
-    <div class="stat"><span>Replies</span><b>${replies}</b></div>
-    <div class="stat hero"><span>Response rate</span><b>${pct(replies,sent)}</b></div>
-    <div class="stat"><span>Calls booked</span><b>${booked}</b><small>${pct(booked,sent)} of DMs</small></div>
-    <div class="stat"><span>Booked value</span><b>${eur(bookedValue)}</b><small>per month if all close</small></div>
-    <div class="stat"><span>Missed follow-ups</span><b style="${late?'color:var(--bad)':''}">${late}</b></div>
-  </div>
-
-  ${upcomingCalls().length ? `<h2>Upcoming <i>calls</i></h2>
-  <div class="card list">${upcomingCalls().map(d => `<div class="call"><span class="pill solid">Call</span><span class="when">${esc(fmtCall(d.bookedFor))}</span><a href="${esc(d.url)}" target="_blank" rel="noopener" style="color:var(--ink);font-weight:600;text-decoration:none">@${esc(d.handle)}</a><span style="flex:1"></span><span class="small muted">${esc(offerTag(offerOf(d)))}</span></div>`).join('')}</div>` : ''}
-
-  <h2 class="fu-h">Follow up <i>now</i></h2>
-  ${due.length ? `<div class="card list">${due.map(row).join('')}</div>`
-    : `<div class="card empty small">Nothing due. DMs show up here ${FOLLOW_UP_AFTER} days after sending without a reply. After ${TOO_LATE} days it's too late. To check for a reply, drop a fresh screenshot on any DM below.</div>`}
-
-  <h2 class="fu-h">Follow-<i>ups</i></h2>
-  ${followUpHistory()}
-
-  <h2>Opener <i>ranking</i></h2>
-  ${openerRanking()}
-
-  <h2>By <i>offer</i></h2>
-  ${offerTable()}
-
-  <h2>What gets <i>replies</i></h2>
-  ${bucketTable('Channel', group(d => d.channel || 'Instagram', CHANNELS))}
-  ${bucketTable('Profile engagement', group(d => tier(d.er), ['High','Medium','Low']))}
-
-  <h2>All <i>DMs</i></h2>
-  <div class="filters">
-    <div class="views">${STAGES.map(([k,l]) => `<button class="${stage===k?'on':''}" data-act="stage" data-s="${k}">${l}<b>${(k==='all' ? listed : listed.filter(d => d.status===k)).length}</b></button>`).join('')}</div>
-    ${offerViews}
-  </div>
-  ${(() => { const shown = stage === 'all' ? listed : listed.filter(d => d.status === stage);
-    return shown.length ? `<div class="card list">${shown.map(row).join('')}</div>` : `<div class="card empty small">Nothing here yet.</div>`; })()}`;
+  <div class="subnav" role="tablist">${SUBS.map(([k,l]) => `<button role="tab" aria-selected="${sub===k}" class="${sub===k?'on':''}" data-act="sub" data-s="${k}">${l}${k==='followups' && due.length ? `<span class="count">${due.length}</span>` : ''}</button>`).join('')}</div>
+  ${sections[sub]()}`;
 }
 
 /* ---------- Events ---------- */
 document.addEventListener('click', async e => {
   const t = e.target.closest('[data-tab]');
-  if(t){ tab = t.dataset.tab; showTab(); return; }
+  if(t){ if(t.dataset.sub) sub = t.dataset.sub; tab = t.dataset.tab; showTab(); if(t.dataset.sub) window.scrollTo({ top:0 }); return; }
   const b = e.target.closest('[data-act]'); if(!b) return;
   switch(b.dataset.act){
     case 'start': {
@@ -1114,15 +1111,9 @@ document.addEventListener('click', async e => {
       startWith(pendingLeads().find(l => l.handle !== done)?.handle); break;
     }
     case 'stage': stage = b.dataset.s; renderTrack(); break;
-    case 'offerfilter': offerFilter = b.dataset.o; renderTrack(); break;
-    case 'offerpick': readStep(); flow.d.offer = b.dataset.o; renderFlow(); break;
-    case 'leadofferpick': leadOffer = b.dataset.o; renderLeads(); break;
-    case 'leadoffertoggle': case 'dmoffertoggle': {
-      const coll = b.dataset.act === 'leadoffertoggle' ? 'leads' : 'dms', h = b.dataset.h;
-      const cur = (coll === 'leads' ? leads : dms).find(x => x.handle === h), nk = nextOffer(offerOf(cur));
-      try{ await store.collection(coll).doc(h).update({ offer:nk }); toast(`@${h} → ${offerTag(nk)}`); }catch(err){ toast("Couldn't save. Try again."); }
-      break;
-    }
+    case 'sub': sub = b.dataset.s; renderTrack(); break;
+    case 'setlater': { const at = b.getBoundingClientRect(); moveTo('dm', b.dataset.h, 'later').then(ok => { if(ok) sparkle({ getBoundingClientRect:() => at }, 10); renderTrack(); }); break; }
+    case 'setlost': { const at = b.getBoundingClientRect(); moveTo('dm', b.dataset.h, 'lost').then(ok => { if(ok) sparkle({ getBoundingClientRect:() => at }, 10); renderTrack(); }); break; }
     case 'leadadd': addLeads($('#leadPaste')?.value || ''); break;
     case 'leadnext': startWith(pendingLeads()[0]?.handle); break;
     case 'leaddm': startWith(b.dataset.h); break;
