@@ -256,6 +256,27 @@ th{color:var(--muted)}
 .potential span{font-size:12px;color:#40506a}
 
 /* celebration */
+/* board (GHL-style pipeline) */
+.filters{display:grid;gap:8px}
+.board-wrap{overflow-x:auto;width:min(1280px,calc(100vw - 32px));margin-left:calc(50% - min(640px, 50vw - 16px));padding:2px 0 10px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+.board-wrap::-webkit-scrollbar{height:6px}.board-wrap::-webkit-scrollbar-thumb{background:#dcdcdc;border-radius:3px}
+.board{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(230px,1fr);gap:10px;min-width:min-content}
+.col{background:var(--soft);border-radius:18px;padding:10px;display:grid;gap:8px;align-content:start;scroll-snap-align:start;min-height:180px;max-height:560px;overflow-y:auto;transition:box-shadow .2s,background .2s}
+.col.over{background:#eef8fc;box-shadow:0 0 0 2px var(--accent) inset}
+.col-h{display:grid;gap:2px;padding:2px 4px 6px;position:sticky;top:-10px;background:var(--soft);z-index:1}
+.col-h .t{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px}
+.col-h .t i{width:9px;height:9px;border-radius:50%;flex:none}
+.col-h .t b{margin-left:auto;font-weight:600;font-size:12px;color:var(--muted)}
+.col-h small{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.kcard{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 12px;display:grid;gap:6px;cursor:grab;transition:transform .15s,box-shadow .2s}
+.kcard:hover{box-shadow:0 6px 18px -10px rgba(0,0,0,.25)}
+.kcard.dragging{opacity:.45;transform:rotate(-2deg)}
+.kcard a{color:var(--ink);font-weight:600;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kcard .meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:11px;color:var(--muted)}
+.kcard select{font:inherit;font-size:12px;color:var(--muted);background:var(--soft);border:0;border-radius:8px;padding:4px 6px;width:100%;cursor:pointer}
+.col-empty{font-size:12px;color:var(--muted);text-align:center;padding:14px 6px;border:1.5px dashed #dcdcdc;border-radius:12px}
+.kcard .book{margin-top:0}
+.kcard .book input{width:100%}
 /* pipeline money stack */
 .pipe{display:grid;gap:14px}
 .pipe .total{font-family:var(--serif);font-weight:400;font-size:52px;line-height:1;letter-spacing:-.02em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -312,8 +333,8 @@ th{color:var(--muted)}
 <script>
 /* Each DM is one document in "dms", keyed by IG handle:
    { handle, url, followers, avgLikes, avgComments, er, channel, shotId, opener (read from the screenshot), loom,
-     sentAt, day, status: sent|replied|booked, repliedAt, bookedFor, seen, followedUpAt, reply:{text, sentiment},
-     followUps:[{at, text, loom, shotId}], offer: accelerator|academy,
+     sentAt, day, status: sent|replied|booked|lost, repliedAt, bookedFor, seen, followedUpAt, reply:{text, sentiment},
+     followUps:[{at, text, loom, shotId}], offer: accelerator|academy, lostAt (status lost = not interested),
      score:{overall, criteria:{human, personal, value, lowNo, status, clarity, loom}, style, feedback} } */
 const GOAL = 5, FOLLOW_UP_AFTER = 3, TOO_LATE = 7, DAY = 864e5;
 
@@ -417,7 +438,18 @@ function tier(er){
 const fmtCall = iso => new Date(iso).toLocaleString(undefined, { weekday:'short', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
 const upcomingCalls = () => dms.filter(d => d.status === 'booked' && d.bookedFor && new Date(d.bookedFor) > Date.now() - 2*3600e3)
   .sort((a,b) => a.bookedFor.localeCompare(b.bookedFor));
-const STAGES = [['all','All'],['sent','Waiting'],['replied','Replied'],['booked','Booked']];
+const STAGES = [['all','All'],['sent','Contacted'],['replied','Responded'],['booked','Booked call'],['lost','Not interested']];
+// Board columns, in pipeline order. "lead" is a queued profile; the rest are DM statuses.
+const COLS = [
+  { k:'lead',    label:'Lead',           color:'#cfe8f3' },
+  { k:'sent',    label:'Contacted',      color:'#7cc3e0' },
+  { k:'replied', label:'Responded',      color:'#0593c6' },
+  { k:'booked',  label:'Booked Call',    color:'#d83995' },
+  { k:'lost',    label:'Not Interested', color:'#b9b9b9' },
+];
+let offerFilter = 'all'; // all | accelerator | academy, applies to board and list
+// Someone counts as having responded if they replied at any point, even if they later said no.
+const responded = d => ['replied','booked'].includes(d.status) || (d.status === 'lost' && !!d.repliedAt);
 let stage = 'all';   // which stage the All DMs list shows
 let booking = null; // handle whose booking form is open
 let leadOffer = 'accelerator'; // offer picked for the next batch of pasted profiles
@@ -699,7 +731,7 @@ function group(keyFn, order){
   for(const d of dms){
     const k = keyFn(d); if(k == null) continue;
     const r = g[k] ||= { label:k, sent:0, replies:0 };
-    r.sent++; if(d.status !== 'sent') r.replies++;
+    r.sent++; if(responded(d)) r.replies++;
   }
   const rows = Object.values(g);
   return order ? order.map(k => g[k]).filter(Boolean) : rows.sort((a,b) => b.sent - a.sent);
@@ -708,7 +740,7 @@ function group(keyFn, order){
 function offerTable(){
   const rows = OFFER_KEYS.map(k => {
     const ds = dms.filter(d => offerOf(d) === k), b = ds.filter(d => d.status === 'booked').length;
-    return { k, sent:ds.length, replies:ds.filter(d => d.status !== 'sent').length, booked:b, value:b * OFFERS[k].price };
+    return { k, sent:ds.length, replies:ds.filter(responded).length, booked:b, value:b * OFFERS[k].price };
   });
   return `<div class="card list" style="overflow-x:auto"><table>
     <tr><th>Offer</th><th class="num">Sent</th><th class="num">Reply rate</th><th class="num">Booked</th><th class="num">Value/mo</th></tr>
@@ -740,6 +772,63 @@ function pipelineCard(){
   </div>`;
 }
 
+function boardHTML(){
+  const keep = x => offerFilter === 'all' || offerOf(x) === offerFilter;
+  const pad = n => String(n).padStart(2,'0');
+  const local = iso => { const x = new Date(iso); return `${x.getFullYear()}-${pad(x.getMonth()+1)}-${pad(x.getDate())}T${pad(x.getHours())}:${pad(x.getMinutes())}`; };
+  const moveSel = (kind, h, cur) => `<select data-move="${kind}:${esc(h)}" aria-label="Move @${esc(h)}"><option value="">Move to…</option>${COLS.filter(c => c.k !== cur && !(kind === 'dm' && c.k === 'lead')).map(c => `<option value="${c.k}">${c.label}</option>`).join('')}</select>`;
+  const card = (kind, x, colKey) => {
+    const f = kind === 'dm' ? followState(x) : null;
+    const extra = kind === 'lead' ? `<span>Added ${new Date(x.addedAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})}</span>`
+      : colKey === 'booked' ? (x.bookedFor ? `<span style="color:var(--pink);font-weight:600">${esc(fmtCall(x.bookedFor))}</span>` : `<button class="sm" data-act="bookopen" data-h="${esc(x.handle)}">Set call time</button>`)
+      : f && f.k !== 'done' ? `<span class="pill ${f.k==='due'?'fu':f.k==='late'?'bad':'fu-soft'}">${f.label}</span>`
+      : `<span>${new Date(x.sentAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})} · ${esc(x.channel || 'Instagram')}</span>`;
+    const form = kind === 'dm' && booking === x.handle ? `<div class="book"><input type="datetime-local" min="${local(new Date().toISOString()).slice(0,10)}T00:00" value="${x.bookedFor ? local(x.bookedFor) : ''}"><button class="sm primary" data-act="booksave" data-h="${esc(x.handle)}">Save</button><button class="sm" data-act="bookcancel">Cancel</button></div>` : '';
+    return `<div class="kcard" draggable="true" data-card="${kind}:${esc(x.handle)}">
+      <a href="https://instagram.com/${encodeURIComponent(x.handle)}" target="_blank" rel="noopener">@${esc(x.handle)}</a>
+      <div class="meta">${offerPill(offerOf(x), kind === 'lead' ? 'leadoffertoggle' : 'dmoffertoggle', x.handle)}${extra}</div>
+      ${form}${moveSel(kind, x.handle, colKey)}
+    </div>`;
+  };
+  const cols = COLS.map(c => {
+    const items = c.k === 'lead' ? pendingLeads().filter(keep).map(l => ['lead', l]) : dms.filter(d => d.status === c.k && keep(d)).sort((a,b) => (b.sentAt||'').localeCompare(a.sentAt||'')).map(d => ['dm', d]);
+    const value = c.k === 'lost' ? null : items.reduce((t,[,x]) => t + OFFERS[offerOf(x)].price, 0);
+    return `<div class="col" data-col="${c.k}">
+      <div class="col-h"><div class="t"><i style="background:${c.color}"></i>${c.label}<b>${items.length}</b></div><small>${value == null ? 'Out of the pipeline' : eur(value) + ' / month'}</small></div>
+      ${items.length ? items.map(([kind,x]) => card(kind, x, c.k)).join('') : `<div class="col-empty">Drop someone here</div>`}
+    </div>`;
+  }).join('');
+  return `<div class="board-wrap"><div class="board">${cols}</div></div>`;
+}
+
+// Move a lead or DM to a board column. A queued lead becomes a DM the moment it leaves "Lead".
+async function moveTo(kind, h, col){
+  const now = new Date().toISOString();
+  if(kind === 'dm' && col === 'lead'){ toast(`@${h} already has a logged DM, so it can't go back to Lead`); return false; }
+  try{
+    if(kind === 'lead'){
+      if(col === 'lead') return false;
+      const l = leads.find(x => x.handle === h); if(!l) return false;
+      const lastCh = dms.slice().sort((a,b) => b.sentAt.localeCompare(a.sentAt))[0]?.channel;
+      const doc = { handle:h, url:`https://instagram.com/${h}`, offer:offerOf(l), channel:lastCh || 'Instagram', opener:'', loom:'', sentAt:now, day:localDay(), status:col, movedOnBoard:true };
+      if(col === 'replied' || col === 'booked') doc.repliedAt = now;
+      if(col === 'lost') doc.lostAt = now;
+      await store.collection('dms').doc(h).set(doc);
+      store.collection('leads').doc(h).delete().catch(() => {});
+    } else {
+      const d = dms.find(x => x.handle === h); if(!d || d.status === col) return false;
+      const patch = { status:col };
+      if((col === 'replied' || col === 'booked') && !d.repliedAt) patch.repliedAt = now;
+      if(col === 'lost') patch.lostAt = now;
+      await store.collection('dms').doc(h).update(patch);
+    }
+  }catch(e){ toast("Couldn't move. Try again."); return false; }
+  const label = COLS.find(c => c.k === col).label;
+  if(col === 'booked'){ toast(`@${h} → Booked Call ✦ Set the call time on the card`); booking = h; confetti(40); }
+  else toast(`@${h} → ${label}`);
+  return true;
+}
+
 // Rank every opener by what it got: booked, then a warm reply, then any reply, then seen, then nothing.
 function outcome(d){
   if(d.status === 'booked') return { pts:4, label:'Booked', cls:'solid' };
@@ -747,6 +836,7 @@ function outcome(d){
     const s = d.reply?.sentiment;
     return s === 'positive' ? { pts:3, label:'Warm reply', cls:'good' } : s === 'negative' ? { pts:1, label:'Cold reply', cls:'bad' } : { pts:2, label:'Replied', cls:'good' };
   }
+  if(d.status === 'lost') return { pts: d.repliedAt ? 1 : 0, label:'Not interested', cls:'bad' };
   if(d.seen) return { pts:0.5, label:'Seen', cls:'' };
   return { pts:0, label:'No reply', cls:'' };
 }
@@ -926,14 +1016,16 @@ function renderTrack(){
   if(!store){ el.innerHTML = `<div class="notice">${loaded ? 'Open this page in Claude to see your tracking.' : 'Connecting…'}</div>`; return; }
   if(!dms.length){ el.innerHTML = `<div class="card empty">No DMs yet. Go to Start and log your first one.</div>`; return; }
 
-  const sent = dms.length, replies = dms.filter(d => d.status !== 'sent').length, booked = dms.filter(d => d.status === 'booked').length;
+  const sent = dms.length, replies = dms.filter(responded).length, booked = dms.filter(d => d.status === 'booked').length;
   const late = dms.filter(d => followState(d)?.k === 'late').length;
   const bookedValue = dms.filter(d => d.status === 'booked').reduce((t,d) => t + OFFERS[offerOf(d)].price, 0);
   const all = dms.slice().sort((a,b) => b.sentAt.localeCompare(a.sentAt));
+  const listed = all.filter(d => offerFilter === 'all' || offerOf(d) === offerFilter);
+  const offerViews = `<div class="views">${[['all','All offers'], ...OFFER_KEYS.map(k => [k, OFFERS[k].name])].map(([k,l]) => `<button class="${offerFilter===k?'on':''}" data-act="offerfilter" data-o="${k}">${l}</button>`).join('')}</div>`;
 
   const row = d => {
     const f = followState(d);
-    const status = d.status === 'booked' ? `<span class="pill solid">Booked${d.bookedFor ? ' · ' + esc(fmtCall(d.bookedFor)) : ''}</span>` : d.status === 'replied' ? '<span class="pill good">Replied</span>' : (d.seen ? '<span class="pill">Seen</span>' : '');
+    const status = d.status === 'booked' ? `<span class="pill solid">Booked${d.bookedFor ? ' · ' + esc(fmtCall(d.bookedFor)) : ''}</span>` : d.status === 'replied' ? '<span class="pill good">Replied</span>' : d.status === 'lost' ? '<span class="pill bad">Not interested</span>' : (d.seen ? '<span class="pill">Seen</span>' : '');
     const fu = f ? `<span class="pill ${f.k==='due'?'fu':f.k==='late'?'bad':f.k==='wait'?'fu-soft':''}">${f.label}</span>` : '';
     const h = esc(d.handle);
     const fuN = followUpsOf(d).length;
@@ -968,6 +1060,10 @@ function renderTrack(){
   el.innerHTML = `
   ${fuCardHTML()}
   ${pipelineCard()}
+
+  <div class="row" style="justify-content:space-between;align-items:flex-end"><h2 style="margin:0">Pipeline <i>board</i></h2><span class="small muted">Drag cards, or use Move to…</span></div>
+  ${offerViews}
+  ${boardHTML()}
   <div class="stats">
     <div class="stat"><span>DMs sent</span><b>${sent}</b></div>
     <div class="stat"><span>Replies</span><b>${replies}</b></div>
@@ -998,8 +1094,11 @@ function renderTrack(){
   ${bucketTable('Profile engagement', group(d => tier(d.er), ['High','Medium','Low']))}
 
   <h2>All <i>DMs</i></h2>
-  <div class="views">${STAGES.map(([k,l]) => `<button class="${stage===k?'on':''}" data-act="stage" data-s="${k}">${l}<b>${k==='all' ? all.length : all.filter(d => d.status===k).length}</b></button>`).join('')}</div>
-  ${(() => { const shown = stage === 'all' ? all : all.filter(d => d.status === stage);
+  <div class="filters">
+    <div class="views">${STAGES.map(([k,l]) => `<button class="${stage===k?'on':''}" data-act="stage" data-s="${k}">${l}<b>${(k==='all' ? listed : listed.filter(d => d.status===k)).length}</b></button>`).join('')}</div>
+    ${offerViews}
+  </div>
+  ${(() => { const shown = stage === 'all' ? listed : listed.filter(d => d.status === stage);
     return shown.length ? `<div class="card list">${shown.map(row).join('')}</div>` : `<div class="card empty small">Nothing here yet.</div>`; })()}`;
 }
 
@@ -1015,6 +1114,7 @@ document.addEventListener('click', async e => {
       startWith(pendingLeads().find(l => l.handle !== done)?.handle); break;
     }
     case 'stage': stage = b.dataset.s; renderTrack(); break;
+    case 'offerfilter': offerFilter = b.dataset.o; renderTrack(); break;
     case 'offerpick': readStep(); flow.d.offer = b.dataset.o; renderFlow(); break;
     case 'leadofferpick': leadOffer = b.dataset.o; renderLeads(); break;
     case 'leadoffertoggle': case 'dmoffertoggle': {
@@ -1090,6 +1190,25 @@ document.addEventListener('change', e => {
   if(e.target.id === 'f_shot') setShot(e.target.files[0]);
   else if(e.target.id === 'f_fushot') setFuShot(e.target.files[0]);
   else if(e.target.dataset.reply){ checkReply(e.target.dataset.reply, e.target.files[0]); e.target.value = ''; }
+  else if(e.target.dataset.move && e.target.value){
+    const [kind, h] = e.target.dataset.move.split(':'), col = e.target.value, at = e.target.getBoundingClientRect();
+    moveTo(kind, h, col).then(ok => { if(ok) sparkle({ getBoundingClientRect:() => at }, 14); renderTrack(); });
+  }
+});
+// Board: drag a card onto another column.
+let dragCard = null;
+document.addEventListener('dragstart', e => {
+  const c = e.target.closest?.('[data-card]'); if(!c) return;
+  dragCard = c.dataset.card; c.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', dragCard);
+});
+document.addEventListener('dragend', e => { e.target.closest?.('[data-card]')?.classList.remove('dragging'); document.querySelectorAll('.col.over').forEach(c => c.classList.remove('over')); dragCard = null; });
+document.addEventListener('dragover', e => { const col = dragCard && e.target.closest?.('[data-col]'); if(col){ e.preventDefault(); document.querySelectorAll('.col.over').forEach(c => c !== col && c.classList.remove('over')); col.classList.add('over'); } });
+document.addEventListener('drop', e => {
+  const col = dragCard && e.target.closest?.('[data-col]'); if(!col) return;
+  e.preventDefault(); col.classList.remove('over');
+  const [kind, h] = dragCard.split(':'); dragCard = null;
+  moveTo(kind, h, col.dataset.col).then(ok => { if(ok) sparkle(col, 16); renderTrack(); });
 });
 // Drag and drop: onto the message step, or onto any sent DM in Tracking to check for a reply.
 const dropTarget = e => e.target.closest?.('[data-drop]');
