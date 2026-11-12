@@ -86,6 +86,12 @@ h2{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--mute
 .btnlike{display:inline-block;font-size:12px;padding:4px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);cursor:pointer}
 .btnlike:hover{border-color:var(--muted)}
 .fu-h{color:var(--fu)}
+a.ig{color:var(--ink);text-decoration:none;cursor:pointer}
+a.ig::after{content:' ↗';font-size:.8em;color:var(--muted);transition:color .15s}
+a.ig:hover{text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--accent)}
+a.ig:hover::after{color:var(--accent)}
+a.ig-btn{text-decoration:none;color:var(--ink);font-size:12px;white-space:nowrap}
+@media (max-width:420px){ a.ig-btn{display:none} }
 .stat small{display:block;font-size:11px;color:var(--muted);margin-top:2px}
 nav .lc{display:inline-block;min-width:18px;padding:0 5px;margin-left:4px;border-radius:999px;background:var(--soft);color:var(--ink);font-size:11px;font-weight:700;line-height:18px;text-align:center}
 nav button.on .lc{background:var(--bg);color:var(--ink)}
@@ -783,7 +789,7 @@ function boardHTML(){
       : `<span>${new Date(x.sentAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})} · ${esc(x.channel || 'Instagram')}</span>`;
     const form = kind === 'dm' && booking === x.handle ? `<div class="book"><input type="datetime-local" min="${local(new Date().toISOString()).slice(0,10)}T00:00" value="${x.bookedFor ? local(x.bookedFor) : ''}"><button class="sm primary" data-act="booksave" data-h="${esc(x.handle)}">Save</button><button class="sm" data-act="bookcancel">Cancel</button></div>` : '';
     return `<div class="kcard" draggable="true" data-card="${kind}:${esc(x.handle)}">
-      <a href="https://instagram.com/${encodeURIComponent(x.handle)}" target="_blank" rel="noopener">@${esc(x.handle)}</a>
+      <a href="https://instagram.com/${encodeURIComponent(x.handle)}" target="_blank" rel="noopener" class="ig" title="Open @${esc(x.handle)} on Instagram">@${esc(x.handle)}</a>
       <div class="meta">${extra}</div>
       ${form}${moveSel(kind, x.handle, colKey)}
     </div>`;
@@ -886,9 +892,10 @@ function renderLeads(){
   </div>
   ${pend.length ? `<div class="card list">${pend.map(l => `<div class="lead">
       <div class="who">
-        <a href="https://instagram.com/${encodeURIComponent(l.handle)}" target="_blank" rel="noopener">@${esc(l.handle)}</a>
+        <a href="https://instagram.com/${encodeURIComponent(l.handle)}" target="_blank" rel="noopener" class="ig" title="Open @${esc(l.handle)} on Instagram">@${esc(l.handle)}</a>
         <div>Added ${new Date(l.addedAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})}${l.note ? ' · ' + esc(l.note) : ''}</div>
       </div>
+      <a class="btnlike ig-btn" href="https://instagram.com/${encodeURIComponent(l.handle)}" target="_blank" rel="noopener">Profile ↗</a>
       <button class="sm" data-act="leaddm" data-h="${esc(l.handle)}">DM now</button>
       <button class="x" data-act="leaddel" data-h="${esc(l.handle)}" aria-label="Remove @${esc(l.handle)}">✕</button>
     </div>`).join('')}</div>`
@@ -962,7 +969,7 @@ function followUpHistory(){
   return `<div class="small muted">${items.length} follow-up${items.length===1?'':'s'} · ${wins} got a reply after (${pct(wins, items.length)}) · ${withLoom} with a Loom</div>
   <div class="card list">${items.map(x => `<div class="fuitem">
       <div class="top">
-        <a href="${esc(x.d.url)}" target="_blank" rel="noopener" style="color:var(--ink);font-weight:600;text-decoration:none">@${esc(x.d.handle)}</a>
+        <a href="${esc(x.d.url)}" target="_blank" rel="noopener" class="ig" style="color:var(--ink);font-weight:600">@${esc(x.d.handle)}</a>
         <span class="small muted">Follow-up #${x.n} · ${new Date(x.f.at).toLocaleDateString(undefined,{month:'short',day:'numeric'})}</span>
         ${x.f.loom ? '<span class="pill fu-soft">Loom</span>' : ''}
         <span style="flex:1"></span>
@@ -1048,7 +1055,7 @@ function renderTrack(){
     const form = booking === d.handle ? `<div class="book"><input type="datetime-local" min="${local(new Date().toISOString()).slice(0,10)}T00:00" value="${d.bookedFor ? local(d.bookedFor) : ''}"><button class="sm primary" data-act="booksave" data-h="${h}">Save</button><button class="sm" data-act="bookcancel">Cancel</button></div>` : '';
     return `<div class="dm"${d.status === 'sent' && canImages ? ` data-drop="${h}"` : ''}>
       <div class="dm-main">
-        <div class="who"><a href="${esc(d.url)}" target="_blank" rel="noopener">@${h}</a>
+        <div class="who"><a href="${esc(d.url)}" target="_blank" rel="noopener" class="ig" title="Open @${h} on Instagram">@${h}</a>
           <div class="small muted">${new Date(d.sentAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})} · ${esc(d.channel || 'Instagram')}</div></div>
         ${status}${next}
       </div>${form}
@@ -1066,7 +1073,7 @@ function renderTrack(){
   const sections = {
     pipeline: () => `
       ${pipelineCard()}
-      ${upcomingCalls().length ? `<div class="card list">${upcomingCalls().map(d => `<div class="call"><span class="pill solid">Call</span><span class="when">${esc(fmtCall(d.bookedFor))}</span><a href="${esc(d.url)}" target="_blank" rel="noopener" style="color:var(--ink);font-weight:600;text-decoration:none">@${esc(d.handle)}</a></div>`).join('')}</div>` : ''}
+      ${upcomingCalls().length ? `<div class="card list">${upcomingCalls().map(d => `<div class="call"><span class="pill solid">Call</span><span class="when">${esc(fmtCall(d.bookedFor))}</span><a href="${esc(d.url)}" target="_blank" rel="noopener" class="ig" style="color:var(--ink);font-weight:600">@${esc(d.handle)}</a></div>`).join('')}</div>` : ''}
       <div class="sec-h"><h2>Board</h2><span class="small muted">Drag a card, or use Move to…</span></div>
       ${boardHTML()}`,
     followups: () => `
