@@ -327,3 +327,11 @@ body.pv .wrap{display:none}body.pv #preview{display:block}
 '''
 (OUT / 'guia-de-pegado.html').write_text(guide)
 print('paste guide written: ghl/guia-de-pegado.html')
+
+# ---------- Step 2: Confirmación (one section, styles and script inside it) ----------
+c = (SRC / 'confirmacion.html').read_text().replace('src="img/', 'src="' + IMG_BASE)
+sec = c[c.index('  <section class="step2">'):c.index('</main>')].rstrip()
+d = OUT / 'confirmacion'; d.mkdir(exist_ok=True)
+for f in d.glob('*.html'): f.unlink()
+(d / '01-confirmacion.html').write_text('<div class="jc">\n' + sec + '\n</div>\n')
+print('confirmacion step written')
