@@ -1,5 +1,75 @@
 <div class="jc">
 <header>
+  <!-- Workshop bar: free live Zoom workshop with a countdown to 15 Dec 19:00 (Madrid). It hides itself once the workshop has started. -->
+  <style>
+    .wbar{background:var(--accent);color:#fff}
+    header .wbar .wrap{display:flex;justify-content:flex-start;align-items:center;gap:22px;height:auto;min-height:64px;padding-top:12px;padding-bottom:12px}
+    .wbar-zoom{flex:none;display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;letter-spacing:.02em}
+    .wbar-zoom svg{display:block;width:30px;height:30px}
+    .wbar-text{flex:1;min-width:0}
+    .wbar-text strong{display:block;font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase}
+    .wbar-text span{display:block;margin-top:3px;font-size:13px;line-height:1.4;color:rgba(255,255,255,.78)}
+    .wbar-cd{flex:none;display:flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
+    .wbar-cd .when{margin-right:6px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.75)}
+    .wbar-cd div{min-width:46px;padding:5px 4px 4px;border:1px solid rgba(255,255,255,.28);text-align:center}
+    .wbar-cd b{display:block;font-family:var(--serif);font-weight:500;font-size:22px;line-height:1}
+    .wbar-cd i{display:block;margin-top:2px;font-style:normal;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.7)}
+    .wbar .btn.sm{flex:none;background:#fff;color:var(--accent);border-color:#fff}
+    .wbar .btn.sm:hover{background:var(--blush)}
+    @media (max-width:860px){
+      header .wbar .wrap{flex-wrap:wrap;gap:8px 12px;padding-top:10px;padding-bottom:10px}
+      .wbar-text{flex:1 1 calc(100% - 50px)}
+      .wbar-text span{display:none}
+      .wbar-cd{order:3}
+      .wbar-cd .when{display:none}
+      .wbar-cd div{min-width:40px}
+      .wbar-cd b{font-size:18px}
+      .wbar .btn.sm{order:4;margin-left:auto}
+    }
+  </style>
+  <div class="wbar" data-workshop="2026-12-15T19:00:00+01:00">
+    <div class="wrap">
+      <span class="wbar-zoom" aria-label="Zoom">
+        <svg viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="8" fill="#0b5cff"/><rect x="6" y="10" width="12.5" height="10" rx="2.5" fill="#fff"/><path d="M19.5 13.4l4.5-3v9.2l-4.5-3z" fill="#fff"/></svg>
+        Zoom
+      </span>
+      <p class="wbar-text">
+        <strong>Workshop gratuito en directo de Zoom</strong>
+        <span>Te enseñaré mi método de confianza en 10 días, que va a impulsar tu carrera profesional y hacerte más visible. El workshop completo de confianza, donde hablaremos de cómo conseguir más en menos tiempo.</span>
+      </p>
+      <div class="wbar-cd" aria-label="Cuenta atrás hasta el workshop">
+        <span class="when">15 dic · 19:00</span>
+        <div><b data-w="d">00</b><i>días</i></div>
+        <div><b data-w="h">00</b><i>h</i></div>
+        <div><b data-w="m">00</b><i>min</i></div>
+        <div><b data-w="s">00</b><i>seg</i></div>
+      </div>
+      <a class="btn sm" data-workshop-link href="#" hidden>Reservar mi plaza</a>
+    </div>
+  </div>
+  <script>
+  (function () {
+    var bar = document.querySelector('.wbar');
+    if (!bar || bar.dataset.run) return;
+    bar.dataset.run = '1';
+    // TODO: the workshop registration link (e.g. a GHL form or calendar page). Empty = no button.
+    var WORKSHOP_URL = '';
+    var link = bar.querySelector('[data-workshop-link]');
+    if (WORKSHOP_URL) { link.href = WORKSHOP_URL; link.hidden = false; }
+    var end = new Date(bar.getAttribute('data-workshop')).getTime(), pad = function (n) { return (n < 10 ? '0' : '') + n; };
+    var tick = function () {
+      var t = end - Date.now();
+      if (t <= 0) { bar.hidden = true; return; }               // workshop started: the bar goes away
+      var s = Math.floor(t / 1000);
+      bar.querySelector('[data-w=d]').textContent = pad(Math.floor(s / 86400));
+      bar.querySelector('[data-w=h]').textContent = pad(Math.floor(s % 86400 / 3600));
+      bar.querySelector('[data-w=m]').textContent = pad(Math.floor(s % 3600 / 60));
+      bar.querySelector('[data-w=s]').textContent = pad(s % 60);
+      setTimeout(tick, 1000 - Date.now() % 1000);
+    };
+    tick();
+  })();
+  </script>
   <div class="wrap">
     <a href="#" class="name">Judith Calzada</a>
     <a href="#precios" class="btn sm">Empezar ya</a>
