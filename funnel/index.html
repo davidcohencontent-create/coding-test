@@ -16,13 +16,13 @@
   <!-- Workshop bar: "Workshop gratuito en directo" and a countdown to 15 Dec 19:00 (Madrid). It hides itself once the workshop has started. -->
   <style>
     .wbar{background:var(--accent);color:#fff}
-    header .wbar .wrap{display:flex;justify-content:center;align-items:center;gap:18px;height:auto;min-height:48px;padding-top:8px;padding-bottom:8px}
-    .wbar-title{font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase}
+    header .wbar .wrap{display:flex;justify-content:center;align-items:center;gap:20px;height:auto;min-height:60px;padding-top:10px;padding-bottom:10px}
+    .wbar-title{font-size:13px;font-weight:600;letter-spacing:.18em;text-transform:uppercase}
     .wbar-cd{display:flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
     .wbar-cd div{min-width:42px;padding:4px 4px 3px;border:1px solid rgba(255,255,255,.28);text-align:center}
     .wbar-cd b{display:block;font-family:var(--serif);font-weight:500;font-size:19px;line-height:1}
     .wbar-cd i{display:block;margin-top:2px;font-style:normal;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.7)}
-    @media (max-width:560px){header .wbar .wrap{flex-direction:column;gap:6px}}
+    @media (max-width:560px){header .wbar .wrap{flex-direction:column;gap:7px}.wbar-title{font-size:11px;letter-spacing:.14em}}
   </style>
   <div class="wbar" data-workshop="2026-12-15T19:00:00+01:00">
     <div class="wrap">
@@ -54,10 +54,6 @@
     tick();
   })();
   </script>
-  <div class="wrap">
-    <a href="#top" class="name">Judith Calzada</a>
-    <a href="#precios" class="btn sm">Empezar ya</a>
-  </div>
 </header>
 
 <main id="top">

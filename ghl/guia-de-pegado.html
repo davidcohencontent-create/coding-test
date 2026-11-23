@@ -681,13 +681,13 @@ body :has(&gt; .jc),body :has(.jc){padding:0!important;margin:0!important;max-wi
   &lt;!-- Workshop bar: &quot;Workshop gratuito en directo&quot; and a countdown to 15 Dec 19:00 (Madrid). It hides itself once the workshop has started. --&gt;
   &lt;style&gt;
     .wbar{background:var(--accent);color:#fff}
-    header .wbar .wrap{display:flex;justify-content:center;align-items:center;gap:18px;height:auto;min-height:48px;padding-top:8px;padding-bottom:8px}
-    .wbar-title{font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase}
+    header .wbar .wrap{display:flex;justify-content:center;align-items:center;gap:20px;height:auto;min-height:60px;padding-top:10px;padding-bottom:10px}
+    .wbar-title{font-size:13px;font-weight:600;letter-spacing:.18em;text-transform:uppercase}
     .wbar-cd{display:flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
     .wbar-cd div{min-width:42px;padding:4px 4px 3px;border:1px solid rgba(255,255,255,.28);text-align:center}
     .wbar-cd b{display:block;font-family:var(--serif);font-weight:500;font-size:19px;line-height:1}
     .wbar-cd i{display:block;margin-top:2px;font-style:normal;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.7)}
-    @media (max-width:560px){header .wbar .wrap{flex-direction:column;gap:6px}}
+    @media (max-width:560px){header .wbar .wrap{flex-direction:column;gap:7px}.wbar-title{font-size:11px;letter-spacing:.14em}}
   &lt;/style&gt;
   &lt;div class=&quot;wbar&quot; data-workshop=&quot;2026-12-15T19:00:00+01:00&quot;&gt;
     &lt;div class=&quot;wrap&quot;&gt;
@@ -719,10 +719,6 @@ body :has(&gt; .jc),body :has(.jc){padding:0!important;margin:0!important;max-wi
     tick();
   })();
   &lt;/script&gt;
-  &lt;div class=&quot;wrap&quot;&gt;
-    &lt;a href=&quot;#&quot; class=&quot;name&quot;&gt;Judith Calzada&lt;/a&gt;
-    &lt;a href=&quot;#precios&quot; class=&quot;btn sm&quot;&gt;Empezar ya&lt;/a&gt;
-  &lt;/div&gt;
 &lt;/header&gt;
 &lt;/div&gt;
 </textarea></section><section class="step" id="s5"><header><span class="n">05</span><div><h2>Vídeo y titular</h2><p>Sección a ancho completo, padding 0, sin fondo · fila de 1 columna, padding 0 · elemento Custom JS/HTML.</p></div><button type="button" class="copy" data-for="c5">Copiar</button></header><textarea id="c5" spellcheck="false">&lt;div class=&quot;jc&quot;&gt;
