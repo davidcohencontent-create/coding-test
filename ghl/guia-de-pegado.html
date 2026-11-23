@@ -692,11 +692,29 @@ body :has(&gt; .jc),body :has(.jc){padding:0!important;margin:0!important;max-wi
         &lt;h1&gt;Te ayudo a dejar de esperar &lt;em class=&quot;nowrap&quot;&gt;a sentirte preparada&lt;/em&gt; para ocupar el lugar que ya te has ganado.&lt;/h1&gt;
         &lt;p&gt;Dejé de esperar a sentirme preparada. Actué con miedo. Y en 10 días, ese miedo se convirtió en confianza.&lt;/p&gt;
       &lt;/div&gt;
-      &lt;!-- TODO client: the hero video thumbnail looks blurred on the live page. If it is not just Vimeo&#x27;s loading state,
-           set a sharp custom thumbnail in Vimeo (Settings → General → Thumbnail) or send a key frame to use as a poster. --&gt;
+      &lt;!-- Video with Judith&#x27;s cover image on top: clicking the cover hides it and starts the video --&gt;
+      &lt;style&gt;
+        .video .poster{position:absolute;inset:0;z-index:2;width:100%;height:100%;border:0;padding:0;margin:0;cursor:pointer;
+          background:#18172a url(&quot;https://files.leadconnectorhq.com/file/6aecb3f8fe82b1ad5fbb02df/image-1793897452777.jpg&quot;) center/cover no-repeat}
+        .video .poster::before{content:&quot;&quot;;position:absolute;inset:0;background:linear-gradient(180deg,rgba(24,23,42,0) 55%,rgba(24,23,42,.35))}
+      &lt;/style&gt;
       &lt;div class=&quot;video&quot;&gt;
         &lt;iframe src=&quot;https://player.vimeo.com/video/1211423165?title=0&amp;amp;byline=0&amp;amp;portrait=0&amp;amp;dnt=1&amp;amp;color=5d0018&quot; title=&quot;Vídeo de Judith Calzada&quot; allow=&quot;autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share&quot; referrerpolicy=&quot;strict-origin-when-cross-origin&quot; allowfullscreen&gt;&lt;/iframe&gt;
+        &lt;button class=&quot;poster&quot; type=&quot;button&quot; aria-label=&quot;Reproducir el vídeo&quot;&gt;&lt;span class=&quot;play&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;/button&gt;
       &lt;/div&gt;
+      &lt;script&gt;
+      (function () {
+        var b = document.querySelector(&#x27;.video .poster&#x27;);
+        if (!b || b.dataset.ready) return;
+        b.dataset.ready = &#x27;1&#x27;;
+        b.addEventListener(&#x27;click&#x27;, function () {
+          var f = b.parentNode.querySelector(&#x27;iframe&#x27;);
+          b.hidden = true;
+          var start = function () { if (!/autoplay=1/.test(f.src)) f.src += &#x27;&amp;autoplay=1&#x27;; };
+          if (window.Vimeo &amp;&amp; window.Vimeo.Player) new window.Vimeo.Player(f).play().catch(start); else start();
+        });
+      })();
+      &lt;/script&gt;
       &lt;div class=&quot;cta&quot;&gt;
         &lt;a href=&quot;#precios&quot; class=&quot;btn light&quot;&gt;Quiero más confianza&lt;/a&gt;
         &lt;p class=&quot;proof&quot;&gt;+500 profesionales acompañados · &lt;span class=&quot;stars&quot; aria-hidden=&quot;true&quot;&gt;★★★★★&lt;/span&gt; 4,8/5&lt;/p&gt;
