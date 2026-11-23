@@ -735,12 +735,33 @@ body :has(&gt; .jc),body :has(.jc){padding:0!important;margin:0!important;max-wi
   &lt;section class=&quot;hero&quot;&gt;
     &lt;div class=&quot;wrap&quot;&gt;
       &lt;div class=&quot;intro&quot;&gt;
+        &lt;!-- Live class card: Zoom logo, pulsing &quot;En directo&quot; and the date --&gt;
+        &lt;div class=&quot;live-card&quot;&gt;
+          &lt;img src=&quot;https://davidcohencontent-create.github.io/coding-test/funnel/img/zoom-logo.png&quot; alt=&quot;Zoom&quot; width=&quot;52&quot; height=&quot;52&quot;&gt;
+          &lt;div class=&quot;lc-txt&quot;&gt;
+            &lt;span class=&quot;lc-live&quot;&gt;&lt;i aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;En directo&lt;/span&gt;
+            &lt;strong&gt;Workshop gratuito por Zoom&lt;/strong&gt;
+            &lt;span class=&quot;lc-when&quot;&gt;Martes 15 de diciembre · 19:00 h (hora de Madrid)&lt;/span&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
         &lt;h1&gt;Te enseñaré a impulsar tu carrera profesional y hacerte &lt;em&gt;más visible&lt;/em&gt; con mi método de confianza en 10 días.&lt;/h1&gt;
         &lt;p&gt;El workshop completo de confianza, donde hablaremos de cómo conseguir más en menos tiempo.&lt;/p&gt;
       &lt;/div&gt;
       &lt;!-- VSL (MP4 hosted in GHL): starts on its own without sound (browsers only allow muted autoplay); the square on top
            switches the sound on and starts the video from the beginning --&gt;
       &lt;style&gt;
+        .hero .live-card{display:inline-flex;align-items:center;gap:16px;margin:0 auto 30px;padding:12px 22px 12px 12px;text-align:left;
+          background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16);border-radius:14px;box-shadow:0 18px 40px -24px rgba(0,0,0,.7)}
+        .hero .live-card img{width:52px;height:52px;border-radius:12px;display:block;flex:none}
+        .hero .lc-txt{display:flex;flex-direction:column;gap:3px;color:#fff}
+        .hero .lc-live{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#ff6b6b}
+        .hero .lc-live i{position:relative;width:9px;height:9px;border-radius:50%;background:#ff3b3b;flex:none}
+        .hero .lc-live i::after{content:&quot;&quot;;position:absolute;inset:-5px;border-radius:50%;border:2px solid #ff3b3b;opacity:0;animation:live-ring 1.6s ease-out infinite}
+        .hero .live-card strong{font-size:16px;font-weight:600;letter-spacing:.01em}
+        .hero .lc-when{font-size:13px;color:rgba(255,255,255,.72)}
+        @keyframes live-ring{0%{transform:scale(.5);opacity:.9}100%{transform:scale(1.6);opacity:0}}
+        @media (max-width:760px){.hero .live-card{gap:12px;padding:10px 16px 10px 10px;margin-bottom:24px}.hero .live-card img{width:44px;height:44px}.hero .live-card strong{font-size:15px}.hero .lc-when{font-size:12px}}
+        @media (prefers-reduced-motion:reduce){.hero .lc-live i::after{animation:none}}
         .video video{position:absolute;inset:0;width:100%;height:100%;display:block;background:#000;object-fit:contain}
         .video .unmute{position:absolute;left:50%;top:50%;z-index:2;transform:translate(-50%,-50%);width:150px;height:150px;
           display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;border:0;border-radius:2px;cursor:pointer;

@@ -3,12 +3,33 @@
   <section class="hero">
     <div class="wrap">
       <div class="intro">
+        <!-- Live class card: Zoom logo, pulsing "En directo" and the date -->
+        <div class="live-card">
+          <img src="https://davidcohencontent-create.github.io/coding-test/funnel/img/zoom-logo.png" alt="Zoom" width="52" height="52">
+          <div class="lc-txt">
+            <span class="lc-live"><i aria-hidden="true"></i>En directo</span>
+            <strong>Workshop gratuito por Zoom</strong>
+            <span class="lc-when">Martes 15 de diciembre · 19:00 h (hora de Madrid)</span>
+          </div>
+        </div>
         <h1>Te enseñaré a impulsar tu carrera profesional y hacerte <em>más visible</em> con mi método de confianza en 10 días.</h1>
         <p>El workshop completo de confianza, donde hablaremos de cómo conseguir más en menos tiempo.</p>
       </div>
       <!-- VSL (MP4 hosted in GHL): starts on its own without sound (browsers only allow muted autoplay); the square on top
            switches the sound on and starts the video from the beginning -->
       <style>
+        .hero .live-card{display:inline-flex;align-items:center;gap:16px;margin:0 auto 30px;padding:12px 22px 12px 12px;text-align:left;
+          background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16);border-radius:14px;box-shadow:0 18px 40px -24px rgba(0,0,0,.7)}
+        .hero .live-card img{width:52px;height:52px;border-radius:12px;display:block;flex:none}
+        .hero .lc-txt{display:flex;flex-direction:column;gap:3px;color:#fff}
+        .hero .lc-live{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#ff6b6b}
+        .hero .lc-live i{position:relative;width:9px;height:9px;border-radius:50%;background:#ff3b3b;flex:none}
+        .hero .lc-live i::after{content:"";position:absolute;inset:-5px;border-radius:50%;border:2px solid #ff3b3b;opacity:0;animation:live-ring 1.6s ease-out infinite}
+        .hero .live-card strong{font-size:16px;font-weight:600;letter-spacing:.01em}
+        .hero .lc-when{font-size:13px;color:rgba(255,255,255,.72)}
+        @keyframes live-ring{0%{transform:scale(.5);opacity:.9}100%{transform:scale(1.6);opacity:0}}
+        @media (max-width:760px){.hero .live-card{gap:12px;padding:10px 16px 10px 10px;margin-bottom:24px}.hero .live-card img{width:44px;height:44px}.hero .live-card strong{font-size:15px}.hero .lc-when{font-size:12px}}
+        @media (prefers-reduced-motion:reduce){.hero .lc-live i::after{animation:none}}
         .video video{position:absolute;inset:0;width:100%;height:100%;display:block;background:#000;object-fit:contain}
         .video .unmute{position:absolute;left:50%;top:50%;z-index:2;transform:translate(-50%,-50%);width:150px;height:150px;
           display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;border:0;border-radius:2px;cursor:pointer;
