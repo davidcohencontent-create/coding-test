@@ -39,7 +39,9 @@
     bar.dataset.run = '1';
     // Where the button goes: paste the workshop registration link between the quotes (for now it goes to the waiting list)
     var WORKSHOP_URL = '';
-    if (WORKSHOP_URL) bar.querySelector('[data-workshop-link]').href = WORKSHOP_URL;
+    var link = bar.querySelector('[data-workshop-link]');
+    if (WORKSHOP_URL) link.href = WORKSHOP_URL;
+    else if (!document.getElementById('precios')) link.hidden = true;   // pages without the sign-up card (e.g. Step 2): no button
     var end = new Date(bar.getAttribute('data-workshop')).getTime(), pad = function (n) { return (n < 10 ? '0' : '') + n; };
     var tick = function () {
       var t = end - Date.now();

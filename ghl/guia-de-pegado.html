@@ -717,7 +717,9 @@ body :has(&gt; .jc),body :has(.jc){padding:0!important;margin:0!important;max-wi
     bar.dataset.run = &#x27;1&#x27;;
     // Where the button goes: paste the workshop registration link between the quotes (for now it goes to the waiting list)
     var WORKSHOP_URL = &#x27;&#x27;;
-    if (WORKSHOP_URL) bar.querySelector(&#x27;[data-workshop-link]&#x27;).href = WORKSHOP_URL;
+    var link = bar.querySelector(&#x27;[data-workshop-link]&#x27;);
+    if (WORKSHOP_URL) link.href = WORKSHOP_URL;
+    else if (!document.getElementById(&#x27;precios&#x27;)) link.hidden = true;   // pages without the sign-up card (e.g. Step 2): no button
     var end = new Date(bar.getAttribute(&#x27;data-workshop&#x27;)).getTime(), pad = function (n) { return (n &lt; 10 ? &#x27;0&#x27; : &#x27;&#x27;) + n; };
     var tick = function () {
       var t = end - Date.now();
