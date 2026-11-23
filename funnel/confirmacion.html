@@ -131,7 +131,6 @@
       var q = new URLSearchParams(location.search), n = (q.get('first_name') || q.get('name') || '').trim().split(' ')[0];
       if (n && n.indexOf('{{') < 0) {
         n = n.charAt(0).toUpperCase() + n.slice(1);
-        root.querySelector('[data-hi]').textContent = '¡' + n + ', ya casi estás!';
         root.querySelector('[data-name]').textContent = n;
       }
       // Access code: a short code that stays the same for this visitor
