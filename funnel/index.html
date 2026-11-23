@@ -15,19 +15,23 @@
 <header>
   <!-- Workshop bar: "Workshop gratuito en directo" and a countdown to 15 Dec 19:00 (Madrid). It hides itself once the workshop has started. -->
   <style>
-    .wbar{background:var(--accent);color:#fff}
+    @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500&display=swap');
+    /* Own colours and fonts, so the bar looks the same on pages without the Custom CSS (e.g. Step 2) */
+    .wbar{background:#5d0018;color:#fff;font-family:'PP Neue Montreal','Helvetica Neue',Helvetica,Arial,sans-serif;line-height:1.4}
+    .wbar *{box-sizing:border-box}
+    .wbar .wrap{max-width:1080px;margin:0 auto;padding-left:24px;padding-right:24px}
     header .wbar .wrap{display:flex;justify-content:center;align-items:center;gap:20px;height:auto;min-height:60px;padding-top:10px;padding-bottom:10px}
-    .wbar-title{font-size:13px;font-weight:600;letter-spacing:.18em;text-transform:uppercase}
+    .wbar-title{color:#fff;font-size:13px;font-weight:600;letter-spacing:.18em;text-transform:uppercase}
     .wbar-cd{display:flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
     .wbar-cd div{min-width:42px;padding:4px 4px 3px;border:1px solid rgba(255,255,255,.28);text-align:center}
-    .wbar-cd b{display:block;font-family:var(--serif);font-weight:500;font-size:19px;line-height:1}
+    .wbar-cd b{display:block;font-family:'EB Garamond',Garamond,'Times New Roman',serif;color:#fff;font-weight:500;font-size:19px;line-height:1}
     .wbar-cd i{display:block;margin-top:2px;font-style:normal;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.7)}
-    header .wbar a.wbar-btn{flex:none;display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:#fff;color:var(--accent);text-decoration:none;
+    header .wbar a.wbar-btn{flex:none;display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:#fff;color:#5d0018;text-decoration:none;
       font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;border-radius:2px;transition:background .2s,transform .2s}
     header .wbar a.wbar-btn::after{content:"→";letter-spacing:0}
-    header .wbar a.wbar-btn:hover{background:var(--blush);transform:translateY(-1px)}
+    header .wbar a.wbar-btn:hover{background:#f1e3e6;transform:translateY(-1px)}
     @media (max-width:860px){header .wbar .wrap{flex-wrap:wrap;gap:8px 14px}.wbar-title{flex:1 1 100%;text-align:center}}
-    @media (max-width:560px){header .wbar .wrap{gap:8px}.wbar-title{font-size:10.5px;letter-spacing:.1em}.wbar-cd{gap:4px}.wbar-cd div{min-width:34px;padding:3px 2px}.wbar-cd b{font-size:16px}.wbar-cd i{font-size:8px;letter-spacing:.08em}header .wbar a.wbar-btn{padding:9px 12px;font-size:10.5px;letter-spacing:.1em}}
+    @media (max-width:560px){header .wbar .wrap{gap:8px;padding-left:16px;padding-right:16px}.wbar-title{font-size:10.5px;letter-spacing:.1em}.wbar-cd{gap:4px}.wbar-cd div{min-width:34px;padding:3px 2px}.wbar-cd b{font-size:16px}.wbar-cd i{font-size:8px;letter-spacing:.08em}header .wbar a.wbar-btn{padding:9px 12px;font-size:10.5px;letter-spacing:.1em}}
   </style>
   <div class="wbar" data-workshop="2026-12-15T19:00:00+01:00">
     <div class="wrap">
