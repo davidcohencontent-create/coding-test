@@ -735,35 +735,43 @@ body :has(&gt; .jc),body :has(.jc){padding:0!important;margin:0!important;max-wi
   &lt;section class=&quot;hero&quot;&gt;
     &lt;div class=&quot;wrap&quot;&gt;
       &lt;div class=&quot;intro&quot;&gt;
-        &lt;div class=&quot;zoom-badge&quot;&gt;&lt;svg viewBox=&quot;0 0 30 30&quot; aria-hidden=&quot;true&quot;&gt;&lt;rect width=&quot;30&quot; height=&quot;30&quot; rx=&quot;8&quot; fill=&quot;#0b5cff&quot;/&gt;&lt;rect x=&quot;6&quot; y=&quot;10&quot; width=&quot;12.5&quot; height=&quot;10&quot; rx=&quot;2.5&quot; fill=&quot;#fff&quot;/&gt;&lt;path d=&quot;M19.5 13.4l4.5-3v9.2l-4.5-3z&quot; fill=&quot;#fff&quot;/&gt;&lt;/svg&gt; Workshop gratuito en directo por Zoom&lt;/div&gt;
-        &lt;h1&gt;Te ayudo a dejar de esperar &lt;em class=&quot;nowrap&quot;&gt;a sentirte preparada&lt;/em&gt; para ocupar el lugar que ya te has ganado.&lt;/h1&gt;
-        &lt;p&gt;Te enseñaré mi método de confianza en 10 días, que va a impulsar tu carrera profesional y hacerte más visible.&lt;/p&gt;
-        &lt;p class=&quot;sub2&quot;&gt;El workshop completo de confianza, donde hablaremos de cómo conseguir más en menos tiempo.&lt;/p&gt;
+        &lt;h1&gt;Te enseñaré a impulsar tu carrera profesional y hacerte &lt;em&gt;más visible&lt;/em&gt; con mi método de confianza en 10 días.&lt;/h1&gt;
+        &lt;p&gt;El workshop completo de confianza, donde hablaremos de cómo conseguir más en menos tiempo.&lt;/p&gt;
       &lt;/div&gt;
-      &lt;!-- VSL (MP4 hosted in GHL) with Judith&#x27;s cover image and play button on top --&gt;
+      &lt;!-- VSL (MP4 hosted in GHL): starts on its own without sound (browsers only allow muted autoplay); the square on top
+           switches the sound on and starts the video from the beginning --&gt;
       &lt;style&gt;
-        .hero .zoom-badge{display:inline-flex;align-items:center;gap:10px;margin:0 0 22px;padding:7px 16px 7px 8px;border:1px solid rgba(255,255,255,.25);border-radius:999px;
-          font-size:13px;font-weight:600;letter-spacing:.06em;color:#fff}
-        .hero .zoom-badge svg{width:26px;height:26px;display:block}
-        .hero .intro p.sub2{margin-top:10px}
         .video video{position:absolute;inset:0;width:100%;height:100%;display:block;background:#000;object-fit:contain}
-        .video .poster{position:absolute;inset:0;z-index:2;width:100%;height:100%;border:0;padding:0;margin:0;cursor:pointer;
-          background:#18172a url(&quot;https://files.leadconnectorhq.com/file/6aecb3f8fe82b1ad5fbb02df/image-1793897452777.jpg&quot;) center/cover no-repeat}
-        .video .poster::before{content:&quot;&quot;;position:absolute;inset:0;background:linear-gradient(180deg,rgba(24,23,42,0) 55%,rgba(24,23,42,.35))}
+        .video .unmute{position:absolute;left:50%;top:50%;z-index:2;transform:translate(-50%,-50%);width:150px;height:150px;
+          display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;border:0;border-radius:2px;cursor:pointer;
+          background:rgba(93,0,24,.92);color:#fff;font:600 12px/1.35 var(--font);letter-spacing:.12em;text-transform:uppercase;text-align:center;
+          box-shadow:0 20px 40px -18px rgba(0,0,0,.6);animation:unmute-pulse 2s ease-in-out infinite}
+        .video .unmute svg{width:40px;height:40px;display:block}
+        .video .unmute:hover{background:var(--accent-dark)}
+        @keyframes unmute-pulse{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.04)}}
+        @media (max-width:760px){.video .unmute{width:118px;height:118px;font-size:10.5px;gap:8px}.video .unmute svg{width:32px;height:32px}}
+        @media (prefers-reduced-motion:reduce){.video .unmute{animation:none}}
       &lt;/style&gt;
       &lt;div class=&quot;video&quot;&gt;
-        &lt;video src=&quot;https://files.leadconnectorhq.com/file/6b042bc1d50d9db7969c0ba5/webinar-vsl.mp4&quot; controls playsinline preload=&quot;metadata&quot;
-          poster=&quot;https://files.leadconnectorhq.com/file/6aecb3f8fe82b1ad5fbb02df/image-1793897452777.jpg&quot; title=&quot;Vídeo de Judith Calzada&quot;&gt;&lt;/video&gt;
-        &lt;button class=&quot;poster&quot; type=&quot;button&quot; aria-label=&quot;Reproducir el vídeo&quot;&gt;&lt;span class=&quot;play&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;/button&gt;
+        &lt;video src=&quot;https://files.leadconnectorhq.com/file/6b042bc1d50d9db7969c0ba5/webinar-vsl.mp4&quot; autoplay muted playsinline preload=&quot;auto&quot; title=&quot;Vídeo de Judith Calzada&quot;&gt;&lt;/video&gt;
+        &lt;button class=&quot;unmute&quot; type=&quot;button&quot; aria-label=&quot;Activar el sonido y ver el vídeo desde el principio&quot;&gt;
+          &lt;svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;M4 9h4l5-4v14l-5-4H4z&quot;/&gt;&lt;path d=&quot;M17 9l4 6M21 9l-4 6&quot;/&gt;&lt;/svg&gt;
+          Activar sonido
+        &lt;/button&gt;
       &lt;/div&gt;
       &lt;script&gt;
       (function () {
-        var b = document.querySelector(&#x27;.video .poster&#x27;);
+        var b = document.querySelector(&#x27;.video .unmute&#x27;);
         if (!b || b.dataset.ready) return;
         b.dataset.ready = &#x27;1&#x27;;
         var v = b.parentNode.querySelector(&#x27;video&#x27;);
-        b.addEventListener(&#x27;click&#x27;, function () { b.hidden = true; var p = v.play(); if (p &amp;&amp; p.catch) p.catch(function () {}); });
-        v.addEventListener(&#x27;play&#x27;, function () { b.hidden = true; });
+        v.muted = true;                                    // some browsers only autoplay when muted is also set from script
+        var p = v.play(); if (p &amp;&amp; p.catch) p.catch(function () {});
+        b.addEventListener(&#x27;click&#x27;, function () {
+          v.muted = false; v.currentTime = 0; v.controls = true;
+          var q = v.play(); if (q &amp;&amp; q.catch) q.catch(function () {});
+          b.hidden = true;
+        });
       })();
       &lt;/script&gt;
       &lt;div class=&quot;cta&quot;&gt;

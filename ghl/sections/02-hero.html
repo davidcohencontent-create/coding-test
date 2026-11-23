@@ -3,35 +3,43 @@
   <section class="hero">
     <div class="wrap">
       <div class="intro">
-        <div class="zoom-badge"><svg viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="8" fill="#0b5cff"/><rect x="6" y="10" width="12.5" height="10" rx="2.5" fill="#fff"/><path d="M19.5 13.4l4.5-3v9.2l-4.5-3z" fill="#fff"/></svg> Workshop gratuito en directo por Zoom</div>
-        <h1>Te ayudo a dejar de esperar <em class="nowrap">a sentirte preparada</em> para ocupar el lugar que ya te has ganado.</h1>
-        <p>Te enseñaré mi método de confianza en 10 días, que va a impulsar tu carrera profesional y hacerte más visible.</p>
-        <p class="sub2">El workshop completo de confianza, donde hablaremos de cómo conseguir más en menos tiempo.</p>
+        <h1>Te enseñaré a impulsar tu carrera profesional y hacerte <em>más visible</em> con mi método de confianza en 10 días.</h1>
+        <p>El workshop completo de confianza, donde hablaremos de cómo conseguir más en menos tiempo.</p>
       </div>
-      <!-- VSL (MP4 hosted in GHL) with Judith's cover image and play button on top -->
+      <!-- VSL (MP4 hosted in GHL): starts on its own without sound (browsers only allow muted autoplay); the square on top
+           switches the sound on and starts the video from the beginning -->
       <style>
-        .hero .zoom-badge{display:inline-flex;align-items:center;gap:10px;margin:0 0 22px;padding:7px 16px 7px 8px;border:1px solid rgba(255,255,255,.25);border-radius:999px;
-          font-size:13px;font-weight:600;letter-spacing:.06em;color:#fff}
-        .hero .zoom-badge svg{width:26px;height:26px;display:block}
-        .hero .intro p.sub2{margin-top:10px}
         .video video{position:absolute;inset:0;width:100%;height:100%;display:block;background:#000;object-fit:contain}
-        .video .poster{position:absolute;inset:0;z-index:2;width:100%;height:100%;border:0;padding:0;margin:0;cursor:pointer;
-          background:#18172a url("https://files.leadconnectorhq.com/file/6aecb3f8fe82b1ad5fbb02df/image-1793897452777.jpg") center/cover no-repeat}
-        .video .poster::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(24,23,42,0) 55%,rgba(24,23,42,.35))}
+        .video .unmute{position:absolute;left:50%;top:50%;z-index:2;transform:translate(-50%,-50%);width:150px;height:150px;
+          display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;border:0;border-radius:2px;cursor:pointer;
+          background:rgba(93,0,24,.92);color:#fff;font:600 12px/1.35 var(--font);letter-spacing:.12em;text-transform:uppercase;text-align:center;
+          box-shadow:0 20px 40px -18px rgba(0,0,0,.6);animation:unmute-pulse 2s ease-in-out infinite}
+        .video .unmute svg{width:40px;height:40px;display:block}
+        .video .unmute:hover{background:var(--accent-dark)}
+        @keyframes unmute-pulse{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.04)}}
+        @media (max-width:760px){.video .unmute{width:118px;height:118px;font-size:10.5px;gap:8px}.video .unmute svg{width:32px;height:32px}}
+        @media (prefers-reduced-motion:reduce){.video .unmute{animation:none}}
       </style>
       <div class="video">
-        <video src="https://files.leadconnectorhq.com/file/6b042bc1d50d9db7969c0ba5/webinar-vsl.mp4" controls playsinline preload="metadata"
-          poster="https://files.leadconnectorhq.com/file/6aecb3f8fe82b1ad5fbb02df/image-1793897452777.jpg" title="Vídeo de Judith Calzada"></video>
-        <button class="poster" type="button" aria-label="Reproducir el vídeo"><span class="play" aria-hidden="true"></span></button>
+        <video src="https://files.leadconnectorhq.com/file/6b042bc1d50d9db7969c0ba5/webinar-vsl.mp4" autoplay muted playsinline preload="auto" title="Vídeo de Judith Calzada"></video>
+        <button class="unmute" type="button" aria-label="Activar el sonido y ver el vídeo desde el principio">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l4 6M21 9l-4 6"/></svg>
+          Activar sonido
+        </button>
       </div>
       <script>
       (function () {
-        var b = document.querySelector('.video .poster');
+        var b = document.querySelector('.video .unmute');
         if (!b || b.dataset.ready) return;
         b.dataset.ready = '1';
         var v = b.parentNode.querySelector('video');
-        b.addEventListener('click', function () { b.hidden = true; var p = v.play(); if (p && p.catch) p.catch(function () {}); });
-        v.addEventListener('play', function () { b.hidden = true; });
+        v.muted = true;                                    // some browsers only autoplay when muted is also set from script
+        var p = v.play(); if (p && p.catch) p.catch(function () {});
+        b.addEventListener('click', function () {
+          v.muted = false; v.currentTime = 0; v.controls = true;
+          var q = v.play(); if (q && q.catch) q.catch(function () {});
+          b.hidden = true;
+        });
       })();
       </script>
       <div class="cta">
