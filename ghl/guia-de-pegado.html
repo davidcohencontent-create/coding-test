@@ -1279,6 +1279,8 @@ body :has(&gt; .jc),body :has(.jc){padding:0!important;margin:0!important;max-wi
         var box = document.getElementById(&#x27;lista-espera&#x27;), id = box.getAttribute(&#x27;data-form-id&#x27;);
         if (!id) { box.parentNode.querySelector(&#x27;.wl-msg&#x27;).hidden = false; return; }
         box.hidden = false; open.hidden = true;          // show the space first, then load the form into it
+        // Start loading Step 2 now, so the redirect after the form is quick
+        [&#x27;/confirmacion&#x27;].forEach(function (u) { var l = document.createElement(&#x27;link&#x27;); l.rel = &#x27;prefetch&#x27;; l.href = u; document.head.appendChild(l); });
         if (!box.querySelector(&#x27;iframe&#x27;)) {
           var f = document.createElement(&#x27;iframe&#x27;);
           f.src = &#x27;https://api.leadconnectorhq.com/widget/form/&#x27; + id;

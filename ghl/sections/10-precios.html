@@ -96,6 +96,8 @@
         var box = document.getElementById('lista-espera'), id = box.getAttribute('data-form-id');
         if (!id) { box.parentNode.querySelector('.wl-msg').hidden = false; return; }
         box.hidden = false; open.hidden = true;          // show the space first, then load the form into it
+        // Start loading Step 2 now, so the redirect after the form is quick
+        ['/confirmacion'].forEach(function (u) { var l = document.createElement('link'); l.rel = 'prefetch'; l.href = u; document.head.appendChild(l); });
         if (!box.querySelector('iframe')) {
           var f = document.createElement('iframe');
           f.src = 'https://api.leadconnectorhq.com/widget/form/' + id;
