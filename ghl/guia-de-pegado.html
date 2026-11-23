@@ -1172,7 +1172,7 @@ body :has(&gt; .jc),body :has(.jc){padding:0!important;margin:0!important;max-wi
     &lt;/div&gt;
   &lt;/section&gt;
 
-  &lt;!-- Final CTA: the Intensivo card with a countdown to the opening date and the waiting list (no price for now).
+  &lt;!-- Final CTA: the Workshop de Confianza card (previously the Intensivo card) with a countdown to the opening date and the waiting list (no price for now).
        Styles and script live in this section, so it pastes into GHL as one block. --&gt;
 &lt;/div&gt;
 </textarea></section><section class="step" id="s13"><header><span class="n">13</span><div><h2>Precio / lista de espera</h2><p>Sección a ancho completo, padding 0, sin fondo · fila de 1 columna, padding 0 · elemento Custom JS/HTML. Incluye el formulario de la lista de espera; se conecta con la URL del webhook de GHL en el Footer code (WAITLIST_WEBHOOK).</p></div><button type="button" class="copy" data-for="c13">Copiar</button></header><textarea id="c13" spellcheck="false">&lt;div class=&quot;jc&quot;&gt;
@@ -1209,8 +1209,8 @@ body :has(&gt; .jc),body :has(.jc){padding:0!important;margin:0!important;max-wi
         &lt;div class=&quot;offer&quot;&gt;
           &lt;!-- Offer image: replace with the client&#x27;s asset (transparent PNG/WebP, about 1200×900, object centred) --&gt;
           &lt;img class=&quot;offer-img&quot; src=&quot;https://davidcohencontent-create.github.io/coding-test/funnel/img/dia-bloqueado.jpg&quot; alt=&quot;&quot; loading=&quot;lazy&quot;&gt;
-          &lt;h3&gt;Intensivo de la Confianza&lt;/h3&gt;
-          &lt;p class=&quot;price soon&quot;&gt;Próximamente&lt;/p&gt;
+          &lt;h3&gt;Workshop de Confianza&lt;/h3&gt;
+          &lt;p class=&quot;price soon&quot;&gt;Gratuito&lt;/p&gt;
           &lt;!-- Countdown to the opening: data-open is the moment it ends (26 Nov 2026, 00:00 Madrid time) --&gt;
           &lt;!-- Same live Zoom card as in section 1, light version for the white card --&gt;
           &lt;div class=&quot;live-card light&quot;&gt;
@@ -1231,15 +1231,15 @@ body :has(&gt; .jc),body :has(.jc){padding:0!important;margin:0!important;max-wi
               &lt;div&gt;&lt;b data-u=&quot;s&quot;&gt;00&lt;/b&gt;&lt;span&gt;seg&lt;/span&gt;&lt;/div&gt;
             &lt;/div&gt;
           &lt;/div&gt;
-          &lt;p class=&quot;offer-line&quot;&gt;Únete a la lista de espera y serás la primera en saber cuándo abren las plazas.&lt;/p&gt;
+          &lt;p class=&quot;offer-line&quot;&gt;Reserva tu plaza para el workshop en directo. Esto es lo que vas a llevarte:&lt;/p&gt;
           &lt;ul class=&quot;offer-list&quot;&gt;
-            &lt;li&gt;10 días de vídeos · 11 lecciones grabadas&lt;/li&gt;
-            &lt;li&gt;Meditaciones guiadas&lt;/li&gt;
-            &lt;li&gt;Llamadas grupales con Judith&lt;/li&gt;
-            &lt;li&gt;A tu ritmo y sin caducidad&lt;/li&gt;
+            &lt;li&gt;Mi método de 10 días&lt;/li&gt;
+            &lt;li&gt;Guía para hacerte más visible en el trabajo&lt;/li&gt;
+            &lt;li&gt;Ejercicios prácticos para aplicar diariamente&lt;/li&gt;
+            &lt;li&gt;Cómo eliminar la voz de la jueza interior&lt;/li&gt;
           &lt;/ul&gt;
           &lt;div class=&quot;waitlist&quot;&gt;
-            &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-wl-open&gt;Unirme a la lista de espera&lt;/button&gt;
+            &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-wl-open&gt;Reservar mi plaza gratis&lt;/button&gt;
             &lt;!-- GHL form &quot;Lista de Espera&quot;: loaded only when the button is clicked, so every browser sizes it at the card&#x27;s full width --&gt;
             &lt;div class=&quot;wl-embed&quot; id=&quot;lista-espera&quot; data-form-id=&quot;sMcm0lzKXctDRTcBHbDI&quot; data-form-name=&quot;Lista de Espera&quot; data-height=&quot;466&quot; hidden&gt;&lt;/div&gt;
             &lt;p class=&quot;wl-msg&quot; hidden&gt;Falta pegar aquí el código del formulario de GHL.&lt;/p&gt;
