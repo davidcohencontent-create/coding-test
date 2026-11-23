@@ -687,17 +687,23 @@ body :has(&gt; .jc),body :has(.jc){padding:0!important;margin:0!important;max-wi
     .wbar-cd div{min-width:42px;padding:4px 4px 3px;border:1px solid rgba(255,255,255,.28);text-align:center}
     .wbar-cd b{display:block;font-family:var(--serif);font-weight:500;font-size:19px;line-height:1}
     .wbar-cd i{display:block;margin-top:2px;font-style:normal;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.7)}
-    @media (max-width:560px){header .wbar .wrap{flex-direction:column;gap:7px}.wbar-title{font-size:11px;letter-spacing:.14em}}
+    header .wbar a.wbar-btn{flex:none;display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:#fff;color:var(--accent);text-decoration:none;
+      font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;border-radius:2px;transition:background .2s,transform .2s}
+    header .wbar a.wbar-btn::after{content:&quot;→&quot;;letter-spacing:0}
+    header .wbar a.wbar-btn:hover{background:var(--blush);transform:translateY(-1px)}
+    @media (max-width:860px){header .wbar .wrap{flex-wrap:wrap;gap:8px 14px}.wbar-title{flex:1 1 100%;text-align:center}}
+    @media (max-width:560px){header .wbar .wrap{gap:8px}.wbar-title{font-size:10.5px;letter-spacing:.1em}.wbar-cd{gap:4px}.wbar-cd div{min-width:34px;padding:3px 2px}.wbar-cd b{font-size:16px}.wbar-cd i{font-size:8px;letter-spacing:.08em}header .wbar a.wbar-btn{padding:9px 12px;font-size:10.5px;letter-spacing:.1em}}
   &lt;/style&gt;
   &lt;div class=&quot;wbar&quot; data-workshop=&quot;2026-12-15T19:00:00+01:00&quot;&gt;
     &lt;div class=&quot;wrap&quot;&gt;
-      &lt;span class=&quot;wbar-title&quot;&gt;Workshop gratuito en directo&lt;/span&gt;
+      &lt;span class=&quot;wbar-title&quot;&gt;Regístrate al workshop gratuito en directo conmigo&lt;/span&gt;
       &lt;div class=&quot;wbar-cd&quot; aria-label=&quot;Cuenta atrás hasta el workshop&quot;&gt;
         &lt;div&gt;&lt;b data-w=&quot;d&quot;&gt;00&lt;/b&gt;&lt;i&gt;días&lt;/i&gt;&lt;/div&gt;
         &lt;div&gt;&lt;b data-w=&quot;h&quot;&gt;00&lt;/b&gt;&lt;i&gt;h&lt;/i&gt;&lt;/div&gt;
         &lt;div&gt;&lt;b data-w=&quot;m&quot;&gt;00&lt;/b&gt;&lt;i&gt;min&lt;/i&gt;&lt;/div&gt;
         &lt;div&gt;&lt;b data-w=&quot;s&quot;&gt;00&lt;/b&gt;&lt;i&gt;seg&lt;/i&gt;&lt;/div&gt;
       &lt;/div&gt;
+      &lt;a class=&quot;wbar-btn&quot; data-workshop-link href=&quot;#precios&quot;&gt;Reservar mi plaza&lt;/a&gt;
     &lt;/div&gt;
   &lt;/div&gt;
   &lt;script&gt;
@@ -705,6 +711,9 @@ body :has(&gt; .jc),body :has(.jc){padding:0!important;margin:0!important;max-wi
     var bar = document.querySelector(&#x27;.wbar&#x27;);
     if (!bar || bar.dataset.run) return;
     bar.dataset.run = &#x27;1&#x27;;
+    // Where the button goes: paste the workshop registration link between the quotes (for now it goes to the waiting list)
+    var WORKSHOP_URL = &#x27;&#x27;;
+    if (WORKSHOP_URL) bar.querySelector(&#x27;[data-workshop-link]&#x27;).href = WORKSHOP_URL;
     var end = new Date(bar.getAttribute(&#x27;data-workshop&#x27;)).getTime(), pad = function (n) { return (n &lt; 10 ? &#x27;0&#x27; : &#x27;&#x27;) + n; };
     var tick = function () {
       var t = end - Date.now();

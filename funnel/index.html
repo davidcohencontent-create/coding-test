@@ -22,17 +22,23 @@
     .wbar-cd div{min-width:42px;padding:4px 4px 3px;border:1px solid rgba(255,255,255,.28);text-align:center}
     .wbar-cd b{display:block;font-family:var(--serif);font-weight:500;font-size:19px;line-height:1}
     .wbar-cd i{display:block;margin-top:2px;font-style:normal;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.7)}
-    @media (max-width:560px){header .wbar .wrap{flex-direction:column;gap:7px}.wbar-title{font-size:11px;letter-spacing:.14em}}
+    header .wbar a.wbar-btn{flex:none;display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:#fff;color:var(--accent);text-decoration:none;
+      font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;border-radius:2px;transition:background .2s,transform .2s}
+    header .wbar a.wbar-btn::after{content:"→";letter-spacing:0}
+    header .wbar a.wbar-btn:hover{background:var(--blush);transform:translateY(-1px)}
+    @media (max-width:860px){header .wbar .wrap{flex-wrap:wrap;gap:8px 14px}.wbar-title{flex:1 1 100%;text-align:center}}
+    @media (max-width:560px){header .wbar .wrap{gap:8px}.wbar-title{font-size:10.5px;letter-spacing:.1em}.wbar-cd{gap:4px}.wbar-cd div{min-width:34px;padding:3px 2px}.wbar-cd b{font-size:16px}.wbar-cd i{font-size:8px;letter-spacing:.08em}header .wbar a.wbar-btn{padding:9px 12px;font-size:10.5px;letter-spacing:.1em}}
   </style>
   <div class="wbar" data-workshop="2026-12-15T19:00:00+01:00">
     <div class="wrap">
-      <span class="wbar-title">Workshop gratuito en directo</span>
+      <span class="wbar-title">Regístrate al workshop gratuito en directo conmigo</span>
       <div class="wbar-cd" aria-label="Cuenta atrás hasta el workshop">
         <div><b data-w="d">00</b><i>días</i></div>
         <div><b data-w="h">00</b><i>h</i></div>
         <div><b data-w="m">00</b><i>min</i></div>
         <div><b data-w="s">00</b><i>seg</i></div>
       </div>
+      <a class="wbar-btn" data-workshop-link href="#precios">Reservar mi plaza</a>
     </div>
   </div>
   <script>
@@ -40,6 +46,9 @@
     var bar = document.querySelector('.wbar');
     if (!bar || bar.dataset.run) return;
     bar.dataset.run = '1';
+    // Where the button goes: paste the workshop registration link between the quotes (for now it goes to the waiting list)
+    var WORKSHOP_URL = '';
+    if (WORKSHOP_URL) bar.querySelector('[data-workshop-link]').href = WORKSHOP_URL;
     var end = new Date(bar.getAttribute('data-workshop')).getTime(), pad = function (n) { return (n < 10 ? '0' : '') + n; };
     var tick = function () {
       var t = end - Date.now();
